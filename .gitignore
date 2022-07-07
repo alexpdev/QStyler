@@ -1,2 +1,7 @@
-venv 
-venv/ 
+.vscode/
+venv/
+other.json
+start.py
+qss2.json
+__pycache__/
+*.pyc
