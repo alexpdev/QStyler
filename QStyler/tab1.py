@@ -5,29 +5,27 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 
 
+def blockSignals(func):
+    def wrapper(widget, *args, **kwargs):
+        widget.blockSignals(True)
+        result = func(widget,*args,**kwargs)
+        widget.blockSignals(False)
+        return result
+    return wrapper
+
+
 class StyleSheetFactory:
     def __init__(self, app):
         self.app = app
         self.sheets = []
 
-    def addSheet(self, widget, control, states, prop, value):
-        if widget == "-":
-            widget = "*"
-        title = widget
-        if control and control != "-":
-            title += control
-        if states is not None and "-" not in states:
-            for state in states:
-                title += state
-        if not self.sheets:
-            sheet = {title: {prop: value}}
-            self.sheets.append(sheet)
-            self.update_styleSheet()
-            return
+    def addSheet(self, widget, prop, value):
         for sheet in self.sheets:
-            if title in sheet:
-                sheet[title][prop] = value
+            if widget in sheet:
+                sheet[widget][prop] = value
                 break
+        else:
+            self.sheets.append({widget:{prop:value}})
         self.update_styleSheet()
 
     def update_styleSheet(self):
@@ -39,154 +37,149 @@ class StyleSheetFactory:
                     ssheet += "  " + key + ": " + val + ";\n"
                 ssheet += "}\n"
         self.app.setStyleSheet(ssheet)
+        return ssheet
 
-    def get_sheet(self, widget, control, states):
-        title = widget
-        if control:
-            title += control
-        if states:
-            for state in states:
-                title += state
+    def get_sheet(self, widget):
         for sheet in self.sheets:
-            if title in sheet:
-                return sheet[title]
-        return None
+            if widget in sheet:
+                return sheet[widget]
+        return {}
 
+    def saveToFile(self, path):
+        stylesheet = self.update_styleSheet()
+        with open(path, "wt") as fd:
+            fd.write(stylesheet)
 
 class Table(QTableWidget):
-    def __init__(self, parent=None) -> None:
+
+    widgetChanged = Signal()
+
+    def __init__(self, data, parent=None) -> None:
         super().__init__(parent=parent)
+        self.data = data
+        self.widget = parent
         self.app = parent.app
         self.ssfactory = StyleSheetFactory(self.app)
-        self.widgcombo = None
-        self.statecombo = None
-        self.controlcombo = None
         self.setColumnCount(2)
+        self.setRowCount(0)
         header = self.horizontalHeader()
         header.setStretchLastSection(True)
         self.setHorizontalHeader(header)
-        self.setRowCount(0)
-        self.cellChanged.connect(self.saveSheet)
-
-    def saveSheet(self, row, col):
-        widget = self.widgcombo.currentText()
-        state = [self.statecombo.currentText()]
-        control = self.controlcombo.currentText()
-        key = self.item(row, 0).text()
-        value = self.item(row, 1)
-        if value is None:
-            return
-        self.ssfactory.addSheet(widget, control, state, key, value.text())
-
-    def loadSheet(self, widget):
-        widget = self.widgcombo.currentText()
-        state = [self.statecombo.currentText()]
-        control = self.controlcombo.currentText()
-        sheet = self.ssfactory.get_sheet(widget, control, state)
-        self.loadProps(sheet)
-
-    def loadProps(self, props=None):
-        for prop in self.info["properties"]:
-            rownum = self.rowCount()
-            self.insertRow(rownum)
-            item = QTableWidgetItem(type=0)
-            item.setText(prop)
-            self.setItem(rownum, 0, item)
-            if props and prop in props:
-                item2 = QTableWidgetItem(type=0)
-                item2.setText(props[prop])
-                self.setItem(rownum, 1, item2)
-
-    def loadinfo(self, info, widgcombo, statecombo, controlcombo):
-        self.widgcombo = widgcombo
-        self.statecombo = statecombo
-        self.controlcombo = controlcombo
-        self.widgcombo.widgetChanged.connect(self.loadSheet)
-        self.statecombo.stateChanged.connect(self.loadSheet)
-        self.controlcombo.controlChanged.connect(self.loadSheet)
-        self.info = info
+        self.verticalHeader().setHidden(True)
         self.loadProps()
-        self.resizeColumnsToContents()
+        self.cellChanged.connect(self.saveProp)
+        self.widgetChanged.connect(self.getSheet)
+
+    def clearAll(self):
+        for _ in range(self.rowCount()):
+            self.removeRow(0)
+        self.clear()
+
+    @blockSignals
+    def loadProps(self, sheet={}):
+        rows = self.rowCount()
+        if rows == 0:
+            return self.populate()
+        props = self.data["properties"]
+        temp = []
+        for rownum in range(rows):
+            key = self.item(rownum,0).text()
+            value = self.item(rownum,1).text()
+            temp.append(key)
+            if key in sheet:
+                self.item(rownum,1).setText(sheet[key])
+            elif value != "":
+                self.item(rownum, 1).setText("")
+        if len(temp) != len(props):
+            left = [i for i in props if i not in temp]
+            for prop in left:
+                self.addRowData(prop, "")
+
+    def populate(self):
+        for prop in self.data["properties"]:
+            self.addRowData(prop, "")
         self.resizeRowsToContents()
+        self.resizeColumnToContents(0)
+
+    def addRowData(self, txt1, txt2):
+        item1 = QTableWidgetItem(type=0)
+        item1.setFlags(
+            Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled
+        )
+        item1.setText(txt1)
+        item2 = QTableWidgetItem(type=0)
+        item2.setFlags(
+            Qt.ItemFlag.ItemIsEditable |
+            Qt.ItemFlag.ItemIsSelectable |
+            Qt.ItemFlag.ItemIsEnabled
+        )
+        item2.setText(txt2)
+        rownum = self.rowCount()
+        self.insertRow(rownum)
+        self.setItem(rownum, 0, item1)
+        self.setItem(rownum, 1, item2)
+
+    def getSheet(self):
+        widget = self.widget.getWidgetState()
+        sheet = self.ssfactory.get_sheet(widget)
+        self.loadProps(sheet=sheet)
+
+    def saveProp(self, row, column):
+        value = self.item(row, column).text()
+        if not value: return None
+        prop = self.item(row, 0).text()
+        widget = self.widget.getWidgetState()
+        self.ssfactory.addSheet(widget, prop, value)
+
+    def save_theme(self):
+        print(self.app.styleSheet())
 
 class WidgetCombo(QComboBox):
+
     widgetChanged = Signal([str])
-    def __init__(self, parent=None):
-        self.widget = parent
-        self.info = None
+
+    def __init__(self, data, parent=None):
         super().__init__(parent=parent)
-        self.currentTextChanged.connect(self.emitWidget)
-
-    def emitWidget(self, text):
-        self.widgetChanged.emit(text)
-
-    def loadinfo(self, info):
-        self.info = info
-        self.clear()
+        self.widget = parent
+        self.info = data
         self.addItem("-")
-        for widget in self.info["widgets"]:
+        self.loadItems()
+        self.currentTextChanged.connect(self.widgetChanged.emit)
+
+    def loadItems(self):
+        widgets = self.info["widgets"]
+        for widget in widgets:
             self.addItem(widget)
-
-
-class StateCombo(QComboBox):
-
-    stateChanged = Signal([str])
-
-    def __init__(self, parent=None):
-        self.widget = parent
-        self.info = None
-        super().__init__(parent=parent)
-        self.widget.widget_combo.widgetChanged.connect(self.change)
-        self.currentTextChanged.connect(self.emitState)
-
-    def loadinfo(self, info):
-        self.info = info
-        self.clear()
-        self.addItem("-")
-        for item in self.info["states"]:
-            self.addItem(item)
-
-    def change(self, text):
-        self.clear()
-        self.addItem("-")
-        if text == "-":
-            return
-        widget_controls = self.info["widgets"][text]
-        for control in widget_controls["controls"]:
-            if control in self.info["states"]:
-                self.addItem(control)
-
-    def emitState(self, text):
-        self.stateChanged.emit(text)
 
 class ControlCombo(QComboBox):
 
-    controlChanged = Signal([str])
-
-    def __init__(self, parent=None):
+    def __init__(self,data, parent=None):
         super().__init__(parent=parent)
         self.widget = parent
-        self.info = None
-        self.widget.widget_combo.widgetChanged.connect(self.change)
-        self.currentTextChanged.connect(self.emitControl)
-
-    def change(self, text):
-        self.clear()
+        self.info = data
         self.addItem("-")
-        if text == "-":
-            return
-        widgetinfo = self.info["widgets"][text]
-        for control in widgetinfo["controls"]:
-            if "::" in control:
+        self.widget.widget_combo.currentTextChanged.connect(self.loadControls)
+
+    def loadControls(self, widget):
+        for i in range(1, self.count()):
+            self.removeItem(0)
+        self.addItem("-")
+        if "controls" in self.info["widgets"][widget]:
+            for control in self.info["widgets"][widget]["controls"]:
                 self.addItem(control)
 
-    def loadinfo(self, info):
-        self.info = info
-        self.clear()
-        self.addItem("-")
+class StateCombo(QComboBox):
 
-    def emitControl(self, text):
-        self.controlChanged.emit(text)
+    def __init__(self, data, parent=None):
+        super().__init__(parent=parent)
+        self.widget = parent
+        self.info = data
+        self.addItem("-")
+        self.loadStates()
+
+    def loadStates(self):
+        for state in self.info["states"]:
+            self.addItem(state)
 
 class Tab1(QWidget):
     def __init__(self, parent=None):
@@ -198,9 +191,11 @@ class Tab1(QWidget):
         self.widget_label = QLabel("Widget")
         self.control_label = QLabel("Control")
         self.state_label = QLabel("State")
-        self.widget_combo = WidgetCombo(parent=self)
-        self.control_combo = ControlCombo(parent=self)
-        self.state_combo = StateCombo(parent=self)
+        for label in [self.widget_label, self.control_label, self.state_label]:
+            label.setAlignment(Qt.AlignRight)
+        self.widget_combo = WidgetCombo(self.data, parent=self)
+        self.control_combo = ControlCombo(self.data, parent=self)
+        self.state_combo = StateCombo(self.data, parent=self)
         self.combos = [self.widget_combo, self.control_combo,
                        self.state_combo]
         self.hlayout = QHBoxLayout()
@@ -210,37 +205,25 @@ class Tab1(QWidget):
         self.hlayout.addWidget(self.control_combo)
         self.hlayout.addWidget(self.state_label)
         self.hlayout.addWidget(self.state_combo)
-        self.table = Table(parent=self)
+        self.button = QPushButton("Save Theme", parent=self)
+        self.button.clicked.connect(self.save_theme)
+        self.table = Table(self.data, parent=self)
         self.layout.addLayout(self.hlayout)
         self.layout.addWidget(self.table)
-        self.fill_data()
+        self.layout.addWidget(self.button)
+        self.widget_combo.currentTextChanged.connect(self.emitChanges)
+        self.control_combo.currentTextChanged.connect(self.emitChanges)
+        self.state_combo.currentTextChanged.connect(self.emitChanges)
 
-    def fill_data(self):
-        for combo in self.combos:
-            combo.loadinfo(self.data)
-        self.table.loadinfo(self.data, self.widget_combo, self.state_combo, self.control_combo)
+    def emitChanges(self):
+        self.table.widgetChanged.emit()
 
+    def getWidgetState(self):
+        widget = self.widget_combo.currentText()
+        control = self.control_combo.currentText()
+        state = self.state_combo.currentText()
+        full = "".join([i for i in [widget, control, state] if i != "-"])
+        return full if full else "*"
 
-# box_model = [
-#  'padding-left',
-#  'padding-right',
-#  'padding-top',
-#  'padding-bottom',
-#  'margin-left',
-#  'margin-right',
-#  'margin-top',
-#  'margin-bottom',
-#  'border-left',
-#  'border-right',
-#  'border-top',
-#  'border-bottom',
-#  'background-color',
-#  'color',
-#  'border-width',
-#  'border-style',
-#  'border-radius',
-#  'border-color',
-#  'max-height',
-#  'max-width',
-#  'min-width',
-#  'min-height']
+    def save_theme(self):
+        self.table.save_theme()

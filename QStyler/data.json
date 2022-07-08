@@ -5,7 +5,7 @@
       "props": ["background-attachment", "background-image"]
     },
     "QCheckBox": {
-      "controls": ["::indicator", "::indicator"],
+      "controls": ["::indicator"],
       "props": ["background", "background-clip", "background-origin", "border", "border-color", "border-image", "border-radius", "border-style", "border-width", "margin", "max-height", "max-width", "min-height", "min-width", "padding", "spacing"]
     },
     "QColumnView": {
@@ -25,14 +25,13 @@
       "props": ["max-height", "max-width", "min-height", "min-width"]
     },
     "QDialog": {
-      "controls": [],
       "props": ["background", "background-clip", "background-origin"]
     },
     "QDialogButtonBox": {
       "props": ["button-layout"]
     },
     "QDockWidget": {
-      "controls": ["::title", "::close-button", "::float-button",  "QDockWidget::DockWidgetFeature", ":vertical", ":closable", ":floatable", ":movable"]
+      "controls": ["::title", "::close-button", "::float-button"]
     },
     "QDoubleSpinBox": {
       "controls": ["::up-button", "::up-arrow", "::down-button", "::down-arrow"],
@@ -47,29 +46,27 @@
       "props": ["background", "background-clip", "background-origin", "border", "border-color", "border-image", "border-radius", "border-style", "border-width", "margin", "max-height", "max-width", "min-height", "min-width", "padding", "spacing*"]
     },
     "QHeaderView": {
-      "controls": ["::section", "::up-arrow", "::down-arrow", ":middle", ":first", ":last", ":only-one", ":next-selected", ":previous-selected", ":selected", ":checked"]
+      "controls": ["::section", "::up-arrow", "::down-arrow"]
     },
     "QLabel": {
-      "controls": [":hover"],
       "props": ["background", "background-clip", "background-origin", "border", "border-color", "border-image", "border-radius", "border-style", "border-width", "margin", "max-height", "max-width", "min-height", "min-width", "padding"]
     },
     "QLineEdit": {
-      "controls": [],
       "props": ["background", "border", "border-color", "border-image", "border-radius", "border-style", "border-width", "margin", "max-height", "max-width", "min-height", "min-width", "padding", "selection-color", "selection-background-color", "lineedit-password-character", "lineedit-password-mask-delay"]
     },
     "QListView": {
       "controls": ["::item"],
-      "props": ["alternating row colors", "alternate-background-color", "selection-color", "selection-background-color", "show-decoration-selected"]
+      "props": ["alternate-background-color", "selection-color", "selection-background-color", "show-decoration-selected"]
     },
     "QListWidget": {
       "controls": ["::item"],
-      "props": ["alternating row colors", "alternate-background-color", "selection-color", "selection-background-color", "show-decoration-selected"]
+      "props": ["alternate-background-color", "selection-color", "selection-background-color", "show-decoration-selected"]
     },
     "QMainWindow": {
       "controls": ["::separator"]
     },
     "QMenu": {
-      "controls": ["::item", ":selected", ":default", ":exclusive", ":non-exclusive", "::separator", "::left-arrow", "::scroller", "::tearoff", "::indicator", "::icon", "::right-arrow"],
+      "controls": ["::item", "::separator", "::left-arrow", "::scroller", "::tearoff", "::indicator", "::icon", "::right-arrow"],
       "props": ["background", "border", "border-color", "border-image", "border-radius", "border-style", "border-width", "margin", "max-height", "max-width", "min-height", "min-width", "padding"]
     },
     "QMenuBar": {
@@ -80,11 +77,11 @@
       "controls": ["messagebox-text-interaction-flags"]
     },
     "QProgressBar": {
-      "controls": ["::chunk", ":indeterminate"],
+      "controls": ["::chunk"],
       "props": ["text-align"]
     },
     "QPushButton": {
-      "controls": [":default", ":flat", ":checked", ":icon", "::menu-indicator", ":open", ":closed"],
+      "controls": ["::menu-indicator"],
       "props": ["background", "background-clip", "background-origin", "border", "border-color", "border-image", "border-radius", "border-style", "border-width", "margin", "max-height", "max-width", "min-height", "min-width", "padding"]
     },
     "QRadioButton": {
@@ -92,7 +89,7 @@
       "props": ["background", "background-clip", "background-origin", "border", "border-color", "border-image", "border-radius", "border-style", "border-width", "margin", "max-height", "max-width", "min-height", "min-width", "padding", "spacing*"]
     },
     "QScrollBar": {
-      "controls": [":horizontal", ":vertical", "::handle", "::add-line", "::right-arrow", "::down-arrow", "::sub-line", "::left-arrow", "::up-arrow", "::sub-page", "::add-page", "::down-button"]
+      "controls": ["::handle", "::add-line", "::right-arrow", "::down-arrow", "::sub-line", "::left-arrow", "::up-arrow", "::sub-page", "::add-page", "::down-button"]
     },
     "QSizeGrip": {
       "props": ["max-height", "max-width", "min-height", "min-width"]
@@ -105,21 +102,21 @@
       "props": ["max-height", "max-width", "min-height", "min-width"]
     },
     "QSplitter": {
-      "controls": ["box model", "::handle", "::handle"],
+      "controls": ["::handle"],
       "props": ["background", "background-clip", "background-origin", "border", "border-color", "border-image", "border-radius", "border-style", "border-width", "margin", "max-height", "max-width", "min-height", "min-width", "padding"]
     },
     "QStatusBar": {
-      "controls": ["background", "::item", "::item"],
+      "controls": ["::item"],
       "props": ["max-height", "max-width", "min-height", "min-width"]
     },
     "QTabBar": {
-      "controls": ["::tab", "::close-button", ":only-one", ":first", ":last", ":middle", ":previous--selected", ":next-selected", ":selected", ":top", ":left", ":right", ":bottom", "::tear", "::scroller", "::tab-bar"]
+      "controls": ["::tab", "::close-button", "::tear", "::scroller", "::tab-bar"]
     },
     "QTabWidget": {
-      "controls": ["::pane", "::left-corner", "::right-corner", "::tab-bar", ":top", ":left", ":right", ":bottom", "::left-corner", "::left-corner", "::pane", "::right-corner", "::right-corner", "::tab-bar", "::tab-bar"]
+      "controls": ["::pane", "::left-corner", "::right-corner", "::tab-bar",  "::left-corner", "::left-corner", "::pane", "::right-corner", "::right-corner", "::tab-bar", "::tab-bar"]
     },
     "QTableView": {
-      "controls": ["box model", "alternating row colors", "alternate-background-color", "selection-color", "selection-background-color", "QTableView", "QAbstractButton", "QTableView", "gridline-color", "QAbsractScrollArea", "Customzing QTableView"]
+      "controls": ["alternate-background-color", "selection-color", "selection-background-color", "gridline-color"]
     },
     "QTableWidget": {
       "props": ["alternating row colors", "alternate-background-color", "selection-color", "selection-background-color", "gridline-color"]
@@ -132,28 +129,27 @@
       "props": ["max-height", "max-width", "min-height", "min-width"]
     },
     "QToolBar": {
-      "controls": [":top", ":left", ":right", ":bottom", ":first", ":last", ":middle", ":only-one", "::positionWithinLine", "::separator", "::handle"]
+      "controls": ["::positionWithinLine", "::separator", "::handle"]
     },
     "QToolButton": {
       "controls": ["::menu-indicator",  "::MenuButtonPopup", "::menu-button", "::menu-arrow", "::up-arrow", "::down-arrow", "::left-arrow", "::right-arrow"],
       "props": ["min-height", "min-width"]
     },
     "QToolBox": {
-      "controls": ["::tab", ":only-one", ":first", ":last", ":middle", ":previous-selected", ":next-selected", ":selected", "::tab"]
+      "controls": ["::tab", "::tab"]
     },
     "QToolTip": {
       "props": ["background", "opacity", "background-clip", "background-origin", "border", "border-color", "border-image", "border-radius", "border-style", "border-width", "margin", "max-height", "max-width", "min-height", "min-width", "padding"]
     },
     "QTreeView": {
       "props": ["alternate-background-color", "selection-color", "selection-background-color", "show-decoration-selected"],
-      "controls": [ "::branch", ":open", ":closed", ":has-sibling", ":has-children", "::item", "::branch"]
+      "controls": [ "::branch", "::item", "::branch"]
     },
     "QTreeWidget": {
       "props": ["alternate-background-color", "selection-color", "selection-background-color", "show-decoration-selected"],
-      "controls": [ "::branch", ":open", ":closed", ":has-sibling", ":has-children", "::item", "::branch"]
+      "controls": [ "::branch", "::item", "::branch"]
     },
     "QWidget": {
-      "controls": [],
       "props": ["background", "background-clip", "background-origin", "border", "border-color"]
     },
     "QAbstractItemView": {
