@@ -13,10 +13,9 @@ def blockSignals(func):
         return result
     return wrapper
 
-
 class StyleSheetFactory:
-    def __init__(self, app):
-        self.app = app
+    def __init__(self):
+        self.app = qApp
         self.sheets = []
 
     def addSheet(self, widget, prop, value):
@@ -58,8 +57,7 @@ class Table(QTableWidget):
         super().__init__(parent=parent)
         self.data = data
         self.widget = parent
-        self.app = parent.app
-        self.ssfactory = StyleSheetFactory(self.app)
+        self.ssfactory = StyleSheetFactory()
         self.setColumnCount(2)
         self.setRowCount(0)
         header = self.horizontalHeader()
@@ -161,7 +159,7 @@ class ControlCombo(QComboBox):
         self.widget.widget_combo.currentTextChanged.connect(self.loadControls)
 
     def loadControls(self, widget):
-        for i in range(1, self.count()):
+        for i in range(self.count()):
             self.removeItem(0)
         self.addItem("-")
         if "controls" in self.info["widgets"][widget]:
@@ -184,7 +182,6 @@ class StateCombo(QComboBox):
 class Tab1(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.app = parent.app
         self.data = json.load(open("./QStyler/data.json"))
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
