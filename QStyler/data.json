@@ -6,6 +6,7 @@
     },
     "QCheckBox": {
       "controls": ["::indicator"],
+      "states": [":checked", ":indeterminate", ":hover", ":pressed", ":unchecked"],
       "props": ["background", "background-clip", "background-origin", "border", "border-color", "border-image", "border-radius", "border-style", "border-width", "margin", "max-height", "max-width", "min-height", "min-width", "padding", "spacing"]
     },
     "QColumnView": {
@@ -14,6 +15,7 @@
     },
     "QComboBox": {
       "controls": ["::drop-down", "::down-arrow"],
+      "states": [":editable",":on"],
       "props": ["background", "background-clip", "background-origin", "border", "border-color", "border-image", "border-radius", "border-style", "border-width", "margin", "max-height", "max-width", "min-height", "min-width", "padding"]
     },
     "QDateEdit": {
@@ -31,6 +33,7 @@
       "props": ["button-layout"]
     },
     "QDockWidget": {
+      "state": [":hover", ":pressed"],
       "controls": ["::title", "::close-button", "::float-button"]
     },
     "QDoubleSpinBox": {
@@ -43,19 +46,23 @@
     },
     "QGroupBox": {
       "controls": ["::title", "::indicator"],
+      "states": [":unchecked"],
       "props": ["background", "background-clip", "background-origin", "border", "border-color", "border-image", "border-radius", "border-style", "border-width", "margin", "max-height", "max-width", "min-height", "min-width", "padding", "spacing*"]
     },
     "QHeaderView": {
-      "controls": ["::section", "::up-arrow", "::down-arrow"]
+      "controls": ["::section", "::up-arrow", "::down-arrow"],
+      "states": [":hover", ":hover"]
     },
     "QLabel": {
       "props": ["background", "background-clip", "background-origin", "border", "border-color", "border-image", "border-radius", "border-style", "border-width", "margin", "max-height", "max-width", "min-height", "min-width", "padding"]
     },
     "QLineEdit": {
+      "states": [":read-only"],
       "props": ["background", "border", "border-color", "border-image", "border-radius", "border-style", "border-width", "margin", "max-height", "max-width", "min-height", "min-width", "padding", "selection-color", "selection-background-color", "lineedit-password-character", "lineedit-password-mask-delay"]
     },
     "QListView": {
       "controls": ["::item"],
+      "states": [":selected", ":active", ":hover", ":alternate", ":!active"],
       "props": ["alternate-background-color", "selection-color", "selection-background-color", "show-decoration-selected"]
     },
     "QListWidget": {
@@ -63,14 +70,17 @@
       "props": ["alternate-background-color", "selection-color", "selection-background-color", "show-decoration-selected"]
     },
     "QMainWindow": {
+      "states": [":hover"],
       "controls": ["::separator"]
     },
     "QMenu": {
       "controls": ["::item", "::separator", "::left-arrow", "::scroller", "::tearoff", "::indicator", "::icon", "::right-arrow"],
+      "states": [":selected", ":checked", ":separator", ":indicator", "non-exclusive", ":unchecked", ":exclusive"],
       "props": ["background", "border", "border-color", "border-image", "border-radius", "border-style", "border-width", "margin", "max-height", "max-width", "min-height", "min-width", "padding"]
     },
     "QMenuBar": {
       "controls": ["::item"],
+      "states": [":selected", ":pressed"],
       "props": ["background", "border", "border-color", "border-image", "border-radius", "border-style", "border-width", "margin", "max-height", "max-width", "min-height", "min-width", "padding", "spacing*"]
     },
     "QMessageBox": {
@@ -82,19 +92,23 @@
     },
     "QPushButton": {
       "controls": ["::menu-indicator"],
+      "states": [":pressed", ":flat", ":default", ":open"],
       "props": ["background", "background-clip", "background-origin", "border", "border-color", "border-image", "border-radius", "border-style", "border-width", "margin", "max-height", "max-width", "min-height", "min-width", "padding"]
     },
     "QRadioButton": {
       "controls": ["::indicator"],
+      "states": [":checked", ":unchecked", ":pressed", ":hover"],
       "props": ["background", "background-clip", "background-origin", "border", "border-color", "border-image", "border-radius", "border-style", "border-width", "margin", "max-height", "max-width", "min-height", "min-width", "padding", "spacing*"]
     },
     "QScrollBar": {
+      "states": [":horizontal", ":vertical"],
       "controls": ["::handle", "::add-line", "::right-arrow", "::down-arrow", "::sub-line", "::left-arrow", "::up-arrow", "::sub-page", "::add-page", "::down-button"]
     },
     "QSizeGrip": {
       "props": ["max-height", "max-width", "min-height", "min-width"]
     },
     "QSlider": {
+      "states": [":horizontal", ":vertical"],
       "controls": ["::groove", "::handle"]
     },
     "QSpinBox": {

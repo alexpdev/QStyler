@@ -1,20 +1,19 @@
 {
   "name": "qstyler",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "version": "0.1.0",
+  "description": "QStyleSheet testing application.",
+  "long_description_content_type": "text/markdown",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alexpdev/QStyler.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["Gui", "Qt", "Ui"],
+  "author": "alexpdev",
+  "license": "Apache2",
+  "email": "alexpdev@pm.me",
   "bugs": {
     "url": "https://github.com/alexpdev/QStyler/issues"
   },
-  "homepage": "https://github.com/alexpdev/QStyler#readme"
+  "homepage": "https://github.com/alexpdev/QStyler#readme",
+  "url": "https://github.com/alexpdev/QStyler"
 }
