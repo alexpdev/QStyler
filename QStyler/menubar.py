@@ -42,14 +42,20 @@ class HelpMenu(QMenu):
     """
 
     def __init__(self, text: str, parent=None) -> None:
+        """
+        Create the menu widget
+
+        Parameters
+        ----------
+        text : str
+            menu bar text
+        parent : QWidget, optional
+            this widgets parent, by default None
+        """
         super().__init__(text, parent=parent)
         self.aboutqt = QAction("About Qt")
         self.addAction(self.aboutqt)
-        self.aboutqt.triggered.connect(self.showAboutQt)
-
-    def showAboutQt(self):
-        """Reset the current style sheet to blank."""
-        app = self.parent().window.showAboutQt()
+        self.aboutqt.triggered.connect(QApplication.instance().aboutQt)
 
 
 class EditMenu(QMenu):
