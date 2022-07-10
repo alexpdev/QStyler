@@ -15,7 +15,7 @@ def blockSignals(func):
 
 class StyleSheetFactory:
     def __init__(self):
-        self.app = qApp
+        self.app = QApplication.instance()
         self.sheets = []
 
     def addSheet(self, widget, prop, value):

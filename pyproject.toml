@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=40.8.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.bandit]
+skips = ["B101"]
+
+[tool.black]
+line-length = 79
+
+[tool.autopep8]
+max_line_length = 80
+ignore = "E266"
+in-place = true
+recursive = true
+aggressive = 3
+
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+    "qstyler",
+]
+console_output_style = "progress"
+addopts = "--maxfail=5"
+
+
+[tool.pylint. 'MESSAGES CONTROL']
+disable = [
+    "R1729",
+    "W0108",
+    "redefined-outer-name",
+    "attribute-defined-outside-init",
+    "invalid-name",
+    "not-callable",
+    "consider-using-with"
+]
+
+[tool.pylint. 'FORMAT']
+max-line-length = 80
+single-line-if-stmt = true
+
+[tool.pylint.'SIMILARITIES']
+ignore-comments = true
+ignore-docstrings=true
+ignore-imports=true
+
+[tool.pylint. 'DESIGN']
+max-args=15
+min-public-methods=0
+max-attributes=20
+max-statements=75
+max-branches=20
+min-similarity-lines=4
+max-locals=25
