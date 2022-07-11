@@ -4,7 +4,7 @@ autorun.bat
 __pycache__/
 *.py[cod]
 *$py.class
-
+.vscode/
 # Prerequisites
 *.d
 

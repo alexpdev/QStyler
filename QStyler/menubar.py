@@ -1,5 +1,6 @@
 import sys
 import os
+import json
 from typing import *
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
@@ -20,11 +21,9 @@ class MenuBar(QMenuBar):
         super().__init__(parent)
         self.window = parent
         self.fileMenu = FileMenu("File", parent=self)
-        self.editMenu = EditMenu("Edit", parent=self)
-        self.helpMenu = HelpMenu("Help", parent=self)
         self.optionsMenu = OptionsMenu("Options", parent=self)
+        self.helpMenu = HelpMenu("Help", parent=self)
         self.addMenu(self.fileMenu)
-        self.addMenu(self.editMenu)
         self.addMenu(self.optionsMenu)
         self.addMenu(self.helpMenu)
 
@@ -58,9 +57,9 @@ class HelpMenu(QMenu):
         self.aboutqt.triggered.connect(QApplication.instance().aboutQt)
 
 
-class EditMenu(QMenu):
+class OptionsMenu(QMenu):
     """
-    Creates Edit menu for the mainwindow menu bar.
+    Creates options menu for the mainwindow menu bar.
 
     Parameters
     ----------
@@ -72,44 +71,42 @@ class EditMenu(QMenu):
 
     def __init__(self, text: str, parent=None) -> None:
         super().__init__(text, parent=parent)
-        self.resetAction = QAction("reset")
+        self.themes = json.load(open("QStyler/style/prestyles.json","rt"))
+        self.resetAction = QAction("Reset")
         self.addAction(self.resetAction)
         self.resetAction.triggered.connect(self.resetStyleSheet)
+        self.themeMenu = QMenu("Themes", parent=self)
+        self.addMenu(self.themeMenu)
+        self.themeactions = {}
+        for key in self.themes:
+            action = QAction(key)
+            action.setObjectName(key+"action")
+            action.triggered.connect(self.applyTheme)
+            self.themeactions[action] = key
+            self.themeMenu.addAction(action)
+
+    def applyTheme(self):
+        """Apply chosen theme to mainwindow and application."""
+        sender = self.sender()
+        theme = {}
+        for k,v in self.themeactions.items():
+            if k == sender:
+                theme = self.themes[v]
+                break
+        sheet = []
+        for key,val in theme.items():
+            sheet.append({key:val})
+        self.parent().window.tab1.table.ssfactory.sheets = sheet
+        self.parent().window.tab1.table.ssfactory.update_styleSheet()
 
     def resetStyleSheet(self):
         """Reset the current style sheet to blank."""
-        pass
-
-
-class OptionsMenu(QMenu):
-    """
-    Creates Options menu for the mainwindow menu bar.
-
-    Parameters
-    ----------
-    text : str
-        The text displayed on the menubar
-    parent : QWidget
-        This widgets parent widget
-    """
-
-    def __init__(self, text: str, parent=None) -> None:
-        super().__init__(text, parent=parent)
-        self.positions = QMenu("Widget Positions")
-        self.position_tab2 = QAction("Tab2")
-        self.position_extend_tab1 = QAction("Tab1")
-        self.position_tab2.triggered.connect(self.change_tab2)
-        self.position_extend_tab1.triggered.connect(self.change_tab1)
-        self.addAction(self.position_tab2)
-        self.addAction(self.position_extend_tab1)
-
-    def change_tab1(self):
-        """Change position of widgets to extend tab1."""
-        pass
-
-    def change_tab2(self):
-        """Change the position of widgets to second tab."""
-        pass
+        parent = self.parent()
+        parent.window.tab1.table.ssfactory.sheets = []
+        sheet = parent.window.tab1.table.ssfactory.update_styleSheet()
+        self.parent().window.setStyleSheet(sheet)
+        parent.window.tab1.setStyleSheet(sheet)
+        parent.window.tab2.setStyleSheet(sheet)
 
 
 class FileMenu(QMenu):
@@ -140,10 +137,11 @@ class FileMenu(QMenu):
 
     def showStyles(self):
         """Show the current stylesheet in a separate widget."""
-        sheet = self.parent().window.tab.table.ssfactory.update_styleSheet()
-        dialog = QWidget()
+        sheet = self.parent().window.tab2.table.ssfactory.update_styleSheet()
+        self.dialog = QWidget()
         layout = QVBoxLayout()
-        dialog.setLayout(layout)
-        textEdit = QTextBrowser()
+        self.dialog.setLayout(layout)
+        textEdit = QTextBrowser(parent=self.dialog)
         textEdit.setPlainText(sheet)
-        dialog.show()
+        layout.addWidget(textEdit)
+        self.dialog.show()
