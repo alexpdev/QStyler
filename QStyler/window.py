@@ -26,8 +26,8 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 
-from QStyler.tab1 import Tab1
-from QStyler.tab2 import Tab2
+from QStyler.widgets import WidgetsTab
+from QStyler.styler import StylerTab
 from QStyler.menubar import MenuBar
 
 
@@ -51,10 +51,10 @@ class MainWindow(QMainWindow):
         self.setObjectName("MainWindow")
         self.resize(700, 600)
         self.tabWidget = QTabWidget()
-        self.tab1 = Tab1(parent=self)
-        self.tab2 = Tab2(parent=self)
-        self.tabWidget.addTab(self.tab1, "Widgets")
-        self.tabWidget.addTab(self.tab2, "Style")
+        self.widgets = WidgetsTab(parent=self)
+        self.styler = StylerTab(parent=self)
+        self.tabWidget.addTab(self.widgets, "Widgets")
+        self.tabWidget.addTab(self.styler, "Style")
         self.layout.addWidget(self.tabWidget)
         self.menubar = MenuBar(self)
         self.setMenuBar(self.menubar)

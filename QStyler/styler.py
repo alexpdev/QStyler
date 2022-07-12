@@ -13,7 +13,7 @@ def blockSignals(func):
         return result
     return wrapper
 
-class StyleSheetFactory:
+class StyleFactory:
 
     def __init__(self):
         self.app = QApplication.instance()
@@ -40,9 +40,10 @@ class StyleSheetFactory:
         return ssheet
 
     def get_sheet(self, widget):
-        for sheet in self.sheets:
-            if widget in sheet:
-                return sheet[widget]
+        if widget:
+            for sheet in self.sheets:
+                if widget in sheet:
+                    return sheet[widget]
         return {}
 
     def saveToFile(self, path):
@@ -51,24 +52,19 @@ class StyleSheetFactory:
             fd.write(stylesheet)
 
 
-class TableItem(QTableWidgetItem):
-
-    def assignValue(self, text, table):
-        sheet = table.ssfactory.sheet
-
-
-
 class Table(QTableWidget):
+    """Table containing all of the styles available for editing."""
 
-    widgetChanged = Signal()
+    widgetChanged = Signal([str])
     setNewRow = Signal()
 
     def __init__(self, data, parent=None) -> None:
+        """Initialize the styler table."""
         super().__init__(parent=parent)
         self.data = data
         self.widget = parent
         self.app = QApplication.instance()
-        self.ssfactory = StyleSheetFactory()
+        self.factory = StyleFactory()
         self.setColumnCount(2)
         self.setRowCount(0)
         self.loadProps()
@@ -82,26 +78,30 @@ class Table(QTableWidget):
         self.widgetChanged.connect(self.loadProps)
 
     @blockSignals
-    def loadProps(self):
-        sheet = self.currentSheet()
+    def loadProps(self, widget=None):
+        """Load items into table."""
+        sheet = self.factory.get_sheet(widget)
         rowcount = self.rowCount()
-        numkeys = len(sheet)
         for i, key in enumerate(sheet):
             if i < rowcount:
                 self._setRowData(i, key, sheet[key])
             else:
-                self.addRow(key=key, val=sheet[key])
-        while self.rowCount() > numkeys:
+                self.addRow(key=key, value=sheet[key])
+        while self.rowCount() > len(sheet):
             self.removeRow(self.rowCount() - 1)
         self.addRow()
 
+
     @blockSignals
     def _setRowData(self, rownum, key, value):
+        """Do something."""
         self.item(rownum, 1).setText(value)
+        self.cellWidget(rownum,0).selectKey(key)
 
 
     @blockSignals
     def addRow(self, key=None, value=""):
+        """Add a new row to the table."""
         cbox = PropsCombo(self.data, parent=self)
         rownum = self.rowCount()
         self.insertRow(rownum)
@@ -116,22 +116,25 @@ class Table(QTableWidget):
         self._setRowData(rownum, key, value)
 
     def saveProp(self, row, column):
+        """Save the newly changed value into the current stylesheet."""
         if column == 0:
             self.updateProp(row, column)
         else:
             prop = self.cellWidget(row, 0).currentText()
             value = self.item(row, 1).text()
             title = self.widget.getWidgetState()
-            self.ssfactory.addSheet(title, prop, value)
+            self.factory.addSheet(title, prop, value)
         self.setNewRow.emit()
 
     def currentSheet(self):
+        """Retreive the current stylesheet from the factory."""
         title = self.widget.getWidgetState()
-        sheet = self.ssfactory.get_sheet(title)
+        sheet = self.factory.get_sheet(title)
         return sheet
 
     @blockSignals
     def updateProp(self, row, column):
+        """Update property when combobox value changes."""
         cbox = self.cellWidget(row, column)
         prop = cbox.currentText()
         sheet = self.currentSheet()
@@ -141,13 +144,16 @@ class Table(QTableWidget):
             self.item(row, column).setText("")
 
     def save_theme(self):
+        """Return the current style sheet."""
         print(self.app.styleSheet())
         print("done")
 
 
 class PropsCombo(QComboBox):
+    """Combobox storing all available properties that can be edited."""
 
     def __init__(self, data, parent=None):
+        """Initialize the properties combo box."""
         super().__init__(parent=parent)
         self.widget = parent
         self.app = QApplication.instance()
@@ -156,36 +162,34 @@ class PropsCombo(QComboBox):
         self.addItem("-")
         self.loadItems()
         self.setSizeAdjustPolicy(self.sizeAdjustPolicy().AdjustToContents)
-        self.currentTextChanged.connect(self.triggerRow)
-
-    def assign(self, item):
-        self.tableItem = item
 
     def loadItems(self):
+        """Populate the combo box with values from json file."""
         for prop in self.info["properties"]:
             self.addItem(prop)
 
     @blockSignals
     def selectKey(self, key):
-        for i in range(self.count):
+        """Select the appropriate item as current index."""
+        for i in range(self.count()):
             if self.itemText(i) == key:
                 self.setCurrentIndex(i)
                 break
 
     def row(self):
+        """Find which row a specific value is in."""
         for i in range(self.widget.rowCount()):
             if self.widget.cellWidget(i,0) == self:
                 return i
         return None
 
-    def triggerRow(self, text):
-        self.table.
-
 class WidgetCombo(QComboBox):
+    """Combo box containing all of the available widgets."""
 
     widgetChanged = Signal([str])
 
     def __init__(self, data, parent=None):
+        """Initialize widget combo box."""
         super().__init__(parent=parent)
         self.widget = parent
         self.info = data
@@ -194,13 +198,16 @@ class WidgetCombo(QComboBox):
         self.currentTextChanged.connect(self.widgetChanged.emit)
 
     def loadItems(self):
+        """Populate combobox with data."""
         widgets = self.info["controls"]
         for widget in widgets:
             self.addItem(widget)
 
 class ControlCombo(QComboBox):
+    """ComboBox containing all of the widget controls."""
 
     def __init__(self,data, parent=None):
+        """Initialize the control combo box."""
         super().__init__(parent=parent)
         self.widget = parent
         self.info = data
@@ -209,6 +216,7 @@ class ControlCombo(QComboBox):
 
     @blockSignals
     def loadControls(self, widget):
+        """Populate the the combobox with data from jsonfile."""
         for _ in range(self.count()):
             self.removeItem(0)
         self.addItem("-")
@@ -217,8 +225,10 @@ class ControlCombo(QComboBox):
                 self.addItem(control)
 
 class StateCombo(QComboBox):
+    """Combobox with all the widget states available."""
 
     def __init__(self, data, parent=None):
+        """Initialize the states combo box."""
         super().__init__(parent=parent)
         self.widget = parent
         self.info = data
@@ -226,12 +236,15 @@ class StateCombo(QComboBox):
         self.loadStates()
 
     def loadStates(self):
+        """Populate with data from jsonfile."""
         for state in self.info["states"]:
             self.addItem(state)
 
-class Tab2(QWidget):
+class StylerTab(QWidget):
+    """Tab containing the table that changes the styling for the widgets."""
 
     def __init__(self, parent=None):
+        """Initialize the styler tab."""
         super().__init__(parent=parent)
         self.data = json.load(open("./QStyler/style/data.json"))
         self.layout = QVBoxLayout()
@@ -286,7 +299,8 @@ class Tab2(QWidget):
     def setLineReadOnly(self, ischecked):
         self.lineedit.setReadOnly(ischecked)
 
-    def emitChanges(self):
+    @blockSignals
+    def emitChanges(self, data):
         self.lineedit.clear()
         text = self.widget_combo.currentText()
         control = self.control_combo.currentText()
@@ -294,7 +308,7 @@ class Tab2(QWidget):
         result = "".join([i for i in [text, control, state] if i != "-"])
         result = "*" if not result else result
         self.lineedit.setText(result)
-        self.table.widgetChanged.emit()
+        self.table.widgetChanged.emit(result)
 
     def getWidgetState(self):
         text = self.lineedit.text()

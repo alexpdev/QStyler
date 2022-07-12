@@ -1,16 +1,17 @@
-import random
-import string
 from typing import *
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 
-from QStyler.utils import Lorem, randstring
+from QStyler.utils import Lorem
 
 
 
-class Tab1(QWidget):
+class WidgetsTab(QWidget):
+    """Tab holding all of the widgets for example of what style will look like."""
+
     def __init__(self, parent=None):
+        """Initialize the widgets tab."""
         super().__init__(parent=parent)
         lorem = Lorem()
         self.grid = QGridLayout()
@@ -166,12 +167,14 @@ class Tab1(QWidget):
         self.textBrowser.setText(lorem.gentext())
 
     def changeLCD(self):
+        """Change the value displayed in LCD number widget."""
         slider = self.verticalSlider
         lcd = self.lcdNumber
         value = slider.value()
         lcd.display(value)
 
     def updateProgress(self):
+        """Update value shown by progressbar."""
         slider = self.horizontalSlider
         progress = self.progressBar
         value = slider.value()

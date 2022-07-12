@@ -96,17 +96,17 @@ class OptionsMenu(QMenu):
         sheet = []
         for key,val in theme.items():
             sheet.append({key:val})
-        self.parent().window.tab1.table.ssfactory.sheets = sheet
-        self.parent().window.tab1.table.ssfactory.update_styleSheet()
+        self.parent().window.styler.table.factory.sheets = sheet
+        self.parent().window.styler.table.factory.update_styleSheet()
 
     def resetStyleSheet(self):
         """Reset the current style sheet to blank."""
         parent = self.parent()
-        parent.window.tab1.table.ssfactory.sheets = []
-        sheet = parent.window.tab1.table.ssfactory.update_styleSheet()
+        parent.window.styler.table.factory.sheets = []
+        sheet = parent.window.styler.table.factory.update_styleSheet()
         self.parent().window.setStyleSheet(sheet)
-        parent.window.tab1.setStyleSheet(sheet)
-        parent.window.tab2.setStyleSheet(sheet)
+        parent.window.widgets.setStyleSheet(sheet)
+        parent.window.styler.setStyleSheet(sheet)
 
 
 class FileMenu(QMenu):
@@ -137,7 +137,7 @@ class FileMenu(QMenu):
 
     def showStyles(self):
         """Show the current stylesheet in a separate widget."""
-        sheet = self.parent().window.tab2.table.ssfactory.update_styleSheet()
+        sheet = self.parent().window.styler.table.factory.update_styleSheet()
         self.dialog = QWidget()
         layout = QVBoxLayout()
         self.dialog.setLayout(layout)
