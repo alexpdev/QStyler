@@ -1,10 +1,29 @@
-import sys
-import os
+#! /usr/bin/python3
+# -*- coding: utf-8 -*-
+
+##############################################################################
+#  Copyright 2022 alexpdev
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+##############################################################################
+"""Module for initializing the menubar."""
+
 import json
 from typing import *
-from PySide6.QtWidgets import *
+
 from PySide6.QtCore import *
 from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 
 
 class MenuBar(QMenuBar):
@@ -18,6 +37,14 @@ class MenuBar(QMenuBar):
     """
 
     def __init__(self, parent) -> None:
+        """
+        Initialize menubar.
+
+        Parameters
+        ----------
+        parent : QWidget, optional
+            the parent of the widget, by default None
+        """
         super().__init__(parent)
         self.window = parent
         self.fileMenu = FileMenu("File", parent=self)
@@ -42,7 +69,7 @@ class HelpMenu(QMenu):
 
     def __init__(self, text: str, parent=None) -> None:
         """
-        Create the menu widget
+        Create the menu widget.
 
         Parameters
         ----------
@@ -70,8 +97,18 @@ class OptionsMenu(QMenu):
     """
 
     def __init__(self, text: str, parent=None) -> None:
+        """
+        Initialize menu.
+
+        Parameters
+        ----------
+        text : str
+            Title of menu.
+        parent : QWidget, optional
+            the parent of the widget, by default None
+        """
         super().__init__(text, parent=parent)
-        self.themes = json.load(open("QStyler/style/prestyles.json","rt"))
+        self.themes = json.load(open("QStyler/style/prestyles.json", "rt"))
         self.resetAction = QAction("Reset")
         self.addAction(self.resetAction)
         self.resetAction.triggered.connect(self.resetStyleSheet)
@@ -80,7 +117,7 @@ class OptionsMenu(QMenu):
         self.themeactions = {}
         for key in self.themes:
             action = QAction(key)
-            action.setObjectName(key+"action")
+            action.setObjectName(key + "action")
             action.triggered.connect(self.applyTheme)
             self.themeactions[action] = key
             self.themeMenu.addAction(action)
@@ -89,13 +126,13 @@ class OptionsMenu(QMenu):
         """Apply chosen theme to mainwindow and application."""
         sender = self.sender()
         theme = {}
-        for k,v in self.themeactions.items():
+        for k, v in self.themeactions.items():
             if k == sender:
                 theme = self.themes[v]
                 break
         sheet = []
-        for key,val in theme.items():
-            sheet.append({key:val})
+        for key, val in theme.items():
+            sheet.append({key: val})
         self.parent().window.styler.table.factory.sheets = sheet
         self.parent().window.styler.table.factory.update_styleSheet()
 
@@ -122,6 +159,16 @@ class FileMenu(QMenu):
     """
 
     def __init__(self, text: str, parent=None) -> None:
+        """
+        Initialize menu.
+
+        Parameters
+        ----------
+        text : str
+            Title of menu.
+        parent : QWidget, optional
+            the parent of the widget, by default None
+        """
         super().__init__(text, parent=parent)
         self.exitAction = QAction("Exit")
         self.showAction = QAction("Show StyleSheet")

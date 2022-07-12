@@ -23,29 +23,27 @@ export PRINT_HELP_PYSCRIPT
 
 
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
-PROJECTNAME = {{projectname}}
+PROJECTNAME = QStyler
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
 clean: clean-build ## remove all build, test, coverage and Python artifacts
 
 clean-build: ## remove build artifacts
-	rm -fr build/
-	rm -fr dist/
-	rm -fr .eggs/
-	rm -fr *.egg-info
-	rm -fr *.egg
-	rm -f **.pyc
-	rm -f **.pyo
-	rm -f **~
-	rm -fr **/__pycache__
-	rm -fr .tox/
-	rm -f .coverage
-	rm -fr htmlcov/
-	rm -fr .pytest_cache
-	rm -f corbertura.xml
-	rm -f coverage.xml
-	rm -fr .codacy-coverage
+	rm -vfr build/
+	rm -vfr dist/
+	rm -vfr .eggs/
+	rm -vfr *.egg-info
+	rm -vfr *.egg
+	rm -vf **.pyc
+	rm -vf **.pyo
+	rm -fvr **/__pycache__
+	rm -fvr .tox/
+	rm -fv .coverage
+	rm -frv htmlcov/
+	rm -frv .pytest_cache
+	rm -fv corbertura.xml
+	rm -fv coverage.xml
 
 lint: ## check style with flake8
 	black ${PROJECTNAME}
@@ -67,7 +65,7 @@ test: ## run tests quickly with the default Python
 	pytest tests --pylint
 
 coverage: ## check code coverage quickly with the default Python
-	coverage run -m pytest tests --cov --pylint
+	coverage run -m pytest
 	coverage xml -o coverage.xml
 
 push: lint docs clean test coverage

@@ -1,14 +1,34 @@
+#! /usr/bin/python3
+# -*- coding: utf-8 -*-
+
+##############################################################################
+#  Copyright 2022 alexpdev
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+##############################################################################
+"""Widget tab module."""
+
 from typing import *
-from PySide6.QtWidgets import *
+
 from PySide6.QtCore import *
 from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 
 from QStyler.utils import Lorem
 
 
-
 class WidgetsTab(QWidget):
-    """Tab holding all of the widgets for example of what style will look like."""
+    """Tab holding all of the widgets for example style will look like."""
 
     def __init__(self, parent=None):
         """Initialize the widgets tab."""
@@ -20,10 +40,10 @@ class WidgetsTab(QWidget):
         self.vlay1 = QVBoxLayout()
         self.buttonbox.setLayout(self.vlay1)
         self.pushButton = QPushButton("Push Button", self)
-        self.radioButton = QRadioButton("Radio Button",self)
+        self.radioButton = QRadioButton("Radio Button", self)
         self.checkBox = QCheckBox("Check Box", self)
         self.keySequenceEdit = QKeySequenceEdit(self)
-        self.commandLinkButton = QCommandLinkButton("Command Link",self)
+        self.commandLinkButton = QCommandLinkButton("Command Link", self)
         self.toolButton = QToolButton(self)
         self.toolButton.setText("ToolButton")
         self.vlay1.addWidget(self.pushButton)
@@ -83,7 +103,7 @@ class WidgetsTab(QWidget):
         self.vlay3.addWidget(self.line2)
         self.verticalbox = QGroupBox("Vertical", self)
         self.hlay1 = QHBoxLayout()
-        self.progressBar.setRange(0,100)
+        self.progressBar.setRange(0, 100)
         self.horizontalSlider.setMinimum(0)
         self.horizontalSlider.setMaximum(100)
         self.horizontalSlider.setTickInterval(1)
@@ -99,10 +119,10 @@ class WidgetsTab(QWidget):
         self.hlay1.addWidget(self.verticalSlider)
         self.hlay1.addWidget(self.line)
         self.hlay1.addWidget(self.dial)
-        self.grid.addWidget(self.buttonbox,0,0)
-        self.grid.addWidget(self.linebox,0,1)
-        self.grid.addWidget(self.horizontalbox,0,3)
-        self.grid.addWidget(self.verticalbox,0,2)
+        self.grid.addWidget(self.buttonbox, 0, 0)
+        self.grid.addWidget(self.linebox, 0, 1)
+        self.grid.addWidget(self.horizontalbox, 0, 3)
+        self.grid.addWidget(self.verticalbox, 0, 2)
         for _ in range(15):
             item = QListWidgetItem(type=0)
             item.setText(lorem.genword())
@@ -146,20 +166,20 @@ class WidgetsTab(QWidget):
         self.vtreelay.addWidget(self.treeWidget)
         self.vtablelay.addWidget(self.tablelabel)
         self.vtablelay.addWidget(self.tableWidget)
-        self.grid.addLayout(self.vteditlay,1,0)
-        self.grid.addLayout(self.vtbrowslay,1,1)
-        self.grid.addLayout(self.vpteditlay,1,2)
-        self.grid.addWidget(self.dockWidget,1,3,-1,-1)
-        self.grid.addLayout(self.vlistlay,2,0)
-        self.grid.addLayout(self.vtablelay,2,1)
-        self.grid.addLayout(self.vtreelay,2,2)
+        self.grid.addLayout(self.vteditlay, 1, 0)
+        self.grid.addLayout(self.vtbrowslay, 1, 1)
+        self.grid.addLayout(self.vpteditlay, 1, 2)
+        self.grid.addWidget(self.dockWidget, 1, 3, -1, -1)
+        self.grid.addLayout(self.vlistlay, 2, 0)
+        self.grid.addLayout(self.vtablelay, 2, 1)
+        self.grid.addLayout(self.vtreelay, 2, 2)
         self.dockLay = QVBoxLayout()
         self.docked = QWidget()
         self.docked.setLayout(self.dockLay)
         self.dockWidget.setWidget(self.docked)
         self.labels = []
         for _ in range(10):
-            label = QLabel(lorem.genword(),parent=self)
+            label = QLabel(lorem.genword(), parent=self)
             self.dockLay.addWidget(label)
             self.labels.append(label)
         self.plainTextEdit.setPlainText(lorem.gentext()[:200])

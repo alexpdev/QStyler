@@ -1,37 +1,108 @@
+#! /usr/bin/python3
+# -*- coding: utf-8 -*-
+
+##############################################################################
+#  Copyright 2022 alexpdev
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+##############################################################################
+"""Module for styler tab and styler table."""
+
 import json
 from typing import *
-from PySide6.QtWidgets import *
+
 from PySide6.QtCore import *
 from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 
 
 def blockSignals(func):
+    """
+    Decorate for blocking signals in decorated functions.
+
+    Parameters
+    ----------
+    func : Callable
+        function wrapped
+    """
+
     def wrapper(widget, *args, **kwargs):
+        """
+        Wrap function with functionality.
+
+        Parameters
+        ----------
+        widget : QWidget
+            the QWidget instance.
+
+        Returns
+        -------
+        any
+            the return value of wrapped function.
+        """
         widget.blockSignals(True)
-        result = func(widget, *args,**kwargs)
+        result = func(widget, *args, **kwargs)
         widget.blockSignals(False)
         return result
+
     return wrapper
 
+
 class StyleFactory:
+    """
+    Style Factory for table widget.
+    """
 
     def __init__(self):
+        """
+        Initialize the Style Factory class.
+        """
         self.app = QApplication.instance()
         self.sheets = []
 
-    def addSheet(self, widget, prop, value):
+    def addSheet(self, widget: QWidget, prop: str, value: str):
+        """
+        Add sheet data for widget to list of stylesheets.
+
+        Parameters
+        ----------
+        widget : QWidget
+            _description_
+        prop : str
+            _description_
+        value : str
+            _description_
+        """
         for sheet in self.sheets:
             if widget in sheet:
                 sheet[widget][prop] = value
                 break
         else:
-            self.sheets.append({widget:{prop:value}})
+            self.sheets.append({widget: {prop: value}})
         self.update_styleSheet()
 
-    def update_styleSheet(self):
+    def update_styleSheet(self) -> dict:
+        """
+        Update the sheet with data from table.
+
+        Returns
+        -------
+        dict
+            the changed sheet
+        """
         ssheet = ""
         for row in self.sheets:
-            for k,v in row.items():
+            for k, v in row.items():
                 ssheet += k + " {\n"
                 for key, val in v.items():
                     ssheet += "    " + key + ": " + val + ";\n"
@@ -39,14 +110,35 @@ class StyleFactory:
         self.app.setStyleSheet(ssheet)
         return ssheet
 
-    def get_sheet(self, widget):
+    def get_sheet(self, widget: str) -> dict:
+        """
+        Get the sheet associated with the widget or empty dict.
+
+        Parameters
+        ----------
+        widget : str
+            The name of the widget to get the sheet for.
+
+        Returns
+        -------
+        dict
+            Empty dict or current style sheet.
+        """
         if widget:
             for sheet in self.sheets:
                 if widget in sheet:
                     return sheet[widget]
         return {}
 
-    def saveToFile(self, path):
+    def saveToFile(self, path: str) -> None:
+        """
+        Save current style sheet.
+
+        Parameters
+        ----------
+        path : str
+            path to save file.
+        """
         stylesheet = self.update_styleSheet()
         with open(path, "wt") as fd:
             fd.write(stylesheet)
@@ -91,13 +183,11 @@ class Table(QTableWidget):
             self.removeRow(self.rowCount() - 1)
         self.addRow()
 
-
     @blockSignals
     def _setRowData(self, rownum, key, value):
         """Do something."""
         self.item(rownum, 1).setText(value)
-        self.cellWidget(rownum,0).selectKey(key)
-
+        self.cellWidget(rownum, 0).selectKey(key)
 
     @blockSignals
     def addRow(self, key=None, value=""):
@@ -107,11 +197,10 @@ class Table(QTableWidget):
         self.insertRow(rownum)
         self.setCellWidget(rownum, 0, cbox)
         item = QTableWidgetItem(type=0)
-        item.setFlags(
-            Qt.ItemFlag.ItemIsEditable |
-            Qt.ItemFlag.ItemIsSelectable |
-            Qt.ItemFlag.ItemIsEnabled
-        )
+        flag1 = Qt.ItemFlag.ItemIsEditable
+        flag2 = Qt.ItemFlag.ItemIsEnabled
+        flag3 = Qt.ItemFlag.ItemIsSelectable
+        item.setFlags(flag1 | flag2 | flag3)
         self.setItem(rownum, 1, item)
         self._setRowData(rownum, key, value)
 
@@ -139,7 +228,7 @@ class Table(QTableWidget):
         prop = cbox.currentText()
         sheet = self.currentSheet()
         if prop in sheet:
-            self.item(row,column).setText(sheet[prop])
+            self.item(row, column).setText(sheet[prop])
         else:
             self.item(row, column).setText("")
 
@@ -179,9 +268,10 @@ class PropsCombo(QComboBox):
     def row(self):
         """Find which row a specific value is in."""
         for i in range(self.widget.rowCount()):
-            if self.widget.cellWidget(i,0) == self:
+            if self.widget.cellWidget(i, 0) == self:
                 return i
         return None
+
 
 class WidgetCombo(QComboBox):
     """Combo box containing all of the available widgets."""
@@ -203,10 +293,11 @@ class WidgetCombo(QComboBox):
         for widget in widgets:
             self.addItem(widget)
 
+
 class ControlCombo(QComboBox):
     """ComboBox containing all of the widget controls."""
 
-    def __init__(self,data, parent=None):
+    def __init__(self, data, parent=None):
         """Initialize the control combo box."""
         super().__init__(parent=parent)
         self.widget = parent
@@ -222,7 +313,8 @@ class ControlCombo(QComboBox):
         self.addItem("-")
         widget = "*" if widget == "-" else widget
         for control in self.info["controls"][widget]:
-                self.addItem(control)
+            self.addItem(control)
+
 
 class StateCombo(QComboBox):
     """Combobox with all the widget states available."""
@@ -239,6 +331,7 @@ class StateCombo(QComboBox):
         """Populate with data from jsonfile."""
         for state in self.info["states"]:
             self.addItem(state)
+
 
 class StylerTab(QWidget):
     """Tab containing the table that changes the styling for the widgets."""
@@ -260,11 +353,7 @@ class StylerTab(QWidget):
         self.control_combo = ControlCombo(self.data, parent=self)
         self.state_combo = StateCombo(self.data, parent=self)
         self.checkbox = QCheckBox("Read Only", parent=self)
-        self.combos = [
-            self.widget_combo,
-            self.control_combo,
-            self.state_combo
-        ]
+        self.combos = [self.widget_combo, self.control_combo, self.state_combo]
         self.hlayout = QHBoxLayout()
         self.hlayout.addWidget(self.widget_label)
         self.hlayout.addWidget(self.widget_combo)
@@ -290,17 +379,36 @@ class StylerTab(QWidget):
         self.table.setNewRow.connect(self.addTableRow)
 
     def addTableRow(self):
+        """
+        Add a new row to the table.
+        """
         for row in range(self.table.rowCount()):
             text = self.table.cellWidget(row, 0).currentText()
             if text == "-":
                 return
         self.table.addRow()
 
-    def setLineReadOnly(self, ischecked):
+    def setLineReadOnly(self, ischecked: bool):
+        """
+        Set the line edit as read only.
+
+        Parameters
+        ----------
+        ischecked : bool
+            if is checked.
+        """
         self.lineedit.setReadOnly(ischecked)
 
     @blockSignals
-    def emitChanges(self, data):
+    def emitChanges(self, data: str) -> None:
+        """
+        Send signals to table widget.
+
+        Parameters
+        ----------
+        data : str
+            _description_
+        """
         self.lineedit.clear()
         text = self.widget_combo.currentText()
         control = self.control_combo.currentText()
@@ -310,9 +418,18 @@ class StylerTab(QWidget):
         self.lineedit.setText(result)
         self.table.widgetChanged.emit(result)
 
-    def getWidgetState(self):
+    def getWidgetState(self) -> str:
+        """
+        Get the current state of the combo boxes.
+
+        Returns
+        -------
+        str
+            the current state as a string
+        """
         text = self.lineedit.text()
         return text if text else "*"
 
     def save_theme(self):
+        """Save the theme."""
         self.table.save_theme()
