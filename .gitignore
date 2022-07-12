@@ -4,10 +4,11 @@ autorun.bat
 __pycache__/
 *.py[cod]
 *$py.class
-
+.vscode/
+.tox/
 # Prerequisites
 *.d
-
+.vscode/
 # Compiled Object files
 *.slo
 *.lo

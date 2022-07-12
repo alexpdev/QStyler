@@ -16,17 +16,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 ##############################################################################
-"""Module for creating the main window and central widget for the application."""
+"""Module for creating the main window for the application."""
 
 import sys
 from typing import *
-from PySide6.QtWidgets import *
+
 from PySide6.QtCore import *
 from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 
-from QStyler.tab1 import Tab1
-from QStyler.tab2 import Tab2
 from QStyler.menubar import MenuBar
+from QStyler.styler import StylerTab
+from QStyler.widgets import WidgetsTab
 
 
 class MainWindow(QMainWindow):
@@ -47,18 +48,18 @@ class MainWindow(QMainWindow):
         self.central.setLayout(self.layout)
         self.setCentralWidget(self.central)
         self.setObjectName("MainWindow")
-        self.resize(800, 600)
+        self.resize(700, 600)
         self.tabWidget = QTabWidget()
-        self.tab = Tab1(parent=self)
-        self.tab2 = Tab2(parent=self)
-        self.tabWidget.addTab(self.tab, "Styles")
-        self.tabWidget.addTab(self.tab2, "Blank")
+        self.widgets = WidgetsTab(parent=self)
+        self.styler = StylerTab(parent=self)
+        self.tabWidget.addTab(self.widgets, "Widgets")
+        self.tabWidget.addTab(self.styler, "Style")
         self.layout.addWidget(self.tabWidget)
         self.menubar = MenuBar(self)
         self.setMenuBar(self.menubar)
 
 
-def execute():
+def execute():  # pragma: nocover
     """Entry point for cli and execution."""
     app = QApplication(sys.argv)
     window = MainWindow()

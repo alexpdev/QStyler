@@ -52,3 +52,6 @@ max-statements=75
 max-branches=20
 min-similarity-lines=4
 max-locals=25
+
+[tool.coverage.run]
+disable_warnings = ["couldnt-parse"]

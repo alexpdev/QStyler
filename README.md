@@ -1,6 +1,6 @@
 # QStyler
 
-![QStyler](https://github.com/alexpdev/qstyler/raw/main/assets/QStylerLogo.png)
+![QStyler](https://raw.githubusercontent.com/alexpdev/QStyler/master/assets/QStylerLogo.png)
 
 ------------------------------
 <!--- These are examples. See https://shields.io for others or to customize this set of shields. You might want to include dependencies, project status and licence info here --->
