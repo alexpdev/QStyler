@@ -1,17 +1,12 @@
-# ~~~ProjectName~~~ ChangeLog
+# QStyler ChangeLog
 
-## Version
-
--------------------------
+-------------------
 
 ## Version [0.1.0]
 
 ### Added
 
-- initial commit
-
-### Fixed
-
-### Removed
-
--------------------------
+- initial release
+- added testing suite
+- full gui
+- pre-prapared themes

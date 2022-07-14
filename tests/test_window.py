@@ -19,6 +19,7 @@
 """Module for testing functions and methods."""
 
 import sys
+import time
 
 import pytest
 from PySide6.QtWidgets import QApplication, QMainWindow
@@ -27,28 +28,7 @@ from QStyler.window import MainWindow
 
 
 @pytest.fixture(scope="module")
-def app() -> QApplication:
-    """
-    Test fixture for QApplication.
-
-    Returns
-    -------
-    QApplication
-        _description_
-
-    Yields
-    ------
-    Iterator[QApplication]
-        _description_
-    """
-    app = QApplication(sys.argv)
-    yield app
-    app.quit()
-    del app
-
-
-@pytest.fixture(scope="module")
-def window(app: QApplication) -> tuple:
+def pre() -> tuple:
     """
     Test fixture for Application and MainWindow.
 
@@ -62,43 +42,42 @@ def window(app: QApplication) -> tuple:
     Iterator[tuple]
         _description_
     """
+    app = QApplication()
     mainwindow: QMainWindow = MainWindow()
     mainwindow.show()
     yield mainwindow, app
+    app.quit()
 
 
-def test_main_window(app: QApplication):
+def test_main_window(pre: tuple):
     """
     Test the main window.
 
     Parameters
     ----------
-    app : QApplication
-        _description_
+    pre: tuple
+        the app and window.
     """
-    assert app
-    mainwindow = MainWindow()
-    mainwindow.show()
-    assert mainwindow
+    assert pre[0]
+    assert pre[1]
 
 
-def test_menu_bar(app: QApplication):
+def test_menu_bar(pre: tuple):
     """
     Test the menu bar.
 
     Parameters
     ----------
-    app : QApplication
-        _description_
+    pre: tuple
+        the app and window.
     """
-    assert app
-    mainwindow = MainWindow()
-    mainwindow.show()
-    mainwindow.menubar.fileMenu.showStyles()
-    assert mainwindow
+    assert pre
+    pre[1].processEvents()
+    time.sleep(0.01)
+    assert pre[0]
 
 
-def test_styler_widget_combo(window: tuple):
+def test_styler_widget_combo(pre: tuple):
     """
     Test the styler tab widget combo box.
 
@@ -107,18 +86,19 @@ def test_styler_widget_combo(window: tuple):
     window : tuple
         _description_
     """
-    app: QApplication = window[1]
-    window: QMainWindow = window[0]
+    app: QApplication = pre[1]
+    window: QMainWindow = pre[0]
     assert app
     window.tabWidget.setCurrentIndex(2)
     app.processEvents()
+    time.sleep(0.01)
     tab = window.styler
     tab.widget_combo.setCurrentIndex(5)
     text = tab.widget_combo.currentText()
     assert text in tab.lineedit.text()
 
 
-def test_apply_theme(window: tuple):
+def test_apply_theme(pre: tuple):
     """
     Test applying theme.
 
@@ -127,18 +107,113 @@ def test_apply_theme(window: tuple):
     window : tuple
         _description_
     """
-    app: QApplication = window[1]
-    window: QMainWindow = window[0]
+    app: QApplication = pre[1]
+    window: QMainWindow = pre[0]
+    app.processEvents()
+    time.sleep(0.01)
     assert app
     window.tabWidget.setCurrentIndex(2)
     app.processEvents()
+    time.sleep(0.01)
     for k in window.menubar.optionsMenu.themeactions:
         k.trigger()
         break
+    app.processEvents()
+    time.sleep(0.01)
     tab = window.styler
     for i in range(tab.widget_combo.count()):
         text = tab.widget_combo.itemText(i)
         if text == "QPushButton":
             break
+    app.processEvents()
+    time.sleep(0.01)
     text = tab.widget_combo.setCurrentIndex(i)
+    assert tab.table.rowCount() > 1
+
+
+def test_set_property(pre: tuple):
+    """
+    Test applying theme.
+
+    Parameters
+    ----------
+    window : tuple
+        _description_
+    """
+    app: QApplication = pre[1]
+    window: QMainWindow = pre[0]
+    assert app
+    window.tabWidget.setCurrentIndex(2)
+    app.processEvents()
+    time.sleep(0.01)
+    tab = window.styler
+    for i in range(tab.widget_combo.count()):
+        text = tab.widget_combo.itemText(i)
+        if text == "QPushButton":
+            tab.widget_combo.setCurrentIndex(i)
+            break
+    app.processEvents()
+    app.processEvents()
+    time.sleep(0.01)
+    propcombo = tab.table.cellWidget(0, 0)
+    for j in range(propcombo.count()):
+        if propcombo.itemText(j) == "background-color":
+            propcombo.setCurrentIndex(j)
+            tab.table.item(0, 1).setText("#000")
+            break
+    app.processEvents()
+    time.sleep(0.01)
+    assert tab.table.item(0, 1).text() == "#000"
+    assert tab.table.rowCount() > 1
+
+
+def test_reset_property(pre: tuple):
+    """
+    Test applying theme.
+
+    Parameters
+    ----------
+    window : tuple
+        _description_
+    """
+    app: QApplication = pre[1]
+    window: QMainWindow = pre[0]
+    assert app
+    window.tabWidget.setCurrentIndex(2)
+    app.processEvents()
+    time.sleep(0.01)
+    tab = window.styler
+    for i in range(tab.widget_combo.count()):
+        text = tab.widget_combo.itemText(i)
+        if text == "QPushButton":
+            tab.widget_combo.setCurrentIndex(i)
+            break
+    app.processEvents()
+    time.sleep(0.01)
+    app.processEvents()
+    propcombo = tab.table.cellWidget(0, 0)
+    for j in range(propcombo.count()):
+        if propcombo.itemText(j) == "background-color":
+            propcombo.setCurrentIndex(j)
+            tab.table.item(0, 1).setText("#000")
+            break
+    app.processEvents()
+    time.sleep(0.01)
+    assert tab.table.item(0, 1).text() == "#000"
+    for k in window.menubar.optionsMenu.themeactions:
+        k.trigger()
+        break
+    app.processEvents()
+    time.sleep(0.01)
+    tab = window.styler
+    for i in range(tab.widget_combo.count()):
+        text = tab.widget_combo.itemText(i)
+        if text == "QPushButton":
+            break
+    app.processEvents()
+    time.sleep(0.01)
+    text = tab.widget_combo.setCurrentIndex(i)
+    window.menubar.optionsMenu.resetAction.trigger()
+    app.processEvents()
+    time.sleep(0.01)
     assert tab.table.rowCount() > 1

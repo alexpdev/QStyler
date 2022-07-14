@@ -65,8 +65,8 @@ test: ## run tests quickly with the default Python
 	pytest tests --pylint
 
 coverage: ## check code coverage quickly with the default Python
-	coverage run -m pytest
-	coverage xml -o coverage.xml
+	coverage run -m pytest tests
+	coverage xml -io coverage.xml
 
 push: lint docs clean test coverage
 	git add .

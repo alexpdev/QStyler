@@ -19,11 +19,11 @@
 """Module for styler tab and styler table."""
 
 import json
-from typing import *
 
-from PySide6.QtCore import *
-from PySide6.QtGui import *
-from PySide6.QtWidgets import *
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QHBoxLayout,
+                               QLabel, QLineEdit, QPushButton, QTableWidget,
+                               QTableWidgetItem, QVBoxLayout, QWidget)
 
 
 def blockSignals(func):

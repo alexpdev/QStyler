@@ -19,11 +19,10 @@
 """Module for initializing the menubar."""
 
 import json
-from typing import *
 
-from PySide6.QtCore import *
-from PySide6.QtGui import *
-from PySide6.QtWidgets import *
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import (QApplication, QMenu, QMenuBar, QTextBrowser,
+                               QVBoxLayout, QWidget)
 
 
 class MenuBar(QMenuBar):
