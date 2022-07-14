@@ -107,7 +107,9 @@ class OptionsMenu(QMenu):
             the parent of the widget, by default None
         """
         super().__init__(text, parent=parent)
-        self.themes = json.load(open("QStyler/style/prestyles.json", "rt"))
+        self.themes = json.load(
+            open("QStyler/style/prestyles.json", encoding="utf-8")
+        )
         self.resetAction = QAction("Reset")
         self.addAction(self.resetAction)
         self.resetAction.triggered.connect(self.resetStyleSheet)

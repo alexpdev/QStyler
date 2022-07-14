@@ -42,7 +42,7 @@ def pre() -> tuple:
     Iterator[tuple]
         _description_
     """
-    app = QApplication()
+    app = QApplication(sys.argv)
     mainwindow: QMainWindow = MainWindow()
     mainwindow.show()
     yield mainwindow, app
@@ -174,7 +174,7 @@ def test_reset_property(pre: tuple):
     Parameters
     ----------
     window : tuple
-        _description_
+
     """
     app: QApplication = pre[1]
     window: QMainWindow = pre[0]

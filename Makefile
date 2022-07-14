@@ -45,32 +45,11 @@ clean-build: ## remove build artifacts
 	rm -fv corbertura.xml
 	rm -fv coverage.xml
 
-lint: ## check style with flake8
-	black ${PROJECTNAME}
-	black tests
-	isort ${PROJECTNAME}
-	isort tests
-	pylint ${PROJECTNAME} tests
-	pycodestyle ${PROJECTNAME} tests
-	pydocstyle ${PROJECTNAME} tests
-	pyroma .
-	bandit ${PROJECTNAME}/*
-	pep257 ${PROJECTNAME}
-	prospector ${PROJECTNAME}
-	prospector tests
-
 test: ## run tests quickly with the default Python
-	pytest tests
-	pytest tests --cov
-	pytest tests --pylint
+	tox
 
-coverage: ## check code coverage quickly with the default Python
-	coverage run -m pytest tests
-	coverage xml -io coverage.xml
-
-push: lint docs clean test coverage
-	git add .
-	git commit -m "generic message"
+push: clean test ## push to repo
+	git commit -a -m "$m"
 	git push
 
 docs: ## generate Sphinx HTML documentation, including API docs

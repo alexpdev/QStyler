@@ -140,7 +140,7 @@ class StyleFactory:
             path to save file.
         """
         stylesheet = self.update_styleSheet()
-        with open(path, "wt") as fd:
+        with open(path, "wt", encoding="utf-8") as fd:
             fd.write(stylesheet)
 
 
@@ -339,7 +339,9 @@ class StylerTab(QWidget):
     def __init__(self, parent=None):
         """Initialize the styler tab."""
         super().__init__(parent=parent)
-        self.data = json.load(open("./QStyler/style/data.json"))
+        self.data = json.load(
+            open("./QStyler/style/data.json", encoding="utf-8")
+        )
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.widget_label = QLabel("Widget")
@@ -400,7 +402,7 @@ class StylerTab(QWidget):
         self.lineedit.setReadOnly(ischecked)
 
     @blockSignals
-    def emitChanges(self, data: str) -> None:
+    def emitChanges(self, _: str) -> None:
         """
         Send signals to table widget.
 
