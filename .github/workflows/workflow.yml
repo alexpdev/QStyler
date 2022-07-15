@@ -38,9 +38,7 @@ jobs:
           pip install -r requirements.txt
       - name: Run Tests
         run: |
-          export GITHUB_WORKFLOW=1
-          pytest --cov=QStylere --cov=tests
-          coverage xml -o ./coverage.xml
+          tox
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2.1.0
         with:
