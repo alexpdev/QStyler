@@ -228,12 +228,12 @@ class Table(QTableWidget):
     def saveProp(self, row, column):
         """Save the newly changed value into the current stylesheet."""
         if column == 0:
-            print("comlumn = 0")
             self.updateProp(row, column)
         else:
             prop = self.cellWidget(row, 0).currentText()
             value = self.item(row, 1).text()
             title = self.widget.getWidgetState()
+            if not prop or prop == "-": return
             self.factory.addSheet(title, prop, value)
         self.setNewRow.emit()
 
