@@ -2,27 +2,6 @@ name: CI
 
 on: [push, pull_request]
 jobs:
-  codacy-security-scan:
-    name: Codacy Security Scan
-    runs-on: ubuntu-latest
-    steps:
-
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Run Codacy Analysis CLI
-        uses: codacy/codacy-analysis-cli-action@d840f886c4bd4edc059706d09c6a1586111c540b
-        with:
-          verbose: true
-          output: results.sarif
-          format: sarif
-          gh-code-scanning-compat: true
-          max-allowed-issues: 2147483647
-
-      - name: Upload SARIF results file
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: results.sarif
   run:
     name: CI
     runs-on: ubuntu-latest
@@ -34,13 +13,12 @@ jobs:
         run: python --version
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip tox
-          pip install -r requirements.txt
+          python -m pip install --upgrade pip tox torrentfile PySide6
       - name: Run Tests
         run: |
           tox
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2.1.0
+      - name: Codecov
+        uses: codecov/codecov-action@v3.1.0
         with:
           files: ./coverage.xml
           verbose: true

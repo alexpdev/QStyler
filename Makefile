@@ -1,4 +1,4 @@
-.PHONY: clean docs help push release dist install lint
+.PHONY: clean help push release lint test
 .DEFAULT_GOAL := help
 
 define BROWSER_PYSCRIPT
@@ -52,19 +52,8 @@ push: clean test ## push to repo
 	git commit -a -m "$m"
 	git push
 
-docs: ## generate Sphinx HTML documentation, including API docs
-	rm -rf docs
-	mkdocs build
-
 release: dist ## package and upload a release
 	twine upload dist/*
 
-dist: clean ## builds source and wheel package
-	python setup.py build
-	python setup.py sdist
-	python setup.py bdist_wheel
-	python setup.py bdist_egg
-	ls -l dist
-
 install: clean ## install the package to the active Python's site-packages
-	python setup.py install
+	py -m build .
