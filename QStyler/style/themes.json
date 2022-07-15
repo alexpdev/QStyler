@@ -469,7 +469,7 @@
       "border-style": "solid",
       "border-width": "1px",
       "border-color": "rgb(0,0,0)",
-      "min-heigth": "25px"
+      "min-height": "25px"
     },
     "QScrollBar::up-arrow:vertical": {
       "border": "1px transparent grey",

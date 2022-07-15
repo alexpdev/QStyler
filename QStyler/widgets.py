@@ -18,11 +18,17 @@
 ##############################################################################
 """Widget tab module."""
 
-from typing import *
-
-from PySide6.QtCore import *
-from PySide6.QtGui import *
-from PySide6.QtWidgets import *
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (QCheckBox, QComboBox, QCommandLinkButton, QDial,
+                               QDockWidget, QDoubleSpinBox, QFontComboBox,
+                               QFrame, QGridLayout, QGroupBox, QHBoxLayout,
+                               QKeySequenceEdit, QLabel, QLCDNumber, QLineEdit,
+                               QListWidget, QListWidgetItem, QPlainTextEdit,
+                               QProgressBar, QPushButton, QRadioButton,
+                               QScrollBar, QSlider, QSpinBox, QTableWidget,
+                               QTableWidgetItem, QTextBrowser, QTextEdit,
+                               QTimeEdit, QToolButton, QTreeWidget,
+                               QTreeWidgetItem, QVBoxLayout, QWidget)
 
 from QStyler.utils import Lorem
 
@@ -84,7 +90,7 @@ class WidgetsTab(QWidget):
         self.verticalSlider.setMaximum(100)
         self.verticalSlider.setTickInterval(1)
         self.verticalScrollBar = QScrollBar(self)
-        self.verticalSlider.sliderMoved.connect(self.changeLCD)
+        self.verticalSlider.valueChanged.connect(self.changeLCD)
         self.line2 = QFrame(self)
         self.line2.setFrameShape(QFrame.HLine)
         self.line2.setFrameShadow(QFrame.Sunken)
@@ -107,7 +113,7 @@ class WidgetsTab(QWidget):
         self.horizontalSlider.setMinimum(0)
         self.horizontalSlider.setMaximum(100)
         self.horizontalSlider.setTickInterval(1)
-        self.horizontalSlider.sliderMoved.connect(self.updateProgress)
+        self.horizontalSlider.valueChanged.connect(self.updateProgress)
         self.teditlabel = QLabel("QTextEdit")
         self.tbrowserlabel = QLabel("QTextBrowser")
         self.pteditlabel = QLabel("QPlainTextEdit")

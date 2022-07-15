@@ -19,11 +19,10 @@
 """Module for creating the main window for the application."""
 
 import sys
-from typing import *
+from typing import Optional
 
-from PySide6.QtCore import *
-from PySide6.QtGui import *
-from PySide6.QtWidgets import *
+from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget,
+                               QVBoxLayout, QWidget)
 
 from QStyler.menubar import MenuBar
 from QStyler.styler import StylerTab
@@ -43,6 +42,7 @@ class MainWindow(QMainWindow):
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         """Initialize main window."""
         super().__init__(parent=parent)
+        self.setWindowTitle("QStyler")
         self.central = QWidget(parent=self)
         self.layout = QVBoxLayout()
         self.central.setLayout(self.layout)

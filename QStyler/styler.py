@@ -19,11 +19,11 @@
 """Module for styler tab and styler table."""
 
 import json
-from typing import *
 
-from PySide6.QtCore import *
-from PySide6.QtGui import *
-from PySide6.QtWidgets import *
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QHBoxLayout,
+                               QLabel, QLineEdit, QPushButton, QTableWidget,
+                               QTableWidgetItem, QVBoxLayout, QWidget)
 
 
 def blockSignals(func):
@@ -140,7 +140,7 @@ class StyleFactory:
             path to save file.
         """
         stylesheet = self.update_styleSheet()
-        with open(path, "wt") as fd:
+        with open(path, "wt", encoding="utf-8") as fd:
             fd.write(stylesheet)
 
 
@@ -189,6 +189,26 @@ class Table(QTableWidget):
         self.item(rownum, 1).setText(value)
         self.cellWidget(rownum, 0).selectKey(key)
 
+    def indexFromWidget(self, widget):
+        """
+        Find the row index for the given combobox.
+
+        Parameters
+        ----------
+        widget : PropCombo
+            properties combo box.
+
+        Returns
+        -------
+        int | None
+            row index
+        """
+        for i in range(self.rowCount()):
+            current = self.cellWidget(i, 0)
+            if widget is current:
+                return i
+        return None
+
     @blockSignals
     def addRow(self, key=None, value=""):
         """Add a new row to the table."""
@@ -203,10 +223,12 @@ class Table(QTableWidget):
         item.setFlags(flag1 | flag2 | flag3)
         self.setItem(rownum, 1, item)
         self._setRowData(rownum, key, value)
+        self.resizeRowsToContents()
 
     def saveProp(self, row, column):
         """Save the newly changed value into the current stylesheet."""
         if column == 0:
+            print("comlumn = 0")
             self.updateProp(row, column)
         else:
             prop = self.cellWidget(row, 0).currentText()
@@ -228,9 +250,9 @@ class Table(QTableWidget):
         prop = cbox.currentText()
         sheet = self.currentSheet()
         if prop in sheet:
-            self.item(row, column).setText(sheet[prop])
+            self.item(row, 1).setText(sheet[prop])
         else:
-            self.item(row, column).setText("")
+            self.item(row, 1).setText("")
 
     def save_theme(self):
         """Return the current style sheet."""
@@ -241,6 +263,8 @@ class Table(QTableWidget):
 class PropsCombo(QComboBox):
     """Combobox storing all available properties that can be edited."""
 
+    notifyTable = Signal([int])
+
     def __init__(self, data, parent=None):
         """Initialize the properties combo box."""
         super().__init__(parent=parent)
@@ -250,7 +274,13 @@ class PropsCombo(QComboBox):
         self.tableItem = None
         self.addItem("-")
         self.loadItems()
+        self.currentIndexChanged.connect(self.notifyTable)
         self.setSizeAdjustPolicy(self.sizeAdjustPolicy().AdjustToContents)
+
+    def notifyTable(self, _):
+        """Update table cell with accurate information."""
+        rownum = self.widget.indexFromWidget(self)
+        self.widget.saveProp(rownum, 0)
 
     def loadItems(self):
         """Populate the combo box with values from json file."""
@@ -339,7 +369,9 @@ class StylerTab(QWidget):
     def __init__(self, parent=None):
         """Initialize the styler tab."""
         super().__init__(parent=parent)
-        self.data = json.load(open("./QStyler/style/data.json"))
+        self.data = json.load(
+            open("./QStyler/style/data.json", encoding="utf-8")
+        )
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.widget_label = QLabel("Widget")
@@ -400,7 +432,7 @@ class StylerTab(QWidget):
         self.lineedit.setReadOnly(ischecked)
 
     @blockSignals
-    def emitChanges(self, data: str) -> None:
+    def emitChanges(self, _: str) -> None:
         """
         Send signals to table widget.
 

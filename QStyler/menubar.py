@@ -19,11 +19,13 @@
 """Module for initializing the menubar."""
 
 import json
-from typing import *
+import os
+from pathlib import Path
 
-from PySide6.QtCore import *
-from PySide6.QtGui import *
-from PySide6.QtWidgets import *
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import (QApplication, QFileDialog, QInputDialog,
+                               QLineEdit, QMenu, QMenuBar, QPushButton,
+                               QTextBrowser, QVBoxLayout, QWidget)
 
 
 class MenuBar(QMenuBar):
@@ -108,10 +110,16 @@ class OptionsMenu(QMenu):
             the parent of the widget, by default None
         """
         super().__init__(text, parent=parent)
-        self.themes = json.load(open("QStyler/style/prestyles.json", "rt"))
+        self.path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "style", "themes.json"
+        )
+        self.themes = json.load(open(self.path, encoding="utf-8"))
         self.resetAction = QAction("Reset")
         self.addAction(self.resetAction)
+        self.createThemeAction = QAction("Create Theme")
+        self.createThemeAction.triggered.connect(self.createTheme)
         self.resetAction.triggered.connect(self.resetStyleSheet)
+        self.addAction(self.createThemeAction)
         self.themeMenu = QMenu("Themes", parent=self)
         self.addMenu(self.themeMenu)
         self.themeactions = {}
@@ -121,6 +129,21 @@ class OptionsMenu(QMenu):
             action.triggered.connect(self.applyTheme)
             self.themeactions[action] = key
             self.themeMenu.addAction(action)
+
+    def createTheme(self):  # pragma: nocover
+        """
+        Save the current stylesheet as a theme to use in the future.
+        """
+        sheets = self.parent().window.styler.table.factory.sheets
+        name, status = QInputDialog.getText(
+            self, "Enter Theme Name", "Theme Name", QLineEdit.Normal, ""
+        )
+        if status and name not in self.themes:
+            theme = {}
+            map(theme.update, sheets)
+            self.themes[name] = theme
+            json.dump(self.themes, open(self.path, "wt", encoding="utf-8"))
+        return True
 
     def applyTheme(self):
         """Apply chosen theme to mainwindow and application."""
@@ -177,18 +200,33 @@ class FileMenu(QMenu):
         self.addAction(self.showAction)
         self.addAction(self.exitAction)
 
-    def exitApp(self):
+    def exitApp(self):  # pragma: nocover
         """Quit the application."""
         qapp = QApplication.instance()
         qapp.quit()
 
-    def showStyles(self):
+    def showStyles(self):  # pragma: nocover
         """Show the current stylesheet in a separate widget."""
-        sheet = self.parent().window.styler.table.factory.update_styleSheet()
+        sheet = QApplication.instance().styleSheet()
         self.dialog = QWidget()
+        self.dialog.resize(300, 200)
         layout = QVBoxLayout()
         self.dialog.setLayout(layout)
         textEdit = QTextBrowser(parent=self.dialog)
         textEdit.setPlainText(sheet)
         layout.addWidget(textEdit)
         self.dialog.show()
+        button = QPushButton("Save", parent=self)
+        layout.addWidget(button)
+        button.clicked.connect(self.saveQss)
+
+    def saveQss(self):  # pragma: nocover
+        """Save current style to file."""
+        path = QFileDialog.getSaveFileName(
+            self, "Save File", str(Path.home()), "QSS (*.qss); Any (*)"
+        )
+        if path:
+            with open(path, "wt", encoding="utf-8") as fd:
+                sheet = QApplication.instance().styleSheet()
+                fd.write(sheet)
+        return True
