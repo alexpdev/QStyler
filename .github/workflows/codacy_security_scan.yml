@@ -14,9 +14,7 @@
 name: Codacy Security Scan
 
 on:
-  push:
-    branches: [ "master" ]
-
+  ["push", "pull_request"]
 
 permissions:
   contents: read
