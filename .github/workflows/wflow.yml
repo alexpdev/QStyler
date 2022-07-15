@@ -18,10 +18,12 @@ jobs:
         run: python --version
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip PySide6 setuptools tox
+          python -m pip install --upgrade pip PySide6 tox pytest coverage
       - name: Testing
         run: |
           tox
+          coverage run -m pytest tests QStyler
+          coverage xml -o coverage.xml
 
       - uses: actions/checkout@v2
       - name: Run codacy-coverage-reporter
