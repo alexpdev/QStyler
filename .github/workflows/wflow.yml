@@ -1,4 +1,4 @@
-name: WindowsCI
+name: Wflow
 
 on: [push, pull_request]
 jobs:
