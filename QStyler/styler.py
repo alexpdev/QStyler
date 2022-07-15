@@ -18,12 +18,12 @@
 ##############################################################################
 """Module for styler tab and styler table."""
 
-import json
-
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QHBoxLayout,
                                QLabel, QLineEdit, QPushButton, QTableWidget,
                                QTableWidgetItem, QVBoxLayout, QWidget)
+
+from QStyler.utils import getdata
 
 
 def blockSignals(func):
@@ -368,9 +368,7 @@ class StylerTab(QWidget):
     def __init__(self, parent=None):
         """Initialize the styler tab."""
         super().__init__(parent=parent)
-        self.data = json.load(
-            open("./QStyler/style/data.json", encoding="utf-8")
-        )
+        self.data = getdata()
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.widget_label = QLabel("Widget")
