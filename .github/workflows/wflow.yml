@@ -19,6 +19,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt install python3-pip python3-pytest
+          sudo apt update && sudo apt install python3-opencv libgl1
           pip install pytest pytest-cov coverage PySide6
       - name: Coverage
         run: |
