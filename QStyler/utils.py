@@ -18,6 +18,12 @@
 ##############################################################################
 """Utility module."""
 
+import json
+from pathlib import Path
+
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QApplication
+
 
 class Lorem:
     """Generator of standard lorem ipsum dummy text."""
@@ -50,3 +56,28 @@ class Lorem:
     def genword(self):
         """Return a single word from text."""
         return next(self.it)
+
+
+def exitApp():  # pragma: nocover
+    """Quit the application."""
+    qapp = QApplication.instance()
+    qapp.quit()
+
+
+def getsrcdir():
+    """Return the source directory."""
+    return Path(__file__).resolve().parent
+
+
+def geticon():
+    """Get the path to the window icon."""
+    path = getsrcdir().parent
+    iconpath = path / "assets" / "QStylerIcon.png"
+    return QIcon(str(iconpath))
+
+
+def getdata():
+    """Return data regarding QWidgets and styles."""
+    path = getsrcdir() / "style" / "data.json"
+    data = json.load(open(path, encoding="utf-8"))
+    return data

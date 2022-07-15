@@ -18,4 +18,9 @@
 ##############################################################################
 """Module for initializing the package."""
 
+from QStyler.version import __version__
 from QStyler.window import MainWindow
+
+VERSION = __version__
+
+__all__ = ["MainWindow", "VERSION"]

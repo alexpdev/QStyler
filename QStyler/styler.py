@@ -18,12 +18,12 @@
 ##############################################################################
 """Module for styler tab and styler table."""
 
-import json
-
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QHBoxLayout,
                                QLabel, QLineEdit, QPushButton, QTableWidget,
                                QTableWidgetItem, QVBoxLayout, QWidget)
+
+from QStyler.utils import getdata
 
 
 def blockSignals(func):
@@ -233,7 +233,8 @@ class Table(QTableWidget):
             prop = self.cellWidget(row, 0).currentText()
             value = self.item(row, 1).text()
             title = self.widget.getWidgetState()
-            if not prop or prop == "-": return
+            if not prop or prop == "-":
+                return
             self.factory.addSheet(title, prop, value)
         self.setNewRow.emit()
 
@@ -262,8 +263,6 @@ class Table(QTableWidget):
 
 class PropsCombo(QComboBox):
     """Combobox storing all available properties that can be edited."""
-
-    notifyTable = Signal([int])
 
     def __init__(self, data, parent=None):
         """Initialize the properties combo box."""
@@ -369,9 +368,7 @@ class StylerTab(QWidget):
     def __init__(self, parent=None):
         """Initialize the styler tab."""
         super().__init__(parent=parent)
-        self.data = json.load(
-            open("./QStyler/style/data.json", encoding="utf-8")
-        )
+        self.data = getdata()
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.widget_label = QLabel("Widget")

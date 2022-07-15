@@ -27,6 +27,8 @@ from PySide6.QtWidgets import (QApplication, QFileDialog, QInputDialog,
                                QLineEdit, QMenu, QMenuBar, QPushButton,
                                QTextBrowser, QVBoxLayout, QWidget)
 
+from QStyler.utils import exitApp
+
 
 class MenuBar(QMenuBar):
     """
@@ -195,15 +197,10 @@ class FileMenu(QMenu):
         super().__init__(text, parent=parent)
         self.exitAction = QAction("Exit")
         self.showAction = QAction("Show StyleSheet")
-        self.exitAction.triggered.connect(self.exitApp)
+        self.exitAction.triggered.connect(exitApp)
         self.showAction.triggered.connect(self.showStyles)
         self.addAction(self.showAction)
         self.addAction(self.exitAction)
-
-    def exitApp(self):  # pragma: nocover
-        """Quit the application."""
-        qapp = QApplication.instance()
-        qapp.quit()
 
     def showStyles(self):  # pragma: nocover
         """Show the current stylesheet in a separate widget."""

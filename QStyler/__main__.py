@@ -28,5 +28,5 @@ def main():  # pragma: nocover
     execute()
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: nocover
     sys.exit(execute())

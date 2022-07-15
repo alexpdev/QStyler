@@ -5,6 +5,11 @@
 ------------------------------
 <!--- These are examples. See https://shields.io for others or to customize this set of shields. You might want to include dependencies, project status and licence info here --->
 
+![GitHub repo size](https://img.shields.io/github/repo-size/alexpdev/qstyler?color=orange)
+![GitHub License](https://img.shields.io/github/license/alexpdev/qstyler?color=red&logo=apache)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/qstyler?color=brown)
+![GitHub Last Commit](https://badgen.net/github/last-commit/alexpdev/qstyler?color=blue&icon=github)
+[![CI](https://github.com/alexpdev/QStyler/actions/workflows/pyworkflow.yml/badge.svg?branch=master&event=push)](https://github.com/alexpdev/QStyler/actions/workflows/workflow.yml)
 ![GitHub repo size](https://img.shields.io/github/repo-size/alexpdev/qstyler)
 ![GitHub contributors](https://img.shields.io/github/contributors/alexpdev/qstyler)
 ![GitHub stars](https://img.shields.io/github/stars/alexpdev/qstyler)

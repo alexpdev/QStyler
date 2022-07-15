@@ -18,17 +18,15 @@
 ##############################################################################
 """Module for creating the main window for the application."""
 
-import os
 import sys
 from typing import Optional
-from pathlib import Path
 
-from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget,
                                QVBoxLayout, QWidget)
 
 from QStyler.menubar import MenuBar
 from QStyler.styler import StylerTab
+from QStyler.utils import geticon
 from QStyler.widgets import WidgetsTab
 
 
@@ -53,7 +51,7 @@ class MainWindow(QMainWindow):
         self.setObjectName("MainWindow")
         self.resize(700, 600)
         self.tabWidget = QTabWidget()
-        self.setWindowIcon(self.geticon())
+        self.setWindowIcon(geticon())
         self.widgets = WidgetsTab(parent=self)
         self.styler = StylerTab(parent=self)
         self.tabWidget.addTab(self.widgets, "Widgets")
@@ -61,13 +59,6 @@ class MainWindow(QMainWindow):
         self.layout.addWidget(self.tabWidget)
         self.menubar = MenuBar(self)
         self.setMenuBar(self.menubar)
-
-    def geticon(self):
-        """Get the path to the window icon."""
-        path = Path(__file__).parent.resolve()
-        iconpath = path.parent / "assets" / "QStylerIcon.png"
-        return QIcon(str(iconpath))
-
 
 
 def execute():  # pragma: nocover

@@ -1,17 +1,16 @@
 [build-system]
-requires = ["setuptools >= 35.0.2", "setuptools_scm >= 2.0.0, <3", "wheel"]
+requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "qstyler"
+name = "QStyler"
 authors = [{name = "alexpdev", email = "alexpdev@pm.me"}]
 version = "0.1.0"
-dependencies = ["PySide6"]
+dependencies = ["PySide6", "wheel"]
 description = "QStyleSheet testing application."
 keywords = ["Qt", "GUI", "QStyleSheet", "qss"]
 license = {text = "Apache Software License"}
 readme = "./README.md"
-requires-python = ">=3.6"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -48,7 +47,7 @@ aggressive = 3
 [tool.pytest.ini_options]
 testpaths = [
     "tests",
-    "qstyler",
+    "QStyler",
 ]
 console_output_style = "progress"
 addopts = "--maxfail=5"

@@ -50,6 +50,12 @@ def pre() -> tuple:
     app.quit()
 
 
+def processtime(app):
+    """Process Events and sleep for a second."""
+    app.processEvents()
+    time.sleep(0.02)
+
+
 def test_main_entry():
     """Test __main__ module can be imported without harm."""
     assert __main__
@@ -83,8 +89,7 @@ def test_menu_bar(pre: tuple):
         the app and window.
     """
     assert pre
-    pre[1].processEvents()
-    time.sleep(0.01)
+    processtime(pre[1])
     assert pre[0]
 
 
@@ -101,8 +106,7 @@ def test_styler_widget_combo(pre: tuple):
     window: QMainWindow = pre[0]
     assert app
     window.tabWidget.setCurrentIndex(2)
-    app.processEvents()
-    time.sleep(0.01)
+    processtime(app)
     tab = window.styler
     tab.widget_combo.setCurrentIndex(5)
     text = tab.widget_combo.currentText()
@@ -118,26 +122,18 @@ def test_apply_theme(pre: tuple):
     window : tuple
         _description_
     """
-    app: QApplication = pre[1]
-    window: QMainWindow = pre[0]
-    app.processEvents()
-    time.sleep(0.01)
-    assert app
-    window.tabWidget.setCurrentIndex(2)
-    app.processEvents()
-    time.sleep(0.01)
-    for k in window.menubar.optionsMenu.themeactions:
-        k.trigger()
-        break
-    app.processEvents()
-    time.sleep(0.01)
+    window, app = pre
+    window.tabWidget.setCurrentIndex(0)
+    processtime(app)
+    theme = next(iter(window.menubar.optionsMenu.themeactions))
+    theme.trigger()
+    processtime(app)
     tab = window.styler
     for i in range(tab.widget_combo.count()):
         text = tab.widget_combo.itemText(i)
         if text == "QPushButton":
             break
-    app.processEvents()
-    time.sleep(0.01)
+    processtime(app)
     text = tab.widget_combo.setCurrentIndex(i)
     assert tab.table.rowCount() > 1
 
@@ -151,29 +147,23 @@ def test_set_property(pre: tuple):
     window : tuple
         _description_
     """
-    app: QApplication = pre[1]
-    window: QMainWindow = pre[0]
-    assert app
-    window.tabWidget.setCurrentIndex(2)
-    app.processEvents()
-    time.sleep(0.01)
+    window, app = pre
+    window.tabWidget.setCurrentIndex(0)
+    processtime(app)
     tab = window.styler
     for i in range(tab.widget_combo.count()):
         text = tab.widget_combo.itemText(i)
-        if text == "QPushButton":
+        if text == "QLineEdit":
             tab.widget_combo.setCurrentIndex(i)
             break
-    app.processEvents()
-    app.processEvents()
-    time.sleep(0.01)
+    processtime(app)
     propcombo = tab.table.cellWidget(0, 0)
     for j in range(propcombo.count()):
         if propcombo.itemText(j) == "background-color":
             propcombo.setCurrentIndex(j)
             tab.table.item(0, 1).setText("#000")
             break
-    app.processEvents()
-    time.sleep(0.01)
+    processtime(app)
     assert tab.table.item(0, 1).text() == "#000"
     assert tab.table.rowCount() > 1
 
@@ -185,48 +175,37 @@ def test_reset_property(pre: tuple):
     Parameters
     ----------
     window : tuple
-
     """
     app: QApplication = pre[1]
     window: QMainWindow = pre[0]
-    assert app
-    window.tabWidget.setCurrentIndex(2)
-    app.processEvents()
-    time.sleep(0.01)
+    window.tabWidget.setCurrentIndex(0)
+    processtime(app)
     tab = window.styler
     for i in range(tab.widget_combo.count()):
         text = tab.widget_combo.itemText(i)
-        if text == "QPushButton":
+        if text == "QComboBox":
             tab.widget_combo.setCurrentIndex(i)
             break
-    app.processEvents()
-    time.sleep(0.01)
-    app.processEvents()
+    processtime(app)
     propcombo = tab.table.cellWidget(0, 0)
     for j in range(propcombo.count()):
-        if propcombo.itemText(j) == "background-color":
+        if propcombo.itemText(j) == "border-color":
             propcombo.setCurrentIndex(j)
             tab.table.item(0, 1).setText("#000")
             break
-    app.processEvents()
-    time.sleep(0.01)
+    processtime(app)
     assert tab.table.item(0, 1).text() == "#000"
-    for k in window.menubar.optionsMenu.themeactions:
-        k.trigger()
-        break
-    app.processEvents()
-    time.sleep(0.01)
-    tab = window.styler
+    theme = next(iter(window.menubar.optionsMenu.themeactions))
+    theme.trigger()
+    processtime(app)
     for i in range(tab.widget_combo.count()):
         text = tab.widget_combo.itemText(i)
-        if text == "QPushButton":
+        if text == "QComboBox":
             break
-    app.processEvents()
-    time.sleep(0.01)
+    processtime(app)
     text = tab.widget_combo.setCurrentIndex(i)
     window.menubar.optionsMenu.resetAction.trigger()
-    app.processEvents()
-    time.sleep(0.01)
+    processtime(app)
     assert tab.table.rowCount() > 1
 
 
@@ -234,19 +213,42 @@ def test_style_table_props(pre: tuple):
     """Test the props combos in the style table."""
     window, app = pre
     actions = window.menubar.optionsMenu.themeactions
+    window.tabWidget.setCurrentIndex(1)
+    processtime(app)
     first_theme = next(iter(actions))
     first_theme.trigger()
-    app.processEvents()
-    time.sleep(0.01)
-    window.tabWidget.setCurrentIndex(2)
-    app.processEvents()
-    time.sleep(0.1)
+    processtime(app)
     styler = window.styler
     styler.widget_combo.setCurrentText("QLineEdit")
-    app.processEvents()
-    time.sleep(0.1)
+    processtime(app)
+    window.tabWidget.setCurrentIndex(2)
+    processtime(app)
     styler.table.cellWidget(0, 0).setCurrentText("color")
-    app.processEvents()
-    time.sleep(0.2)
+    styler.table.item(0, 1).setText("#F00")
+    processtime(app)
     styler.checkbox.toggle()
+    processtime(app)
     assert styler.checkbox.isChecked()
+
+
+def test_tickers(pre: tuple):
+    """Test the tickers in slider widgets."""
+    window, app = pre
+    window.tabWidget.setCurrentIndex(1)
+    processtime(app)
+    window.tabWidget.setCurrentIndex(0)
+    processtime(app)
+    tab = window.widgets
+    val1 = tab.verticalSlider.value()
+    val2 = tab.horizontalSlider.value()
+    print(val1, val2)
+    while tab.verticalSlider.value() < 99:
+        tab.verticalSlider.triggerAction(
+            tab.verticalSlider.SliderSingleStepAdd
+        )
+        tab.horizontalSlider.triggerAction(
+            tab.horizontalSlider.SliderSingleStepAdd
+        )
+        processtime(app)
+    assert tab.verticalSlider.value() > 95
+    assert tab.horizontalSlider.value() > 95
