@@ -3,5 +3,7 @@ PySide6-Addons==6.3.1
 PySide6-Essentials==6.3.1
 shiboken6==6.3.1
 wheel
+tox
+build
 torrentfile
 torrentfileQt
