@@ -9,8 +9,6 @@ jobs:
         python-version: ['3.10']
 
     steps:
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v2.14.0
       - uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -23,9 +21,6 @@ jobs:
           sudo apt install python3-pip
           pip install PySide6 coverage pytest
           pip install -r requirements.txt
-      - name: Run Tests
-        run: |
-          tox
       - name: Coverage
         run: |
           coverage run -m pytest QStyler
