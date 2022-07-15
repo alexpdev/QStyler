@@ -18,10 +18,9 @@
 ##############################################################################
 """Module for creating the main window for the application."""
 
-import os
 import sys
-from typing import Optional
 from pathlib import Path
+from typing import Optional
 
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget,
@@ -67,7 +66,6 @@ class MainWindow(QMainWindow):
         path = Path(__file__).parent.resolve()
         iconpath = path.parent / "assets" / "QStylerIcon.png"
         return QIcon(str(iconpath))
-
 
 
 def execute():  # pragma: nocover

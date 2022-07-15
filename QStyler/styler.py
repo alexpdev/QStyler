@@ -233,7 +233,8 @@ class Table(QTableWidget):
             prop = self.cellWidget(row, 0).currentText()
             value = self.item(row, 1).text()
             title = self.widget.getWidgetState()
-            if not prop or prop == "-": return
+            if not prop or prop == "-":
+                return
             self.factory.addSheet(title, prop, value)
         self.setNewRow.emit()
 
@@ -262,8 +263,6 @@ class Table(QTableWidget):
 
 class PropsCombo(QComboBox):
     """Combobox storing all available properties that can be edited."""
-
-    notifyTable = Signal([int])
 
     def __init__(self, data, parent=None):
         """Initialize the properties combo box."""
