@@ -24,6 +24,7 @@ import time
 import pytest
 from PySide6.QtWidgets import QApplication, QMainWindow
 
+from QStyler import __main__, version
 from QStyler.window import MainWindow
 
 
@@ -47,6 +48,16 @@ def pre() -> tuple:
     mainwindow.show()
     yield mainwindow, app
     app.quit()
+
+
+def test_main_entry():
+    """Test __main__ module can be imported without harm."""
+    assert __main__
+
+
+def test_version():
+    """Test version module."""
+    assert isinstance(version.__version__, str)
 
 
 def test_main_window(pre: tuple):
@@ -217,3 +228,25 @@ def test_reset_property(pre: tuple):
     app.processEvents()
     time.sleep(0.01)
     assert tab.table.rowCount() > 1
+
+
+def test_style_table_props(pre: tuple):
+    """Test the props combos in the style table."""
+    window, app = pre
+    actions = window.menubar.optionsMenu.themeactions
+    first_theme = next(iter(actions))
+    first_theme.trigger()
+    app.processEvents()
+    time.sleep(0.01)
+    window.tabWidget.setCurrentIndex(2)
+    app.processEvents()
+    time.sleep(0.1)
+    styler = window.styler
+    styler.widget_combo.setCurrentText("QLineEdit")
+    app.processEvents()
+    time.sleep(0.1)
+    styler.table.cellWidget(0, 0).setCurrentText("color")
+    app.processEvents()
+    time.sleep(0.2)
+    styler.checkbox.toggle()
+    assert styler.checkbox.isChecked()

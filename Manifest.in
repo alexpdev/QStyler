@@ -1,8 +1,11 @@
 include package.json
 include requirements.txt
 include Makefile
+include .editorconfig
+include Makefile
+include tox.ini
+include CHANGELOG.md
+
 
 recursive-include .github *
-
-recursive-exclude * __pycache__
-recursive-exclude * *.py[co]
+recursive-include assets *

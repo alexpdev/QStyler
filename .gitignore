@@ -14,7 +14,7 @@ __pycache__/
 *.lo
 *.o
 *.obj
-
+exec.py
 # Precompiled Headers
 *.gch
 *.pch
