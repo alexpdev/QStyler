@@ -57,6 +57,7 @@ class Lorem:
         """Return a single word from text."""
         return next(self.it)
 
+
 def exitApp():  # pragma: nocover
     """Quit the application."""
     qapp = QApplication.instance()
@@ -65,8 +66,7 @@ def exitApp():  # pragma: nocover
 
 def getsrcdir():
     """Return the source directory."""
-    return Path(__file__).reolve().parent
-
+    return Path(__file__).resolve().parent
 
 
 def geticon():

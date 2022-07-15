@@ -22,12 +22,12 @@ import json
 import os
 from pathlib import Path
 
-from QStyler.utils import exitApp
-
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (QApplication, QFileDialog, QInputDialog,
                                QLineEdit, QMenu, QMenuBar, QPushButton,
                                QTextBrowser, QVBoxLayout, QWidget)
+
+from QStyler.utils import exitApp
 
 
 class MenuBar(QMenuBar):
