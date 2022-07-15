@@ -18,12 +18,11 @@ jobs:
         run: python --version
       - name: Install dependencies
         run: |
-          sudo apt install python3-pip
-          pip install PySide6 coverage pytest
-          pip install -r requirements.txt
+          sudo apt install python3-pip python3-pytest
+          pip install pytest pytest-cov coverage PySide6
       - name: Coverage
         run: |
-          coverage run -m pytest QStyler
+          coverage run -m pytest tests
           coverage xml -r coverage.xml
 
       - uses: actions/checkout@v2
