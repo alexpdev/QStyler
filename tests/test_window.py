@@ -123,7 +123,7 @@ def test_apply_theme(pre: tuple):
         _description_
     """
     window, app = pre
-    window.tabWidget.setCurrentIndex(2)
+    window.tabWidget.setCurrentIndex(0)
     processtime(app)
     theme = next(iter(window.menubar.optionsMenu.themeactions))
     theme.trigger()
@@ -148,7 +148,7 @@ def test_set_property(pre: tuple):
         _description_
     """
     window, app = pre
-    window.tabWidget.setCurrentIndex(2)
+    window.tabWidget.setCurrentIndex(0)
     processtime(app)
     tab = window.styler
     for i in range(tab.widget_combo.count()):
@@ -178,7 +178,7 @@ def test_reset_property(pre: tuple):
     """
     app: QApplication = pre[1]
     window: QMainWindow = pre[0]
-    window.tabWidget.setCurrentIndex(2)
+    window.tabWidget.setCurrentIndex(0)
     processtime(app)
     tab = window.styler
     for i in range(tab.widget_combo.count()):
@@ -235,6 +235,8 @@ def test_tickers(pre: tuple):
     """Test the tickers in slider widgets."""
     window, app = pre
     window.tabWidget.setCurrentIndex(1)
+    processtime(app)
+    window.tabWidget.setCurrentIndex(0)
     processtime(app)
     tab = window.widgets
     val1 = tab.verticalSlider.value()
