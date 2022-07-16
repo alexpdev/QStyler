@@ -19,129 +19,13 @@
 """Module for styler tab and styler table."""
 
 from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QHBoxLayout,
                                QLabel, QLineEdit, QPushButton, QTableWidget,
-                               QTableWidgetItem, QVBoxLayout, QWidget)
+                               QTableWidgetItem, QVBoxLayout, QWidget, QToolBar,
+                               QToolButton, QStyle)
 
-from QStyler.utils import getdata
-
-
-def blockSignals(func):
-    """
-    Decorate for blocking signals in decorated functions.
-
-    Parameters
-    ----------
-    func : Callable
-        function wrapped
-    """
-
-    def wrapper(widget, *args, **kwargs):
-        """
-        Wrap function with functionality.
-
-        Parameters
-        ----------
-        widget : QWidget
-            the QWidget instance.
-
-        Returns
-        -------
-        any
-            the return value of wrapped function.
-        """
-        widget.blockSignals(True)
-        result = func(widget, *args, **kwargs)
-        widget.blockSignals(False)
-        return result
-
-    return wrapper
-
-
-class StyleFactory:
-    """
-    Style Factory for table widget.
-    """
-
-    def __init__(self):
-        """
-        Initialize the Style Factory class.
-        """
-        self.app = QApplication.instance()
-        self.sheets = []
-
-    def addSheet(self, widget: QWidget, prop: str, value: str):
-        """
-        Add sheet data for widget to list of stylesheets.
-
-        Parameters
-        ----------
-        widget : QWidget
-            _description_
-        prop : str
-            _description_
-        value : str
-            _description_
-        """
-        for sheet in self.sheets:
-            if widget in sheet:
-                sheet[widget][prop] = value
-                break
-        else:
-            self.sheets.append({widget: {prop: value}})
-        self.update_styleSheet()
-
-    def update_styleSheet(self) -> dict:
-        """
-        Update the sheet with data from table.
-
-        Returns
-        -------
-        dict
-            the changed sheet
-        """
-        ssheet = ""
-        for row in self.sheets:
-            for k, v in row.items():
-                ssheet += k + " {\n"
-                for key, val in v.items():
-                    ssheet += "    " + key + ": " + val + ";\n"
-                ssheet += "}\n"
-        self.app.setStyleSheet(ssheet)
-        return ssheet
-
-    def get_sheet(self, widget: str) -> dict:
-        """
-        Get the sheet associated with the widget or empty dict.
-
-        Parameters
-        ----------
-        widget : str
-            The name of the widget to get the sheet for.
-
-        Returns
-        -------
-        dict
-            Empty dict or current style sheet.
-        """
-        if widget:
-            for sheet in self.sheets:
-                if widget in sheet:
-                    return sheet[widget]
-        return {}
-
-    def saveToFile(self, path: str) -> None:
-        """
-        Save current style sheet.
-
-        Parameters
-        ----------
-        path : str
-            path to save file.
-        """
-        stylesheet = self.update_styleSheet()
-        with open(path, "wt", encoding="utf-8") as fd:
-            fd.write(stylesheet)
+from QStyler.utils import StyleManager, blockSignals, get_window_icon
 
 
 class Table(QTableWidget):
@@ -150,13 +34,11 @@ class Table(QTableWidget):
     widgetChanged = Signal([str])
     setNewRow = Signal()
 
-    def __init__(self, data, parent=None) -> None:
+    def __init__(self, manager, parent=None) -> None:
         """Initialize the styler table."""
         super().__init__(parent=parent)
-        self.data = data
+        self.manager = manager
         self.widget = parent
-        self.app = QApplication.instance()
-        self.factory = StyleFactory()
         self.setColumnCount(2)
         self.setRowCount(0)
         self.loadProps()
@@ -172,7 +54,7 @@ class Table(QTableWidget):
     @blockSignals
     def loadProps(self, widget=None):
         """Load items into table."""
-        sheet = self.factory.get_sheet(widget)
+        sheet = self.manager.get_sheet(widget)
         rowcount = self.rowCount()
         for i, key in enumerate(sheet):
             if i < rowcount:
@@ -212,7 +94,7 @@ class Table(QTableWidget):
     @blockSignals
     def addRow(self, key=None, value=""):
         """Add a new row to the table."""
-        cbox = PropsCombo(self.data, parent=self)
+        cbox = PropsCombo(self.manager.data, parent=self)
         rownum = self.rowCount()
         self.insertRow(rownum)
         self.setCellWidget(rownum, 0, cbox)
@@ -368,9 +250,23 @@ class StylerTab(QWidget):
     def __init__(self, parent=None):
         """Initialize the styler tab."""
         super().__init__(parent=parent)
-        self.data = getdata()
+        self.manager = StyleManager()
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
+        self.data = self.manager.data
+        self.toolbar = QToolBar(parent=self)
+        self.saveAction = QAction()
+        _floppy = get_window_icon("floppy.png")
+        _import = get_window_icon("import.png")
+        _clean = get_window_icon("clean.png")
+        self.saveAction.setIcon(_floppy)
+        self.loadAction = QAction()
+        self.loadAction.setIcon(_import)
+        self.cleanAction = QAction()
+        self.cleanAction.setIcon(_clean)
+        self.toolbar.addAction(self.loadAction)
+        self.toolbar.addAction(self.saveAction)
+        self.toolbar.addAction(self.cleanAction)
         self.widget_label = QLabel("Widget")
         self.control_label = QLabel("Control")
         self.state_label = QLabel("State")
@@ -390,13 +286,14 @@ class StylerTab(QWidget):
         self.hlayout.addWidget(self.control_combo)
         self.hlayout.addWidget(self.state_label)
         self.hlayout.addWidget(self.state_combo)
+        self.hlayout.addWidget(self.toolbar)
         self.hlayout2 = QHBoxLayout()
         self.hlayout2.addWidget(self.linelabel)
         self.hlayout2.addWidget(self.lineedit)
         self.hlayout2.addWidget(self.checkbox)
         self.button = QPushButton("Save Theme", parent=self)
         self.button.clicked.connect(self.save_theme)
-        self.table = Table(self.data, parent=self)
+        self.table = Table(self.manager, parent=self)
         self.layout.addLayout(self.hlayout)
         self.layout.addLayout(self.hlayout2)
         self.layout.addWidget(self.table)
