@@ -19,8 +19,8 @@
 """Utility module."""
 
 import json
-from pathlib import Path
 from copy import deepcopy
+from pathlib import Path
 
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
@@ -96,8 +96,8 @@ class StyleManager:
         """
         Initialize the Style Factory class.
         """
-        self.themes = load_records('themes.json')
-        self.data = load_records('data.json')
+        self.themes = load_records("themes.json")
+        self.data = load_records("data.json")
         self.app = QApplication.instance()
         self.sheets = []
 
@@ -120,9 +120,9 @@ class StyleManager:
                 break
         else:
             self.sheets.append({widget: {prop: value}})
-        self._apply_ssheet()
+        self.set_sheet()
 
-    def _apply_ssheet(self) -> dict:
+    def _create_ssheet(self) -> dict:
         """
         Update the sheet with data from table.
 
@@ -138,8 +138,16 @@ class StyleManager:
                 for key, val in v.items():
                     ssheet += "    " + key + ": " + val + ";\n"
                 ssheet += "}\n"
-        self.app.setStyleSheet(ssheet)
         return ssheet
+
+    def set_sheet(self):
+        """Apply current sheet to widget."""
+        ssheet = self._create_ssheet()
+        self.app.setStyleSheet(ssheet)
+
+    def get_style_sheet(self):
+        """Return the full style sheet as a string."""
+        return self._create_ssheet()
 
     def get_sheet(self, widget: str) -> dict:
         """
@@ -170,44 +178,52 @@ class StyleManager:
         path : str
             path to save file.
         """
-        stylesheet = self._apply_ssheet()
+        stylesheet = self._create_ssheet()
         with open(path, "wt", encoding="utf-8") as fd:
             fd.write(stylesheet)
 
     def sanatize_prop(self, prop):
         """Sanatize property text."""
         prop = prop.strip()
-        lst = prop.strip(":")
+        lst = prop.split(":")
         try:
             properte, value = lst[0], ":".join(lst[1:])
             if value[-1] == ";":
                 value = value[:-1]
             return properte.strip(), value.strip()
         except IndexError:
-            pass
+            return None
 
-
-    def parse(self):
+    def parse(self, content):
         """Parse lines from file."""
+        lines = content.split("\n")
+        size = len(lines)
+        out = []
         start = 0
-        while start < self.size:
-            start += 1
+        while start < size - 1:
             states = []
-            while "{" not in self.lines[start]:
-                states.append(self.lines[start])
+            while "{" not in lines[start]:
+                states.append(lines[start])
                 start += 1
-            states.append(self.lines[start][:self.lines[start].index("{")])
+                if start > size:
+                    return out
+            states.append(lines[start][: lines[start].index("{")])
             props = {}
             start += 1
-            while "}" not in self.lines[start]:
-                prop, value = self.sanatize_props()
-                props[prop] = value
+            while "}" not in lines[start]:
+                result = self.sanatize_prop(lines[start])
+                if result:
+                    prop, value = result
+                    props[prop] = value
                 start += 1
-            widgets = [i.strip() for i in ''.join(states).split(',')]
+                if start > size:
+                    return out
+            widgets = [i.strip() for i in "".join(states).split(",")]
             for widget in widgets:
-                self.out.append({widget: deepcopy(props)})
+                out.append({widget: deepcopy(props)})
             start += 1
-        return
+        return out
+
 
 def blockSignals(func):
     """

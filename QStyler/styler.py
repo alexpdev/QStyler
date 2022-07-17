@@ -19,13 +19,11 @@
 """Module for styler tab and styler table."""
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QHBoxLayout,
                                QLabel, QLineEdit, QPushButton, QTableWidget,
-                               QTableWidgetItem, QVBoxLayout, QWidget, QToolBar,
-                               QToolButton, QStyle)
+                               QTableWidgetItem, QVBoxLayout, QWidget)
 
-from QStyler.utils import StyleManager, blockSignals, get_window_icon
+from QStyler.utils import StyleManager, blockSignals
 
 
 class Table(QTableWidget):
@@ -117,13 +115,13 @@ class Table(QTableWidget):
             title = self.widget.getWidgetState()
             if not prop or prop == "-":
                 return
-            self.factory.addSheet(title, prop, value)
+            self.manager.addSheet(title, prop, value)
         self.setNewRow.emit()
 
     def currentSheet(self):
         """Retreive the current stylesheet from the factory."""
         title = self.widget.getWidgetState()
-        sheet = self.factory.get_sheet(title)
+        sheet = self.manager.get_sheet(title)
         return sheet
 
     @blockSignals
@@ -139,7 +137,7 @@ class Table(QTableWidget):
 
     def save_theme(self):
         """Return the current style sheet."""
-        print(self.app.styleSheet())
+        print(QApplication.instance().styleSheet())
         print("done")
 
 
@@ -176,13 +174,6 @@ class PropsCombo(QComboBox):
                 self.setCurrentIndex(i)
                 break
 
-    def row(self):
-        """Find which row a specific value is in."""
-        for i in range(self.widget.rowCount()):
-            if self.widget.cellWidget(i, 0) == self:
-                return i
-        return None
-
 
 class WidgetCombo(QComboBox):
     """Combo box containing all of the available widgets."""
@@ -194,8 +185,9 @@ class WidgetCombo(QComboBox):
         super().__init__(parent=parent)
         self.widget = parent
         self.info = data
-        self.addItem("-")
+        self.addItem("*")
         self.loadItems()
+        self.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         self.currentTextChanged.connect(self.widgetChanged.emit)
 
     def loadItems(self):
@@ -213,7 +205,8 @@ class ControlCombo(QComboBox):
         super().__init__(parent=parent)
         self.widget = parent
         self.info = data
-        self.addItem("-")
+        self.addItem("")
+        self.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         self.widget.widget_combo.currentTextChanged.connect(self.loadControls)
 
     @blockSignals
@@ -221,7 +214,7 @@ class ControlCombo(QComboBox):
         """Populate the the combobox with data from jsonfile."""
         for _ in range(self.count()):
             self.removeItem(0)
-        self.addItem("-")
+        self.addItem("")
         widget = "*" if widget == "-" else widget
         for control in self.info["controls"][widget]:
             self.addItem(control)
@@ -235,8 +228,9 @@ class StateCombo(QComboBox):
         super().__init__(parent=parent)
         self.widget = parent
         self.info = data
-        self.addItem("-")
+        self.addItem("")
         self.loadStates()
+        self.setSizeAdjustPolicy(QComboBox.AdjustToContents)
 
     def loadStates(self):
         """Populate with data from jsonfile."""
@@ -254,26 +248,13 @@ class StylerTab(QWidget):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.data = self.manager.data
-        self.toolbar = QToolBar(parent=self)
-        self.saveAction = QAction()
-        _floppy = get_window_icon("floppy.png")
-        _import = get_window_icon("import.png")
-        _clean = get_window_icon("clean.png")
-        self.saveAction.setIcon(_floppy)
-        self.loadAction = QAction()
-        self.loadAction.setIcon(_import)
-        self.cleanAction = QAction()
-        self.cleanAction.setIcon(_clean)
-        self.toolbar.addAction(self.loadAction)
-        self.toolbar.addAction(self.saveAction)
-        self.toolbar.addAction(self.cleanAction)
         self.widget_label = QLabel("Widget")
         self.control_label = QLabel("Control")
         self.state_label = QLabel("State")
         self.lineedit = QLineEdit(parent=self)
         self.linelabel = QLabel("Target")
         for label in [self.widget_label, self.control_label, self.state_label]:
-            label.setAlignment(Qt.AlignRight)
+            label.setAlignment(Qt.AlignJustify)
         self.widget_combo = WidgetCombo(self.data, parent=self)
         self.control_combo = ControlCombo(self.data, parent=self)
         self.state_combo = StateCombo(self.data, parent=self)
@@ -286,13 +267,11 @@ class StylerTab(QWidget):
         self.hlayout.addWidget(self.control_combo)
         self.hlayout.addWidget(self.state_label)
         self.hlayout.addWidget(self.state_combo)
-        self.hlayout.addWidget(self.toolbar)
         self.hlayout2 = QHBoxLayout()
         self.hlayout2.addWidget(self.linelabel)
         self.hlayout2.addWidget(self.lineedit)
         self.hlayout2.addWidget(self.checkbox)
         self.button = QPushButton("Save Theme", parent=self)
-        self.button.clicked.connect(self.save_theme)
         self.table = Table(self.manager, parent=self)
         self.layout.addLayout(self.hlayout)
         self.layout.addLayout(self.hlayout2)
@@ -339,7 +318,7 @@ class StylerTab(QWidget):
         text = self.widget_combo.currentText()
         control = self.control_combo.currentText()
         state = self.state_combo.currentText()
-        result = "".join([i for i in [text, control, state] if i != "-"])
+        result = "".join([i for i in [text, control, state] if i])
         result = "*" if not result else result
         self.lineedit.setText(result)
         self.table.widgetChanged.emit(result)
@@ -355,7 +334,3 @@ class StylerTab(QWidget):
         """
         text = self.lineedit.text()
         return text if text else "*"
-
-    def save_theme(self):
-        """Save the theme."""
-        self.table.save_theme()
