@@ -69,16 +69,20 @@ def get_src_dir():
     return Path(__file__).resolve().parent
 
 
+
 def get_icon(filename=None):
     """Get the path to the window icon."""
     path = get_src_dir() / "icons" / filename
     return QIcon(str(path))
 
 
+
 def load_records(filename):
     """Return data regarding QWidgets and styles."""
     path = get_src_dir() / "style" / filename
+
     return json.load(open(path, encoding="utf-8"))
+
 
 
 class StyleManager:

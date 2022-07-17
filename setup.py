@@ -18,7 +18,6 @@
 ##############################################################################
 """Setup for Qstyler package."""
 
-from setuptools import  setup
-
+from setuptools import setup
 
 setup()
