@@ -85,3 +85,10 @@ max-locals=25
 
 [tool.coverage.run]
 disable_warnings = ["couldnt-parse"]
+
+[tool.coverage.report]
+omit = [
+    "shibokensupport/*",
+    "pyscript",
+    "signature_bootstrap.py",
+]
