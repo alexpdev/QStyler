@@ -9,11 +9,12 @@
 ![GitHub License](https://img.shields.io/github/license/alexpdev/qstyler?color=red&logo=apache)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/qstyler?color=brown)
 ![GitHub Last Commit](https://badgen.net/github/last-commit/alexpdev/qstyler?color=blue&icon=github)
-[![CI](https://github.com/alexpdev/QStyler/actions/workflows/pyworkflow.yml/badge.svg?branch=master&event=push)](https://github.com/alexpdev/QStyler/actions/workflows/workflow.yml)
+[![CI](https://github.com/alexpdev/QStyler/actions/workflows/workflow.yml/badge.svg?branch=master&event=push)](https://github.com/alexpdev/QStyler/actions/workflows/workflow.yml)
 ![GitHub repo size](https://img.shields.io/github/repo-size/alexpdev/qstyler)
 ![GitHub contributors](https://img.shields.io/github/contributors/alexpdev/qstyler)
 ![GitHub stars](https://img.shields.io/github/stars/alexpdev/qstyler)
-![GitHub forks](https://img.shields.io/github/forks/alexpdev/qstyler)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/1e7fc4df9f66443daa887c740b05335d)](https://www.codacy.com/gh/alexpdev/QStyler/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=alexpdev/QStyler&amp;utm_campaign=Badge_Grade)
+[![codecov](https://codecov.io/gh/alexpdev/QStyler/branch/main/graph/badge.svg?token=jpj9Rgriqi)](https://codecov.io/gh/alexpdev/QStyler)
 
 ## 🌐 Overview
 
@@ -34,12 +35,23 @@ Before you begin, ensure you have met the following requirements:
 
 To install QStyler, follow these steps:
 
+### **PyPI**
+
+```bash
+pip install QStyler
+qstyler
+```
+
+### **Git**
+
 ```bash
 git clone https://github.com/alexpdev/qstyler.git
 cd qstyler
 pip install .
 qstyler
 ```
+
+Alternatively there are pre-compiled executables in the releases section.
 
 ## Contributing to QStyler
 <!--- If your README is long or you have some specific process or steps you want contributors to follow, consider creating a separate CONTRIBUTING.md file--->
@@ -57,4 +69,6 @@ Alternatively see the GitHub documentation on [creating a pull request](https://
 
 <!--- If you're not sure which open license to use see https://choosealicense.com/--->
 
-This project uses the following license: Apache 2.0.
+This project uses the following license: Apache 2.0 Software License
+
+![coverage](https://codecov.io/gh/alexpdev/QStyler/branch/main/graphs/sunburst.svg?token=jpj9Rgriqi)
