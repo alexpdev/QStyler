@@ -19,8 +19,6 @@ enabled = true
 name = "yapf"
 enabled = true
 
-
 [[transformers]]
 name = "isort"
 enabled = true
-
