@@ -50,8 +50,6 @@ push: clean test ## push to repo
 	git commit -a -m "$m"
 	git push
 
-release: dist ## package and upload a release
-	twine upload dist/*
-
-install: clean ## install the package to the active Python's site-packages
+release: test clean ## package and upload a release
 	py -m build .
+	twine upload dist/*

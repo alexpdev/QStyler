@@ -39,7 +39,8 @@ class Lorem:
             "irure dolor in reprehenderit in voluptate velit esse cillum "
             "dolore eu fugiat nulla pariatur. Excepteur sint occaecat "
             "cupidatat non proident, sunt in culpa qui officia deserunt "
-            "mollit anim id est laborum.")
+            "mollit anim id est laborum."
+        )
         self.words = self.text.split(" ")
         self.it = self.iternext()
 
@@ -83,9 +84,7 @@ def load_records(filename):
 
 
 class StyleManager:
-    """
-    Style Factory for table widget.
-    """
+    """Style Factory for table widget."""
 
     def __init__(self):
         """
@@ -164,7 +163,7 @@ class StyleManager:
                     return sheet[widget]
         return {}
 
-    def saveToFile(self, path: str) -> None:
+    def saveToFile(self, path: str) -> None:  # pragma: nocover
         """
         Save current style sheet.
 
@@ -202,8 +201,8 @@ class StyleManager:
                 states.append(lines[start])
                 start += 1
                 if start > size:
-                    return out
-            states.append(lines[start][:lines[start].index("{")])
+                    return out  # pragma: nocover
+            states.append(lines[start][: lines[start].index("{")])
             props = {}
             start += 1
             while "}" not in lines[start]:
@@ -213,7 +212,7 @@ class StyleManager:
                     props[prop] = value
                 start += 1
                 if start > size:
-                    return out
+                    return out  # pragma: nocover
             widgets = [i.strip() for i in "".join(states).split(",")]
             for widget in widgets:
                 out.append({widget: deepcopy(props)})

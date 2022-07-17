@@ -24,21 +24,10 @@ from pathlib import Path
 
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import (
-    QApplication,
-    QDialog,
-    QFileDialog,
-    QHBoxLayout,
-    QInputDialog,
-    QLabel,
-    QLineEdit,
-    QMenu,
-    QMenuBar,
-    QPushButton,
-    QTextBrowser,
-    QVBoxLayout,
-    QWidget,
-)
+from PySide6.QtWidgets import (QApplication, QDialog, QFileDialog, QHBoxLayout,
+                               QInputDialog, QLabel, QLineEdit, QMenu,
+                               QMenuBar, QPushButton, QTextBrowser,
+                               QVBoxLayout, QWidget)
 
 from QStyler.utils import exitApp
 
@@ -172,12 +161,11 @@ class ThemeMenu(QMenu):
         self.dialog.open()
 
     def createTheme(self):  # pragma: nocover
-        """
-        Save the current stylesheet as a theme to use in the future.
-        """
+        """Save the current stylesheet as a theme to use in the future."""
         sheets = self.parent().manager.sheets
-        name, status = QInputDialog.getText(self, "Enter Theme Name",
-                                            "Theme Name", QLineEdit.Normal, "")
+        name, status = QInputDialog.getText(
+            self, "Enter Theme Name", "Theme Name", QLineEdit.Normal, ""
+        )
         if status and name not in self.themes:
             theme = {}
             map(theme.update, sheets)
@@ -212,6 +200,11 @@ class ThemeMenu(QMenu):
 class ThemeLoadDialog(QDialog):  # pragma: nocover
     """
     Open dialog to choose theme to load from qss file.
+
+    Parameters
+    ----------
+    parent : QWidget
+        This widgets parent widget.
     """
 
     closing = Signal([str, str])
@@ -246,18 +239,16 @@ class ThemeLoadDialog(QDialog):  # pragma: nocover
 
     def loadTheme(self):
         """Load new theme into database."""
-        result = QFileDialog.getOpenFileName(self, "Select .qss File",
-                                             str(Path().home()),
-                                             "QSS(*.qss), Any(*)")
+        result = QFileDialog.getOpenFileName(
+            self, "Select .qss File", str(Path().home()), "QSS(*.qss), Any(*)"
+        )
         if result[1]:
             self.path = result[0]
             name, _ = os.path.splitext(os.path.basename(self.path))
             self.lineEdit.setText(name)
 
     def closeDialog(self):
-        """
-        Close dialog and return file path if selected.
-        """
+        """Close dialog and return file path if selected."""
         text = self.lineEdit.text()
         path = self.path if self.path else ""
         self.closing.emit(text, path)
@@ -313,8 +304,9 @@ class FileMenu(QMenu):
 
     def saveQss(self):  # pragma: nocover
         """Save current style to file."""
-        path = QFileDialog.getSaveFileName(self, "Save File", str(Path.home()),
-                                           "QSS (*.qss); Any (*)")
+        path = QFileDialog.getSaveFileName(
+            self, "Save File", str(Path.home()), "QSS (*.qss); Any (*)"
+        )
         if path:
             with open(path, "wt", encoding="utf-8") as fd:
                 sheet = QApplication.instance().styleSheet()

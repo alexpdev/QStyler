@@ -19,19 +19,9 @@
 """Module for styler tab and styler table."""
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import (
-    QApplication,
-    QCheckBox,
-    QComboBox,
-    QHBoxLayout,
-    QLabel,
-    QLineEdit,
-    QPushButton,
-    QTableWidget,
-    QTableWidgetItem,
-    QVBoxLayout,
-    QWidget,
-)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QHBoxLayout,
+                               QLabel, QLineEdit, QPushButton, QTableWidget,
+                               QTableWidgetItem, QVBoxLayout, QWidget)
 
 from QStyler.utils import StyleManager, blockSignals
 
@@ -97,7 +87,7 @@ class Table(QTableWidget):
             current = self.cellWidget(i, 0)
             if widget is current:
                 return i
-        return None
+        return None  # pragma: nocover
 
     @blockSignals
     def addRow(self, key=None, value=""):
@@ -123,8 +113,8 @@ class Table(QTableWidget):
             prop = self.cellWidget(row, 0).currentText()
             value = self.item(row, 1).text()
             title = self.widget.getWidgetState()
-            if not prop or prop == "-":
-                return
+            if not prop or prop == "":
+                return  # pragma: nocover
             self.manager.addSheet(title, prop, value)
         self.setNewRow.emit()
 
