@@ -1,0 +1,14 @@
+QWidget {
+    background-color: #000;
+    color: #0AF;
+    border-color: #F71;
+    border-width: 3px;
+    border-style: outset;
+    border-radius: 8px;
+}
+QLineEdit,
+QLabel {
+    font-size: 15pt;
+
+
+}

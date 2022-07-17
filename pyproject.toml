@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "QStyler"
 authors = [{name = "alexpdev", email = "alexpdev@pm.me"}]
-version = "0.1.0"
+version = "0.1.1"
 dependencies = ["PySide6", "wheel"]
 description = "QStyleSheet testing application."
 keywords = ["Qt", "GUI", "QStyleSheet", "qss"]
@@ -85,3 +85,10 @@ max-locals=25
 
 [tool.coverage.run]
 disable_warnings = ["couldnt-parse"]
+
+[tool.coverage.report]
+omit = [
+    "shibokensupport/*",
+    "pyscript",
+    "signature_bootstrap.py",
+]

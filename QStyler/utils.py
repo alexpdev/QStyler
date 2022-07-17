@@ -19,6 +19,7 @@
 """Utility module."""
 
 import json
+from copy import deepcopy
 from pathlib import Path
 
 from PySide6.QtGui import QIcon
@@ -64,20 +65,194 @@ def exitApp():  # pragma: nocover
     qapp.quit()
 
 
-def getsrcdir():
+def get_src_dir():
     """Return the source directory."""
     return Path(__file__).resolve().parent
 
 
-def geticon():
+def get_window_icon(filename=None):
     """Get the path to the window icon."""
-    path = getsrcdir().parent
-    iconpath = path / "assets" / "QStylerIcon.png"
+    path = get_src_dir().parent
+    if not filename:
+        iconpath = path / "assets" / "QStylerIcon.png"
+    else:
+        iconpath = path / "assets" / filename
     return QIcon(str(iconpath))
 
 
-def getdata():
+def load_records(filename):
     """Return data regarding QWidgets and styles."""
-    path = getsrcdir() / "style" / "data.json"
-    data = json.load(open(path, encoding="utf-8"))
-    return data
+    path = get_src_dir() / "style" / filename
+    records = json.load(open(path, encoding="utf-8"))
+    return records
+
+
+class StyleManager:
+    """
+    Style Factory for table widget.
+    """
+
+    def __init__(self):
+        """
+        Initialize the Style Factory class.
+        """
+        self.themes = load_records("themes.json")
+        self.data = load_records("data.json")
+        self.app = QApplication.instance()
+        self.sheets = []
+
+    def addSheet(self, widget: object, prop: str, value: str):
+        """
+        Add sheet data for widget to list of stylesheets.
+
+        Parameters
+        ----------
+        widget : QWidget
+            _description_
+        prop : str
+            _description_
+        value : str
+            _description_
+        """
+        for sheet in self.sheets:
+            if widget in sheet:
+                sheet[widget][prop] = value
+                break
+        else:
+            self.sheets.append({widget: {prop: value}})
+        self.set_sheet()
+
+    def _create_ssheet(self) -> dict:
+        """
+        Update the sheet with data from table.
+
+        Returns
+        -------
+        dict
+            the changed sheet
+        """
+        ssheet = ""
+        for row in self.sheets:
+            for k, v in row.items():
+                ssheet += k + " {\n"
+                for key, val in v.items():
+                    ssheet += "    " + key + ": " + val + ";\n"
+                ssheet += "}\n"
+        return ssheet
+
+    def set_sheet(self):
+        """Apply current sheet to widget."""
+        ssheet = self._create_ssheet()
+        self.app.setStyleSheet(ssheet)
+
+    def get_style_sheet(self):
+        """Return the full style sheet as a string."""
+        return self._create_ssheet()
+
+    def get_sheet(self, widget: str) -> dict:
+        """
+        Get the sheet associated with the widget or empty dict.
+
+        Parameters
+        ----------
+        widget : str
+            The name of the widget to get the sheet for.
+
+        Returns
+        -------
+        dict
+            Empty dict or current style sheet.
+        """
+        if widget:
+            for sheet in self.sheets:
+                if widget in sheet:
+                    return sheet[widget]
+        return {}
+
+    def saveToFile(self, path: str) -> None:
+        """
+        Save current style sheet.
+
+        Parameters
+        ----------
+        path : str
+            path to save file.
+        """
+        stylesheet = self._create_ssheet()
+        with open(path, "wt", encoding="utf-8") as fd:
+            fd.write(stylesheet)
+
+    @staticmethod
+    def sanatize_prop(prop):
+        """Sanatize property text."""
+        prop = prop.strip()
+        lst = prop.split(":")
+        try:
+            properte, value = lst[0], ":".join(lst[1:])
+            if value[-1] == ";":
+                value = value[:-1]
+            return properte.strip(), value.strip()
+        except IndexError:
+            return None
+
+    def parse(self, content):
+        """Parse lines from file."""
+        lines = content.split("\n")
+        size = len(lines)
+        out = []
+        start = 0
+        while start < size - 1:
+            states = []
+            while "{" not in lines[start]:
+                states.append(lines[start])
+                start += 1
+                if start > size:
+                    return out
+            states.append(lines[start][: lines[start].index("{")])
+            props = {}
+            start += 1
+            while "}" not in lines[start]:
+                result = self.sanatize_prop(lines[start])
+                if result:
+                    prop, value = result
+                    props[prop] = value
+                start += 1
+                if start > size:
+                    return out
+            widgets = [i.strip() for i in "".join(states).split(",")]
+            for widget in widgets:
+                out.append({widget: deepcopy(props)})
+            start += 1
+        return out
+
+
+def blockSignals(func):
+    """
+    Decorate for blocking signals in decorated functions.
+
+    Parameters
+    ----------
+    func : Callable
+        function wrapped
+    """
+
+    def wrapper(widget, *args, **kwargs):
+        """
+        Wrap function with functionality.
+
+        Parameters
+        ----------
+        widget : QWidget
+            the QWidget instance.
+
+        Returns
+        -------
+        any
+            the return value of wrapped function.
+        """
+        widget.blockSignals(True)
+        result = func(widget, *args, **kwargs)
+        widget.blockSignals(False)
+        return result
+
+    return wrapper

@@ -18,6 +18,7 @@
 ##############################################################################
 """Module for testing functions and methods."""
 
+import os
 import sys
 import time
 
@@ -25,6 +26,7 @@ import pytest
 from PySide6.QtWidgets import QApplication, QMainWindow
 
 from QStyler import __main__, version
+from QStyler.utils import StyleManager
 from QStyler.window import MainWindow
 
 
@@ -252,3 +254,13 @@ def test_tickers(pre: tuple):
         processtime(app)
     assert tab.verticalSlider.value() > 95
     assert tab.horizontalSlider.value() > 95
+
+
+def test_load_qss():
+    """Test stylesheet parser."""
+    testdir = os.path.dirname(os.path.abspath(__file__))
+    with open(os.path.join(testdir, "test.qss"), encoding="utf-8") as fd:
+        text = fd.read()
+    manager = StyleManager()
+    out = manager.parse(text)
+    assert len(out) == 3

@@ -22,12 +22,16 @@ import json
 import os
 from pathlib import Path
 
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import (QApplication, QFileDialog, QInputDialog,
-                               QLineEdit, QMenu, QMenuBar, QPushButton,
-                               QTextBrowser, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QDialog, QFileDialog, QHBoxLayout,
+                               QInputDialog, QLabel, QLineEdit, QMenu,
+                               QMenuBar, QPushButton, QTextBrowser,
+                               QVBoxLayout, QWidget)
 
 from QStyler.utils import exitApp
+
+print(os.path.abspath(__file__))
 
 
 class MenuBar(QMenuBar):
@@ -51,8 +55,9 @@ class MenuBar(QMenuBar):
         """
         super().__init__(parent)
         self.window = parent
+        self.manager = parent.styler.manager
         self.fileMenu = FileMenu("File", parent=self)
-        self.optionsMenu = OptionsMenu("Options", parent=self)
+        self.optionsMenu = ThemeMenu("Theme", parent=self)
         self.helpMenu = HelpMenu("Help", parent=self)
         self.addMenu(self.fileMenu)
         self.addMenu(self.optionsMenu)
@@ -88,7 +93,7 @@ class HelpMenu(QMenu):
         self.aboutqt.triggered.connect(QApplication.instance().aboutQt)
 
 
-class OptionsMenu(QMenu):
+class ThemeMenu(QMenu):
     """
     Creates options menu for the mainwindow menu bar.
 
@@ -112,18 +117,15 @@ class OptionsMenu(QMenu):
             the parent of the widget, by default None
         """
         super().__init__(text, parent=parent)
-        self.path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "style", "themes.json"
-        )
-        self.themes = json.load(open(self.path, encoding="utf-8"))
-        self.resetAction = QAction("Reset")
-        self.addAction(self.resetAction)
-        self.createThemeAction = QAction("Create Theme")
-        self.createThemeAction.triggered.connect(self.createTheme)
+        self.themes = self.parent().manager.themes
+        self.resetAction = QAction("Reset Theme")
+        self.loadAction = QAction("Load Theme")
+        self.loadAction.triggered.connect(self.loadTheme)
         self.resetAction.triggered.connect(self.resetStyleSheet)
-        self.addAction(self.createThemeAction)
         self.themeMenu = QMenu("Themes", parent=self)
         self.addMenu(self.themeMenu)
+        self.addAction(self.loadAction)
+        self.addAction(self.resetAction)
         self.themeactions = {}
         for key in self.themes:
             action = QAction(key)
@@ -131,12 +133,38 @@ class OptionsMenu(QMenu):
             action.triggered.connect(self.applyTheme)
             self.themeactions[action] = key
             self.themeMenu.addAction(action)
+        self.themeMenu.addSeparator()
+
+    def getThemeFile(self, title, path):  # pragma: nocover
+        """Open and save data in file path as title theme."""
+        if path and title:
+            with open(path, "rt", encoding="utf-8") as fd:
+                qss = fd.read()
+            manager = self.parent().manager
+            theme = manager.parse(qss)
+            final = {}
+            for row in theme:
+                for k, v in row.items():
+                    final[k] = v
+            theme = final
+            action = QAction(title)
+            action.setObjectName(title + "action")
+            self.themes[title] = theme
+            self.themeactions[action] = title
+            self.themeMenu.addAction(action)
+            action.triggered.connect(self.applyTheme)
+
+    def loadTheme(self):  # pragma: nocover
+        """Load a new theme into collection."""
+        self.dialog = ThemeLoadDialog(self)
+        self.dialog.closing.connect(self.getThemeFile)
+        self.dialog.open()
 
     def createTheme(self):  # pragma: nocover
         """
         Save the current stylesheet as a theme to use in the future.
         """
-        sheets = self.parent().window.styler.table.factory.sheets
+        sheets = self.parent().manager.sheets
         name, status = QInputDialog.getText(
             self, "Enter Theme Name", "Theme Name", QLineEdit.Normal, ""
         )
@@ -158,17 +186,72 @@ class OptionsMenu(QMenu):
         sheet = []
         for key, val in theme.items():
             sheet.append({key: val})
-        self.parent().window.styler.table.factory.sheets = sheet
-        self.parent().window.styler.table.factory.update_styleSheet()
+        self.parent().manager.sheets = sheet
+        self.parent().manager.set_sheet()
 
     def resetStyleSheet(self):
         """Reset the current style sheet to blank."""
         parent = self.parent()
-        parent.window.styler.table.factory.sheets = []
-        sheet = parent.window.styler.table.factory.update_styleSheet()
+        parent.manager.sheets = []
+        sheet = parent.manager.set_sheet()
         self.parent().window.setStyleSheet(sheet)
         parent.window.widgets.setStyleSheet(sheet)
         parent.window.styler.setStyleSheet(sheet)
+
+
+class ThemeLoadDialog(QDialog):  # pragma: nocover
+    """
+    Open dialog to choose theme to load from qss file.
+    """
+
+    closing = Signal([str, str])
+
+    def __init__(self, parent=None):
+        """
+        Initialize the Load Theme dialog menu.
+
+        Parameters
+        ----------
+        parent : QWidget, optional
+            This Widgets Parent, by default None
+        """
+        super().__init__(parent=parent)
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
+        self.label = QLabel("Theme Title", self)
+        self.setWindowTitle("Load Theme")
+        self.lineEdit = QLineEdit(self)
+        self.layout.addWidget(self.label)
+        self.layout.addWidget(self.lineEdit)
+        self.btn1 = QPushButton("Select File", self)
+        self.btn2 = QPushButton("OK", self)
+        self.hlayout = QHBoxLayout()
+        self.hlayout.addWidget(self.btn1)
+        self.hlayout.addWidget(self.btn2)
+        self.layout.addLayout(self.hlayout)
+        self.label.setAlignment(Qt.AlignLeft)
+        self.btn1.clicked.connect(self.loadTheme)
+        self.btn2.clicked.connect(self.closeDialog)
+        self.path = None
+
+    def loadTheme(self):
+        """Load new theme into database."""
+        result = QFileDialog.getOpenFileName(
+            self, "Select .qss File", str(Path().home()), "QSS(*.qss), Any(*)"
+        )
+        if result[1]:
+            self.path = result[0]
+            name, _ = os.path.splitext(os.path.basename(self.path))
+            self.lineEdit.setText(name)
+
+    def closeDialog(self):
+        """
+        Close dialog and return file path if selected.
+        """
+        text = self.lineEdit.text()
+        path = self.path if self.path else ""
+        self.closing.emit(text, path)
+        self.close()
 
 
 class FileMenu(QMenu):
@@ -201,6 +284,7 @@ class FileMenu(QMenu):
         self.showAction.triggered.connect(self.showStyles)
         self.addAction(self.showAction)
         self.addAction(self.exitAction)
+        self.parent().window.styler.button.clicked.connect(self.showStyles)
 
     def showStyles(self):  # pragma: nocover
         """Show the current stylesheet in a separate widget."""
