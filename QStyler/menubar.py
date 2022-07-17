@@ -31,8 +31,6 @@ from PySide6.QtWidgets import (QApplication, QDialog, QFileDialog, QHBoxLayout,
 
 from QStyler.utils import exitApp
 
-print(os.path.abspath(__file__))
-
 
 class MenuBar(QMenuBar):
     """

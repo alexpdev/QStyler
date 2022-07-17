@@ -18,6 +18,8 @@
 ##############################################################################
 """Widget tab module."""
 
+import os
+
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QCheckBox, QComboBox, QCommandLinkButton, QDial,
                                QDockWidget, QDoubleSpinBox, QFontComboBox,
@@ -191,6 +193,9 @@ class WidgetsTab(QWidget):
         self.plainTextEdit.setPlainText(lorem.gentext()[:200])
         self.textEdit.setText(lorem.gentext()[200:])
         self.textBrowser.setText(lorem.gentext())
+        self.pushButton.clicked.connect(
+            lambda: print(os.path.abspath(__file__))
+        )
 
     def changeLCD(self):
         """Change the value displayed in LCD number widget."""

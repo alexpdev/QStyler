@@ -18,7 +18,7 @@ jobs:
       - name: Run Tests
         run: |
           coverage run -m pytest tests QStyler
-          coverage xml -o ./coverage.xml
+          coverage xml -io ./coverage.xml
       - name: Codecov
         uses: codecov/codecov-action@v3.1.0
         with:

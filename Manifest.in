@@ -4,5 +4,5 @@ include tox.ini
 include CHANGELOG.md
 
 recursive-include .github *
-recursive-include assets *
+recursive-include QStyler/icons *
 recursive-include QStyler/style *
