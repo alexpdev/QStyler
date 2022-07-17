@@ -19,6 +19,8 @@
 
 GUI tool for testing Qt StyleSheets and their effect on widgets.
 
+![QStyler.gif](https://raw.githubusercontent.com/alexpdev/QStyler/master/assets/QStyler.gif)
+
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
