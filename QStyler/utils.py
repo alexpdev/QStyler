@@ -39,8 +39,7 @@ class Lorem:
             "irure dolor in reprehenderit in voluptate velit esse cillum "
             "dolore eu fugiat nulla pariatur. Excepteur sint occaecat "
             "cupidatat non proident, sunt in culpa qui officia deserunt "
-            "mollit anim id est laborum."
-        )
+            "mollit anim id est laborum.")
         self.words = self.text.split(" ")
         self.it = self.iternext()
 
@@ -203,7 +202,7 @@ class StyleManager:
                 start += 1
                 if start > size:
                     return out
-            states.append(lines[start][: lines[start].index("{")])
+            states.append(lines[start][:lines[start].index("{")])
             props = {}
             start += 1
             while "}" not in lines[start]:
