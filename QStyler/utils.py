@@ -182,7 +182,8 @@ class StyleManager:
         with open(path, "wt", encoding="utf-8") as fd:
             fd.write(stylesheet)
 
-    def sanatize_prop(self, prop):
+    @staticmethod
+    def sanatize_prop(prop):
         """Sanatize property text."""
         prop = prop.strip()
         lst = prop.split(":")

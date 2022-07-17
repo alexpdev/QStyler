@@ -135,11 +135,6 @@ class Table(QTableWidget):
         else:
             self.item(row, 1).setText("")
 
-    def save_theme(self):
-        """Return the current style sheet."""
-        print(QApplication.instance().styleSheet())
-        print("done")
-
 
 class PropsCombo(QComboBox):
     """Combobox storing all available properties that can be edited."""

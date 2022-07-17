@@ -164,7 +164,7 @@ class ThemeMenu(QMenu):
         """
         Save the current stylesheet as a theme to use in the future.
         """
-        sheets = self.parent().window.styler.table.manager.sheets
+        sheets = self.parent().manager.sheets
         name, status = QInputDialog.getText(
             self, "Enter Theme Name", "Theme Name", QLineEdit.Normal, ""
         )
@@ -186,14 +186,14 @@ class ThemeMenu(QMenu):
         sheet = []
         for key, val in theme.items():
             sheet.append({key: val})
-        self.parent().window.styler.table.manager.sheets = sheet
-        self.parent().window.styler.table.manager.set_sheet()
+        self.parent().manager.sheets = sheet
+        self.parent().manager.set_sheet()
 
     def resetStyleSheet(self):
         """Reset the current style sheet to blank."""
         parent = self.parent()
-        parent.window.styler.table.manager.sheets = []
-        sheet = parent.window.styler.table.manager.set_sheet()
+        parent.manager.sheets = []
+        sheet = parent.manager.set_sheet()
         self.parent().window.setStyleSheet(sheet)
         parent.window.widgets.setStyleSheet(sheet)
         parent.window.styler.setStyleSheet(sheet)
