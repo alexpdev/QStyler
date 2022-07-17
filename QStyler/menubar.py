@@ -24,21 +24,10 @@ from pathlib import Path
 
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import (
-    QApplication,
-    QDialog,
-    QFileDialog,
-    QHBoxLayout,
-    QInputDialog,
-    QLabel,
-    QLineEdit,
-    QMenu,
-    QMenuBar,
-    QPushButton,
-    QTextBrowser,
-    QVBoxLayout,
-    QWidget,
-)
+from PySide6.QtWidgets import (QApplication, QDialog, QFileDialog, QHBoxLayout,
+                               QInputDialog, QLabel, QLineEdit, QMenu,
+                               QMenuBar, QPushButton, QTextBrowser,
+                               QVBoxLayout, QWidget)
 
 from QStyler.utils import exitApp
 
@@ -174,8 +163,9 @@ class ThemeMenu(QMenu):
         Save the current stylesheet as a theme to use in the future.
         """
         sheets = self.parent().manager.sheets
-        name, status = QInputDialog.getText(self, "Enter Theme Name",
-                                            "Theme Name", QLineEdit.Normal, "")
+        name, status = QInputDialog.getText(
+            self, "Enter Theme Name", "Theme Name", QLineEdit.Normal, ""
+        )
         if status and name not in self.themes:
             theme = {}
             map(theme.update, sheets)
@@ -244,9 +234,9 @@ class ThemeLoadDialog(QDialog):  # pragma: nocover
 
     def loadTheme(self):
         """Load new theme into database."""
-        result = QFileDialog.getOpenFileName(self, "Select .qss File",
-                                             str(Path().home()),
-                                             "QSS(*.qss), Any(*)")
+        result = QFileDialog.getOpenFileName(
+            self, "Select .qss File", str(Path().home()), "QSS(*.qss), Any(*)"
+        )
         if result[1]:
             self.path = result[0]
             name, _ = os.path.splitext(os.path.basename(self.path))
@@ -311,8 +301,9 @@ class FileMenu(QMenu):
 
     def saveQss(self):  # pragma: nocover
         """Save current style to file."""
-        path = QFileDialog.getSaveFileName(self, "Save File", str(Path.home()),
-                                           "QSS (*.qss); Any (*)")
+        path = QFileDialog.getSaveFileName(
+            self, "Save File", str(Path.home()), "QSS (*.qss); Any (*)"
+        )
         if path:
             with open(path, "wt", encoding="utf-8") as fd:
                 sheet = QApplication.instance().styleSheet()
