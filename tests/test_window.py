@@ -246,11 +246,9 @@ def test_tickers(pre: tuple):
     print(val1, val2)
     while tab.verticalSlider.value() < 99:
         tab.verticalSlider.triggerAction(
-            tab.verticalSlider.SliderSingleStepAdd
-        )
+            tab.verticalSlider.SliderSingleStepAdd)
         tab.horizontalSlider.triggerAction(
-            tab.horizontalSlider.SliderSingleStepAdd
-        )
+            tab.horizontalSlider.SliderSingleStepAdd)
         processtime(app)
     assert tab.verticalSlider.value() > 95
     assert tab.horizontalSlider.value() > 95
