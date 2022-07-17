@@ -9,6 +9,7 @@
 ![GitHub License](https://img.shields.io/github/license/alexpdev/qstyler?color=red&logo=apache)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/qstyler?color=brown)
 ![GitHub Last Commit](https://badgen.net/github/last-commit/alexpdev/qstyler?color=blue&icon=github)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/280f7873f02c473281c8dcda3c303d08)](https://app.codacy.com/gh/alexpdev/QStyler?utm_source=github.com&utm_medium=referral&utm_content=alexpdev/QStyler&utm_campaign=Badge_Grade_Settings)
 [![CI](https://github.com/alexpdev/QStyler/actions/workflows/pyworkflow.yml/badge.svg?branch=master&event=push)](https://github.com/alexpdev/QStyler/actions/workflows/workflow.yml)
 ![GitHub repo size](https://img.shields.io/github/repo-size/alexpdev/qstyler)
 ![GitHub contributors](https://img.shields.io/github/contributors/alexpdev/qstyler)
