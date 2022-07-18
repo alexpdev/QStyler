@@ -21,16 +21,42 @@
 import os
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QCheckBox, QComboBox, QCommandLinkButton, QDial,
-                               QDockWidget, QDoubleSpinBox, QFontComboBox,
-                               QFrame, QGridLayout, QGroupBox, QHBoxLayout,
-                               QKeySequenceEdit, QLabel, QLCDNumber, QLineEdit,
-                               QListWidget, QListWidgetItem, QPlainTextEdit,
-                               QProgressBar, QPushButton, QRadioButton,
-                               QScrollBar, QSlider, QSpinBox, QTableWidget,
-                               QTableWidgetItem, QTextBrowser, QTextEdit,
-                               QTimeEdit, QToolButton, QTreeWidget,
-                               QTreeWidgetItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (
+    QCheckBox,
+    QComboBox,
+    QCommandLinkButton,
+    QDial,
+    QDockWidget,
+    QDoubleSpinBox,
+    QFontComboBox,
+    QFrame,
+    QGridLayout,
+    QGroupBox,
+    QHBoxLayout,
+    QKeySequenceEdit,
+    QLabel,
+    QLCDNumber,
+    QLineEdit,
+    QListWidget,
+    QListWidgetItem,
+    QPlainTextEdit,
+    QProgressBar,
+    QPushButton,
+    QRadioButton,
+    QScrollBar,
+    QSlider,
+    QSpinBox,
+    QTableWidget,
+    QTableWidgetItem,
+    QTextBrowser,
+    QTextEdit,
+    QTimeEdit,
+    QToolButton,
+    QTreeWidget,
+    QTreeWidgetItem,
+    QVBoxLayout,
+    QWidget,
+)
 
 from QStyler.utils import Lorem
 
@@ -194,8 +220,7 @@ class WidgetsTab(QWidget):
         self.textEdit.setText(lorem.gentext()[200:])
         self.textBrowser.setText(lorem.gentext())
         self.pushButton.clicked.connect(
-            lambda: print(os.path.abspath(__file__))
-        )
+            lambda: print(os.path.abspath(__file__)))
 
     def changeLCD(self):
         """Change the value displayed in LCD number widget."""
