@@ -21,8 +21,13 @@
 import sys
 from typing import Optional
 
-from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget,
-                               QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (
+    QApplication,
+    QMainWindow,
+    QTabWidget,
+    QVBoxLayout,
+    QWidget,
+)
 
 from QStyler.menubar import MenuBar
 from QStyler.styler import StylerTab
