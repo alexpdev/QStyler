@@ -3,16 +3,14 @@
 ![QStyler](https://raw.githubusercontent.com/alexpdev/QStyler/master/assets/QStylerLogo.png)
 
 ------------------------------
-<!--- These are examples. See https://shields.io for others or to customize this set of shields. You might want to include dependencies, project status and licence info here --->
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/alexpdev/qstyler?color=orange)
 ![GitHub License](https://img.shields.io/github/license/alexpdev/qstyler?color=red&logo=apache)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/qstyler?color=brown)
 ![GitHub Last Commit](https://badgen.net/github/last-commit/alexpdev/qstyler?color=blue&icon=github)
-[![CI](https://github.com/alexpdev/QStyler/actions/workflows/workflow.yml/badge.svg?branch=master&event=push)](https://github.com/alexpdev/QStyler/actions/workflows/workflow.yml)
+[![CI](https://github.com/alexpdev/QStyler/actions/workflows/windows.yml/badge.svg?branch=master&event=push)](https://github.com/alexpdev/QStyler/actions/workflows/windows.yml)
+[![CI](https://github.com/alexpdev/QStyler/actions/workflows/mac.yml/badge.svg?branch=master&event=push)](https://github.com/alexpdev/QStyler/actions/workflows/mac.yml)
 ![GitHub repo size](https://img.shields.io/github/repo-size/alexpdev/qstyler)
-![GitHub contributors](https://img.shields.io/github/contributors/alexpdev/qstyler)
-![GitHub stars](https://img.shields.io/github/stars/alexpdev/qstyler)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/1e7fc4df9f66443daa887c740b05335d)](https://www.codacy.com/gh/alexpdev/QStyler/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=alexpdev/QStyler&amp;utm_campaign=Badge_Grade)
 [![codecov](https://codecov.io/gh/alexpdev/QStyler/branch/main/graph/badge.svg?token=jpj9Rgriqi)](https://codecov.io/gh/alexpdev/QStyler)
 
@@ -26,10 +24,8 @@ GUI tool for testing Qt StyleSheets and their effect on widgets.
 
 Before you begin, ensure you have met the following requirements:
 
-<!--- These are just example requirements. Add, duplicate or remove as required --->
-
-* You have installed the latest version of `python3`
-* You have installed `PySide6`.
+- You have installed the latest version of `python3`
+- You have installed `PySide6`.
 
 ## Installing QStyler
 
@@ -54,7 +50,7 @@ qstyler
 Alternatively there are pre-compiled executables in the releases section.
 
 ## Contributing to QStyler
-<!--- If your README is long or you have some specific process or steps you want contributors to follow, consider creating a separate CONTRIBUTING.md file--->
+
 To contribute to QStyler, follow these steps:
 
 1. Fork this repository.
@@ -66,8 +62,6 @@ To contribute to QStyler, follow these steps:
 Alternatively see the GitHub documentation on [creating a pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request).
 
 ## License
-
-<!--- If you're not sure which open license to use see https://choosealicense.com/--->
 
 This project uses the following license: Apache 2.0 Software License
 

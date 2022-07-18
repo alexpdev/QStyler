@@ -2,6 +2,15 @@
 
 ## Version 0.1.2
 
+- Cleanup
+- Bug fixes
+- Added docstrings
+- Changed README gif
+
+-------------------
+
+## Version 0.1.1
+
 - Imporoved UI
 - Improved README
 - Bug Fixes
