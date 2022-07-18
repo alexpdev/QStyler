@@ -86,10 +86,13 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
-
+runner.py
+runner.spec
 # Translations
 *.mo
 *.pot
+build/
+dist/
 
 # Django stuff:
 *.log

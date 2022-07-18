@@ -1,8 +1,18 @@
 # QStyler ChangeLog
 
+## Version 0.1.2
+
+- Imporoved UI
+- Improved README
+- Bug Fixes
+- Improved UnitTests
+- Improved CI workflow
+- Improved package workflow
+- Added executable creation workflow
+
 -------------------
 
-## Version [0.1.0]
+## Version 0.1.0
 
 ### Added
 
