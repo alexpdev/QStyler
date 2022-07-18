@@ -21,28 +21,16 @@
 import json
 import os
 from pathlib import Path
+import webbrowser
 
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import (
-    QApplication,
-    QDialog,
-    QFileDialog,
-    QHBoxLayout,
-    QInputDialog,
-    QLabel,
-    QLineEdit,
-    QMenu,
-    QMenuBar,
-    QPushButton,
-    QTextBrowser,
-    QVBoxLayout,
-    QWidget,
-)
+from PySide6.QtWidgets import (QApplication, QDialog, QFileDialog, QHBoxLayout,
+                               QInputDialog, QLabel, QLineEdit, QMenu,
+                               QMenuBar, QPushButton, QTextBrowser,
+                               QVBoxLayout, QWidget)
 
 from QStyler.utils import exitApp
-
-print(os.path.abspath(__file__))
 
 
 class MenuBar(QMenuBar):
@@ -102,6 +90,14 @@ class HelpMenu(QMenu):
         self.aboutqt = QAction("About Qt")
         self.addAction(self.aboutqt)
         self.aboutqt.triggered.connect(QApplication.instance().aboutQt)
+        self.repolink = QAction("Github Repo")
+        self.addAction(self.repolink)
+        self.repolink.triggered.connect(self.opengithub)
+
+    @staticmethod
+    def opengithub():  # pragma: nocover
+        """Open webbrowser to github repo."""
+        webbrowser.open("https://github.com/alexpdev/QStyler")
 
 
 class ThemeMenu(QMenu):
@@ -304,6 +300,7 @@ class FileMenu(QMenu):
         self.dialog.resize(300, 200)
         layout = QVBoxLayout()
         self.dialog.setLayout(layout)
+        self.dialog.setWindowTitle("Current Style Sheet")
         textEdit = QTextBrowser(parent=self.dialog)
         textEdit.setPlainText(sheet)
         layout.addWidget(textEdit)
