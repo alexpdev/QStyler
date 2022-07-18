@@ -292,6 +292,7 @@ class FileMenu(QMenu):
         self.dialog.resize(300, 200)
         layout = QVBoxLayout()
         self.dialog.setLayout(layout)
+        self.dialog.setWindowTitle("Current Style Sheet")
         textEdit = QTextBrowser(parent=self.dialog)
         textEdit.setPlainText(sheet)
         layout.addWidget(textEdit)

@@ -141,7 +141,7 @@ class StyleManager:
 
     def get_style_sheet(self):
         """Return the full style sheet as a string."""
-        return self._create_ssheet()
+        return self._create_ssheet()  # pragma: nocover
 
     def get_sheet(self, widget: str) -> dict:
         """
