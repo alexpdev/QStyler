@@ -96,6 +96,7 @@ class HelpMenu(QMenu):
 
     @staticmethod
     def opengithub():  # pragma: nocover
+        """Open webbrowser to github repo."""
         webbrowser.open("https://github.com/alexpdev/QStyler")
 
 
