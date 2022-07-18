@@ -21,6 +21,7 @@
 import json
 import os
 from pathlib import Path
+import webbrowser
 
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QAction
@@ -89,6 +90,12 @@ class HelpMenu(QMenu):
         self.aboutqt = QAction("About Qt")
         self.addAction(self.aboutqt)
         self.aboutqt.triggered.connect(QApplication.instance().aboutQt)
+        self.repolink = QAction("Github Repo")
+        self.addAction(self.repolink)
+        self.repolink.triggered.connect(self.opengithub)
+
+    def opengithub(self):  # pragma: nocover
+        webbrowser.open("https://github.com/alexpdev/QStyler")
 
 
 class ThemeMenu(QMenu):
