@@ -94,7 +94,8 @@ class HelpMenu(QMenu):
         self.addAction(self.repolink)
         self.repolink.triggered.connect(self.opengithub)
 
-    def opengithub(self):  # pragma: nocover
+    @staticmethod
+    def opengithub():  # pragma: nocover
         webbrowser.open("https://github.com/alexpdev/QStyler")
 
 
