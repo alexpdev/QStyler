@@ -24,6 +24,7 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QHBoxLayout,
                                QTableWidgetItem, QVBoxLayout, QWidget)
 
 from QStyler.utils import StyleManager, blockSignals
+from QStyler.widgettree import WidgetTree
 
 
 class Table(QTableWidget):
@@ -202,7 +203,7 @@ class ControlCombo(QComboBox):
         self.info = data
         self.addItem("")
         self.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        self.widget.widget_combo.currentTextChanged.connect(self.loadControls)
+        self.widget.widgetTree.itemChanged.connect(self.loadControls)
 
     @blockSignals
     def loadControls(self, widget):
@@ -239,29 +240,34 @@ class StylerTab(QWidget):
     def __init__(self, parent=None):
         """Initialize the styler tab."""
         super().__init__(parent=parent)
-        self.manager = StyleManager()
+        self.manager = parent.manager
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.data = self.manager.data
-        self.widget_label = QLabel("Widget")
+        self.widget_label = QLabel("Widget(s)")
         self.control_label = QLabel("Control")
         self.state_label = QLabel("State")
         self.lineedit = QLineEdit(parent=self)
         self.linelabel = QLabel("Target")
         for label in [self.widget_label, self.control_label, self.state_label]:
             label.setAlignment(Qt.AlignJustify)
-        self.widget_combo = WidgetCombo(self.data, parent=self)
+        # self.widget_combo = WidgetCombo(self.data, parent=self)
+        self.widgetTree = WidgetTree(parent=self)
         self.control_combo = ControlCombo(self.data, parent=self)
         self.state_combo = StateCombo(self.data, parent=self)
         self.checkbox = QCheckBox("Read Only", parent=self)
-        self.combos = [self.widget_combo, self.control_combo, self.state_combo]
+        self.combos = [self.control_combo, self.state_combo]
         self.hlayout = QHBoxLayout()
-        self.hlayout.addWidget(self.widget_label)
-        self.hlayout.addWidget(self.widget_combo)
-        self.hlayout.addWidget(self.control_label)
-        self.hlayout.addWidget(self.control_combo)
-        self.hlayout.addWidget(self.state_label)
-        self.hlayout.addWidget(self.state_combo)
+        self.vlayout = QVBoxLayout()
+        self.vlayout2 = QVBoxLayout()
+        self.vlayout.addWidget(self.widget_label)
+        self.vlayout.addWidget(self.widgetTree)
+        self.vlayout2.addWidget(self.control_label)
+        self.vlayout2.addWidget(self.control_combo)
+        self.vlayout2.addWidget(self.state_label)
+        self.vlayout2.addWidget(self.state_combo)
+        self.hlayout.addLayout(self.vlayout)
+        self.hlayout.addLayout(self.vlayout2)
         self.hlayout2 = QHBoxLayout()
         self.hlayout2.addWidget(self.linelabel)
         self.hlayout2.addWidget(self.lineedit)
@@ -272,7 +278,7 @@ class StylerTab(QWidget):
         self.layout.addLayout(self.hlayout2)
         self.layout.addWidget(self.table)
         self.layout.addWidget(self.button)
-        self.widget_combo.currentTextChanged.connect(self.emitChanges)
+        # self.widget_combo.currentTextChanged.connect(self.emitChanges)
         self.control_combo.currentTextChanged.connect(self.emitChanges)
         self.state_combo.currentTextChanged.connect(self.emitChanges)
         self.checkbox.toggled.connect(self.setLineReadOnly)

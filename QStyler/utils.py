@@ -175,48 +175,83 @@ class StyleManager:
         with open(path, "wt", encoding="utf-8") as fd:
             fd.write(stylesheet)
 
-    @staticmethod
-    def sanatize_prop(prop):
-        """Sanatize property text."""
-        prop = prop.strip()
-        lst = prop.split(":")
-        try:
-            properte, value = lst[0], ":".join(lst[1:])
-            if value[-1] == ";":
-                value = value[:-1]
-            return properte.strip(), value.strip()
-        except IndexError:
-            return None
 
-    def parse(self, content):
+class QssParser:
+
+    def __init__(self, path):
+        with open(path, "rt", encoding="utf-8") as fd:
+            content = fd.read()
+        self.content = content
+        self.result = []
+        self.line = 0
+        self.lines = self.content.split("\n")
+        self.total = len(self.lines)
+        self.parse()
+
+    def skip_comments(self):
+        """Skip over inline comments."""
+        while not self.current.endswith("*/"):
+            self.line += 1
+        self.line += 1
+
+    @property
+    def current(self):
+        """Return current line."""
+        return self.lines[self.line]
+
+    def nextline(self):
+        """Increment current by one."""
+        self.line += 1
+        if self.line >= self.total:
+            return False
+        return True
+
+
+    def parse(self):
         """Parse lines from file."""
-        lines = content.split("\n")
-        size = len(lines)
-        out = []
-        start = 0
-        while start < size - 1:
-            states = []
-            while "{" not in lines[start]:
-                states.append(lines[start])
-                start += 1
-                if start > size:
-                    return out  # pragma: nocover
-            states.append(lines[start][:lines[start].index("{")])
+        while self.line < self.total:
+            widgets = []
+            if self.current.startswith("/*"):
+                self.skip_comments()
+                continue
+            if not self.current:
+                if not self.nextline():
+                    return
+                continue
+            while "{" not in self.current:
+                widgets.append(self.current)
+                if not self.nextline():
+                    return self.result
+            widgets.append(self.current[:self.current.index("{")])
             props = {}
-            start += 1
-            while "}" not in lines[start]:
-                result = self.sanatize_prop(lines[start])
+            if not self.nextline():
+                return self.result
+            while "}" not in self.current:
+                result = self.sanatize_prop()
                 if result:
                     prop, value = result
                     props[prop] = value
-                start += 1
-                if start > size:
-                    return out  # pragma: nocover
-            widgets = [i.strip() for i in "".join(states).split(",")]
+                if not self.nextline():
+                    return self.result
+            if not self.nextline():
+                return self.result
+            widgets = [i.strip() for i in "".join(widgets).split(",")]
             for widget in widgets:
-                out.append({widget: deepcopy(props)})
-            start += 1
-        return out
+                self.result.append({widget: deepcopy(props)})
+            if not self.nextline:
+                return self.result
+        return self.result
+
+    def sanatize_prop(self):
+        """Sanatize property text."""
+        lst = self.current.strip().split(":")
+        try:
+            prop, value = lst[0].strip(), ":".join(lst[1:])
+            if value[-1] == ";":
+                value = value[:-1]
+            return prop, value.strip()
+        except IndexError:
+            return None
 
 
 def blockSignals(func):

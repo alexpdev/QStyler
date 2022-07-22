@@ -30,7 +30,7 @@ from PySide6.QtWidgets import (QApplication, QDialog, QFileDialog, QHBoxLayout,
                                QMenuBar, QPushButton, QTextBrowser,
                                QVBoxLayout, QWidget)
 
-from QStyler.utils import exitApp
+from QStyler.utils import exitApp, QssParser
 
 
 class MenuBar(QMenuBar):
@@ -145,18 +145,14 @@ class ThemeMenu(QMenu):
     def getThemeFile(self, title, path):  # pragma: nocover
         """Open and save data in file path as title theme."""
         if path and title:
-            with open(path, "rt", encoding="utf-8") as fd:
-                qss = fd.read()
-            manager = self.parent().manager
-            theme = manager.parse(qss)
+            parser = QssParser(path)
+            theme = parser.result
             final = {}
             for row in theme:
-                for k, v in row.items():
-                    final[k] = v
-            theme = final
+                final.update(row)
             action = QAction(title)
             action.setObjectName(title + "action")
-            self.themes[title] = theme
+            self.themes[title] = final
             self.themeactions[action] = title
             self.themeMenu.addAction(action)
             action.triggered.connect(self.applyTheme)
