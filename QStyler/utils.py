@@ -177,81 +177,135 @@ class StyleManager:
 
 
 class QssParser:
+    """Qt Style Sheet Parser"""
 
     def __init__(self, path):
+        """
+        Initialize and construct the qss parser object.
+
+        Parameters
+        ----------
+        path : str
+            path to qss file
+        """
         with open(path, "rt", encoding="utf-8") as fd:
-            content = fd.read()
-        self.content = content
-        self.result = []
-        self.line = 0
-        self.lines = self.content.split("\n")
+            content = fd.read().split("\n")
+        self.lines = content
+        self.result = {}
+        self.collection = []
+        self.lnum = 0
         self.total = len(self.lines)
         self.parse()
 
-    def skip_comments(self):
-        """Skip over inline comments."""
-        while not self.current.endswith("*/"):
-            self.line += 1
-        self.line += 1
-
     @property
     def current(self):
-        """Return current line."""
-        return self.lines[self.line]
+        """
+        Return the current line.
 
-    def nextline(self):
-        """Increment current by one."""
-        self.line += 1
-        if self.line >= self.total:
-            return False
-        return True
+        Returns
+        -------
+        str
+            The current line
+        """
+        return self.lines[self.lnum]
 
+    def skipcomment(self):
+        """
+        Skip all lines until parser reaches the end comment token.
+        """
+        while "*/" not in self.current:
+            self.lnum += 1
+        self.lnum += 1
 
-    def parse(self):
-        """Parse lines from file."""
-        while self.line < self.total:
-            widgets = []
-            if self.current.startswith("/*"):
-                self.skip_comments()
-                continue
-            if not self.current:
-                if not self.nextline():
-                    return
-                continue
-            while "{" not in self.current:
-                widgets.append(self.current)
-                if not self.nextline():
-                    return self.result
-            widgets.append(self.current[:self.current.index("{")])
-            props = {}
-            if not self.nextline():
-                return self.result
-            while "}" not in self.current:
-                result = self.sanatize_prop()
-                if result:
-                    prop, value = result
-                    props[prop] = value
-                if not self.nextline():
-                    return self.result
-            if not self.nextline():
-                return self.result
-            widgets = [i.strip() for i in "".join(widgets).split(",")]
-            for widget in widgets:
-                self.result.append({widget: deepcopy(props)})
-            if not self.nextline:
-                return self.result
-        return self.result
+    def add_widgets(self, widgets, props):
+        """
+        Add widgets to the the master collection.
 
-    def sanatize_prop(self):
-        """Sanatize property text."""
-        lst = self.current.strip().split(":")
+        Parameters
+        ----------
+        widgets : str
+            The widgets name
+        props : dict
+            the property names and values
+        """
+        widget_str = "".join(widgets)
+        widgets = widget_str.split(",")
+        for widget in widgets:
+            self.collection.append({widget.strip(): deepcopy(props)})
+
+    def serialize_prop(self, line):
+        """
+        Normalize property string into name and value.
+
+        Parameters
+        ----------
+        line : str
+            the current line
+
+        Returns
+        -------
+        dict
+            the key,value pair of the normalized results
+        """
         try:
-            prop, value = lst[0].strip(), ":".join(lst[1:])
-            if value[-1] == ";":
-                value = value[:-1]
-            return prop, value.strip()
+            group = line.split(":")
+            key, val = group[0].strip(), ':'.join(group[1:]).strip()
+            if val.endswith(";"):
+                val = val[:-1]
+            return {key: val}
         except IndexError:
             return None
+
+    def parse_qss(self):
+        """
+        Parse the content of the qss file one line at a time.
+        """
+        inblock = False
+        widgets, props = [], {}
+        while self.location < self.total:
+            if self.current == "":
+                self.lnum += 1
+                continue
+            if "/*" in self.current:
+                self.skipcomment()
+                continue
+            if "{" in self.current:
+                sblock = self.current.index("{")
+                widgets.append(self.current[:sblock])
+                if "}" in self.current:
+                    eblock = self.current.index("}")
+                    prop = self.current[sblock:eblock]
+                    prop = self.serialize_prop(prop)
+                    if prop: props.update(prop)
+                    self.add_widgets(widgets, props)
+                    widgets, props = [], {}
+                    self.lnum += 1
+                    continue
+                self.lnum += 1
+                inblock = True
+                continue
+            if "}" in self.current:
+                inblock = False
+                self.add_widgets(widgets, props)
+                self.lnum += 1
+                widgets, props = [], {}
+                continue
+            if inblock:
+                prop = self.serialize_prop(self.current)
+                if prop: props.update(prop)
+                self.lnum += 1
+                continue
+            widgets.append(self.current)
+            print(self.current)
+            self.lnum += 1
+        self.add_widgets(widgets, props)
+
+    def compile(self):
+        """
+        Gather and group all results into one dictionary.
+        """
+        for row in self.collection:
+            self.result.update(row)
 
 
 def blockSignals(func):
