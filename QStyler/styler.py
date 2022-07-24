@@ -22,9 +22,9 @@ import re
 
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QValidator
-from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QHBoxLayout,
-                               QLabel, QLineEdit, QPushButton, QTableWidget,
-                               QTableWidgetItem, QVBoxLayout, QWidget, QToolButton)
+from PySide6.QtWidgets import (QApplication, QComboBox, QHBoxLayout,
+                               QLabel, QPushButton, QTableWidget,
+                               QTableWidgetItem, QVBoxLayout, QWidget, QGroupBox)
 
 from QStyler.utils import blockSignals
 
@@ -257,10 +257,8 @@ class StylerTab(QWidget):
         self.widget_label = QLabel("Widget(s)")
         self.control_label = QLabel("Control")
         self.state_label = QLabel("State")
-        self.plusbtn = QToolButton(parent=self)
-        self.plusbtn.setText("+")
-        self.minusbtn = QToolButton(parent=self)
-        self.minusbtn.setText("-")
+        self.plusbtn = QPushButton("+",parent=self)
+        self.minusbtn = QPushButton("-", parent=self)
         self.combo = WidgetCombo(self.data, parent=self)
         self.control_combo = ControlCombo(self.data, parent=self)
         self.state_combo = StateCombo(self.data, parent=self)
@@ -269,40 +267,41 @@ class StylerTab(QWidget):
         self.vlayout1 = QVBoxLayout()
         self.vlayout2 = QVBoxLayout()
         self.vlayout3 = QVBoxLayout()
-        self.vlayout4 = QVBoxLayout()
+        self.hlayout4 = QHBoxLayout()
         self.vlayout1.addWidget(self.widget_label)
         self.vlayout1.addWidget(self.combo)
         self.vlayout2.addWidget(self.control_label)
         self.vlayout2.addWidget(self.control_combo)
         self.vlayout3.addWidget(self.state_label)
         self.vlayout3.addWidget(self.state_combo)
-        self.vlayout4.addWidget(self.plusbtn)
-        self.vlayout4.addWidget(self.minusbtn)
+        self.mainGroup = QGroupBox(parent=self)
         self.hlayout = QHBoxLayout()
-        self.hlayout.addLayout(self.vlayout4)
+        self.mainGroup.setLayout(self.hlayout)
+        self.hlayout4.addWidget(self.plusbtn)
+        self.hlayout4.addWidget(self.minusbtn)
         self.hlayout.addLayout(self.vlayout1)
         self.hlayout.addLayout(self.vlayout2)
         self.hlayout.addLayout(self.vlayout3)
-        self.layout.addLayout(self.hlayout)
+        self.layout.addWidget(self.mainGroup)
+        self.layout.addLayout(self.hlayout4)
         self.layout.addWidget(self.table)
         self.layout.addWidget(self.button)
         self.control_combo.currentTextChanged.connect(self.emitChanges)
         self.state_combo.currentTextChanged.connect(self.emitChanges)
         self.plusbtn.clicked.connect(self.add_widget_combo)
+        self.minusbtn.clicked.connect(self.minus_widget_combo)
         self.table.setNewRow.connect(self.addTableRow)
-        self.combogroups = []
+        self.boxgroups = []
 
     def add_widget_combo(self):
-        layout = QHBoxLayout()
-        widget_combo = WidgetCombo(self.data, parent=self)
-        control_combo = ControlCombo(self.data, parent=self)
-        state_combo = StateCombo(self.data, parent=self)
-        layout.addWidget(widget_combo)
-        layout.addWidget(control_combo)
-        layout.addWidget(state_combo)
-        self.layout.insertLayout(1,layout)
+        groupbox = GroupBox(parent=self)
+        self.layout.insertWidget(1, groupbox)
+        self.boxgroups.append(groupbox)
 
-
+    def minus_widget_combo(self):
+        layout: QVBoxLayout = self.layout
+        if layout.itemAt(1) in self.boxgroups:
+            layout.takeAt(1)
 
 
     def addTableRow(self):
@@ -311,7 +310,7 @@ class StylerTab(QWidget):
         """
         for row in range(self.table.rowCount()):
             text = self.table.cellWidget(row, 0).currentText()
-            if text == "-":
+            if text in ["", "-"]:
                 return
         self.table.addRow()
 
@@ -354,7 +353,22 @@ class StylerTab(QWidget):
         str
             the current state as a string
         """
-        text = self.lineedit.text()
+        widgets = []
+        for box in self.boxgroups + [self]:
+            widget = box.combo.currentText()
+            control = box.control_combo.currentText()
+            state = box.state_combo.currentText()
+            parts = []
+            if widget:
+                parts.append(widget)
+            if control:
+                parts += [":", control]
+            if state:
+                parts += ["::", state]
+            full = ''.join(parts)
+            widgets.append(full)
+        text = ','.join(widgets)
+        print(text)
         return text if text else "*"
 
 
@@ -377,7 +391,7 @@ class WidgetValidator(QValidator):
         while self.validate(text) == self.Invalid:
             text = text[:-1]
 
-    def validate(self,text, pos=None):
+    def validate(self,text, _=None):
         """Authenticate whether text is valid."""
         if text == "":
             return self.Intermediate
@@ -408,3 +422,20 @@ class WidgetValidator(QValidator):
             return self.Invalid
         result = test_match(text)
         return self.Invalid if result is None else result
+
+class GroupBox(QGroupBox):
+    """Custom Group Box."""
+
+    def __init__(self, parent=None):
+        """Initialize Group Box Constructor."""
+        super().__init__(parent=parent)
+        self.widget = parent
+        self.data = parent.data
+        self.layout = QHBoxLayout()
+        self.setLayout(self.layout)
+        self.combo = WidgetCombo(self.data, parent=self)
+        self.control_combo = ControlCombo(self.data, parent=self)
+        self.state_combo = StateCombo(self.data, parent=self)
+        self.layout.addWidget(self.combo)
+        self.layout.addWidget(self.control_combo)
+        self.layout.addWidget(self.state_combo)
