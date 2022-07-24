@@ -25,10 +25,6 @@ class WidgetCombo(QComboBox):
             self.addItem(widget)
 
 
-
-
-
-
 class WidgetTree(QTreeWidget):
     rowAdded = Signal([int])
 

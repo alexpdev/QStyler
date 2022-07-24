@@ -18,13 +18,15 @@
 ##############################################################################
 """Module for styler tab and styler table."""
 
+import re
+
 from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QValidator
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QHBoxLayout,
                                QLabel, QLineEdit, QPushButton, QTableWidget,
-                               QTableWidgetItem, QVBoxLayout, QWidget)
+                               QTableWidgetItem, QVBoxLayout, QWidget, QToolButton)
 
-from QStyler.utils import StyleManager, blockSignals
-from QStyler.widgettree import WidgetTree
+from QStyler.utils import blockSignals
 
 
 class Table(QTableWidget):
@@ -181,9 +183,14 @@ class WidgetCombo(QComboBox):
         super().__init__(parent=parent)
         self.widget = parent
         self.info = data
+        self.addItem("")
         self.addItem("*")
         self.loadItems()
+        self.setEditable(True)
         self.setSizeAdjustPolicy(QComboBox.AdjustToContents)
+        self.setInsertPolicy(self.NoInsert)
+        validator = WidgetValidator(parent=self)
+        self.setValidator(validator)
         self.currentTextChanged.connect(self.widgetChanged.emit)
 
     def loadItems(self):
@@ -203,7 +210,7 @@ class ControlCombo(QComboBox):
         self.info = data
         self.addItem("")
         self.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        self.widget.widgetTree.itemChanged.connect(self.loadControls)
+        self.widget.combo.widgetChanged.connect(self.loadControls)
 
     @blockSignals
     def loadControls(self, widget):
@@ -211,9 +218,12 @@ class ControlCombo(QComboBox):
         for _ in range(self.count()):
             self.removeItem(0)
         self.addItem("")
-        widget = "*" if widget == "-" else widget
-        for control in self.info["controls"][widget]:
-            self.addItem(control)
+        widgets = widget.split(" ")
+        if len(widgets) > 1:
+            widget = widget[-1]
+        if widget in self.info["controls"]:
+            for control in self.info["controls"][widget]:
+                self.addItem(control)
 
 
 class StateCombo(QComboBox):
@@ -241,48 +251,59 @@ class StylerTab(QWidget):
         """Initialize the styler tab."""
         super().__init__(parent=parent)
         self.manager = parent.manager
+        self.data = self.manager.data
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
-        self.data = self.manager.data
         self.widget_label = QLabel("Widget(s)")
         self.control_label = QLabel("Control")
         self.state_label = QLabel("State")
-        self.lineedit = QLineEdit(parent=self)
-        self.linelabel = QLabel("Target")
-        for label in [self.widget_label, self.control_label, self.state_label]:
-            label.setAlignment(Qt.AlignJustify)
-        # self.widget_combo = WidgetCombo(self.data, parent=self)
-        self.widgetTree = WidgetTree(parent=self)
+        self.plusbtn = QToolButton(parent=self)
+        self.plusbtn.setText("+")
+        self.minusbtn = QToolButton(parent=self)
+        self.minusbtn.setText("-")
+        self.combo = WidgetCombo(self.data, parent=self)
         self.control_combo = ControlCombo(self.data, parent=self)
         self.state_combo = StateCombo(self.data, parent=self)
-        self.checkbox = QCheckBox("Read Only", parent=self)
-        self.combos = [self.control_combo, self.state_combo]
-        self.hlayout = QHBoxLayout()
-        self.vlayout = QVBoxLayout()
-        self.vlayout2 = QVBoxLayout()
-        self.vlayout.addWidget(self.widget_label)
-        self.vlayout.addWidget(self.widgetTree)
-        self.vlayout2.addWidget(self.control_label)
-        self.vlayout2.addWidget(self.control_combo)
-        self.vlayout2.addWidget(self.state_label)
-        self.vlayout2.addWidget(self.state_combo)
-        self.hlayout.addLayout(self.vlayout)
-        self.hlayout.addLayout(self.vlayout2)
-        self.hlayout2 = QHBoxLayout()
-        self.hlayout2.addWidget(self.linelabel)
-        self.hlayout2.addWidget(self.lineedit)
-        self.hlayout2.addWidget(self.checkbox)
         self.button = QPushButton("Save Theme", parent=self)
         self.table = Table(self.manager, parent=self)
+        self.vlayout1 = QVBoxLayout()
+        self.vlayout2 = QVBoxLayout()
+        self.vlayout3 = QVBoxLayout()
+        self.vlayout4 = QVBoxLayout()
+        self.vlayout1.addWidget(self.widget_label)
+        self.vlayout1.addWidget(self.combo)
+        self.vlayout2.addWidget(self.control_label)
+        self.vlayout2.addWidget(self.control_combo)
+        self.vlayout3.addWidget(self.state_label)
+        self.vlayout3.addWidget(self.state_combo)
+        self.vlayout4.addWidget(self.plusbtn)
+        self.vlayout4.addWidget(self.minusbtn)
+        self.hlayout = QHBoxLayout()
+        self.hlayout.addLayout(self.vlayout4)
+        self.hlayout.addLayout(self.vlayout1)
+        self.hlayout.addLayout(self.vlayout2)
+        self.hlayout.addLayout(self.vlayout3)
         self.layout.addLayout(self.hlayout)
-        self.layout.addLayout(self.hlayout2)
         self.layout.addWidget(self.table)
         self.layout.addWidget(self.button)
-        # self.widget_combo.currentTextChanged.connect(self.emitChanges)
         self.control_combo.currentTextChanged.connect(self.emitChanges)
         self.state_combo.currentTextChanged.connect(self.emitChanges)
-        self.checkbox.toggled.connect(self.setLineReadOnly)
+        self.plusbtn.clicked.connect(self.add_widget_combo)
         self.table.setNewRow.connect(self.addTableRow)
+        self.combogroups = []
+
+    def add_widget_combo(self):
+        layout = QHBoxLayout()
+        widget_combo = WidgetCombo(self.data, parent=self)
+        control_combo = ControlCombo(self.data, parent=self)
+        state_combo = StateCombo(self.data, parent=self)
+        layout.addWidget(widget_combo)
+        layout.addWidget(control_combo)
+        layout.addWidget(state_combo)
+        self.layout.insertLayout(1,layout)
+
+
+
 
     def addTableRow(self):
         """
@@ -335,3 +356,55 @@ class StylerTab(QWidget):
         """
         text = self.lineedit.text()
         return text if text else "*"
+
+
+class WidgetValidator(QValidator):
+    """
+    Text validator for Widget Combo Box.
+    """
+
+    def __init__(self, parent=None):
+        """Construct the validator."""
+        super().__init__(parent=parent)
+        self.widget = parent
+        self.widget_list = []
+        for i in range(self.widget.count()):
+            text = self.widget.itemText(i)
+            self.widget_list.append(text)
+
+    def fixup(self, text):
+        """Fix the text when it is invalid."""
+        while self.validate(text) == self.Invalid:
+            text = text[:-1]
+
+    def validate(self,text, pos=None):
+        """Authenticate whether text is valid."""
+        if text == "":
+            return self.Intermediate
+        def test_match(text):
+            """Test text to see if it is valid."""
+            l = len(text)
+            for widget in self.widget_list:
+                if len(widget) < l:
+                    continue
+                if len(widget) == l:
+                    if text == widget:
+                        return self.Acceptable
+                if len(widget) > l:
+                    if text in widget:
+                        return self.Intermediate
+        pat1 = re.compile(r"^\w+?\s$")
+        pat2 = re.compile(r"^\w+?\s\w+$")
+        if pat2.match(text):
+            widgets = text.split(" ")
+            if widgets[0] in self.widget_list:
+                result = test_match(widgets[1])
+                return self.Invalid if result is None else result
+            return self.Invalid
+        if pat1.match(text):
+            widgets = text.split(" ")
+            if widgets[0] in self.widget_list:
+                return self.Intermediate
+            return self.Invalid
+        result = test_match(text)
+        return self.Invalid if result is None else result
