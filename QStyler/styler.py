@@ -286,63 +286,38 @@ class StylerTab(QWidget):
         self.layout.addLayout(self.hlayout4)
         self.layout.addWidget(self.table)
         self.layout.addWidget(self.button)
-        self.control_combo.currentTextChanged.connect(self.emitChanges)
-        self.state_combo.currentTextChanged.connect(self.emitChanges)
+        # self.control_combo.currentTextChanged.connect(self.emitChanges)
+        # self.state_combo.currentTextChanged.connect(self.emitChanges)
         self.plusbtn.clicked.connect(self.add_widget_combo)
         self.minusbtn.clicked.connect(self.minus_widget_combo)
         self.table.setNewRow.connect(self.addTableRow)
         self.boxgroups = []
 
     def add_widget_combo(self):
-        groupbox = GroupBox(parent=self)
-        self.layout.insertWidget(1, groupbox)
-        self.boxgroups.append(groupbox)
+        l = len(self.boxgroups)
+        text = self.getWidgetState()
+        if not text: return
+        if len(text.split(",")) >= l+1:
+            groupbox = GroupBox(parent=self)
+            self.layout.insertWidget(l + 1, groupbox)
+            self.boxgroups.append(groupbox)
 
     def minus_widget_combo(self):
-        layout: QVBoxLayout = self.layout
-        if layout.itemAt(1) in self.boxgroups:
-            layout.takeAt(1)
+        if len(self.boxgroups) > 0:
+            box = self.boxgroups[-1]
+            del self.boxgroups[-1]
+            box.deleteLater()
+            box.destroy()
+            self.layout.removeWidget(box)
 
 
     def addTableRow(self):
-        """
-        Add a new row to the table.
-        """
+        """Add a new row to the table."""
         for row in range(self.table.rowCount()):
             text = self.table.cellWidget(row, 0).currentText()
             if text in ["", "-"]:
                 return
         self.table.addRow()
-
-    def setLineReadOnly(self, ischecked: bool):
-        """
-        Set the line edit as read only.
-
-        Parameters
-        ----------
-        ischecked : bool
-            if is checked.
-        """
-        self.lineedit.setReadOnly(ischecked)
-
-    @blockSignals
-    def emitChanges(self, _: str) -> None:
-        """
-        Send signals to table widget.
-
-        Parameters
-        ----------
-        data : str
-            _description_
-        """
-        self.lineedit.clear()
-        text = self.widget_combo.currentText()
-        control = self.control_combo.currentText()
-        state = self.state_combo.currentText()
-        result = "".join([i for i in [text, control, state] if i])
-        result = "*" if not result else result
-        self.lineedit.setText(result)
-        self.table.widgetChanged.emit(result)
 
     def getWidgetState(self) -> str:
         """
@@ -366,10 +341,10 @@ class StylerTab(QWidget):
             if state:
                 parts += ["::", state]
             full = ''.join(parts)
-            widgets.append(full)
+            if full:
+                widgets.append(full)
         text = ','.join(widgets)
-        print(text)
-        return text if text else "*"
+        return text
 
 
 class WidgetValidator(QValidator):
