@@ -26,6 +26,22 @@ from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
 
 
+class Memo:
+    """Memoize data."""
+
+    def __init__(self, func):
+        self.cache = {}
+        self.func = func
+
+    def __call__(self, *args, **kwargs):
+        if args in self.cache:
+            return self.cache[args]
+        result = self.func(*args, **kwargs)
+        self.cache[args] = result
+        return result
+
+
+
 class Lorem:
     """Generator of standard lorem ipsum dummy text."""
 
@@ -75,6 +91,7 @@ def get_icon(filename=None):
     return QIcon(str(path))
 
 
+@Memo
 def load_records(filename):
     """Return data regarding QWidgets and styles."""
     path = get_src_dir() / "style" / filename
@@ -94,7 +111,7 @@ class StyleManager:
         self.app = QApplication.instance()
         self.sheets = []
 
-    def addSheet(self, widget: object, prop: str, value: str):
+    def addSheet(self, widget: str, prop: str, value: str):
         """
         Add sheet data for widget to list of stylesheets.
 
@@ -107,12 +124,13 @@ class StyleManager:
         value : str
             _description_
         """
+        widgets = widget.split(',')
         for sheet in self.sheets:
-            if widget in sheet:
-                sheet[widget][prop] = value
-                break
-        else:
-            self.sheets.append({widget: {prop: value}})
+            widg = next(iter(sheet.keys()))
+            if widg in widgets:
+                sheet[widg].update({prop:value})
+                widgets.remove(widg)
+        self.sheet += [{widget:{prop:value}} for widget in widgets]
         self.set_sheet()
 
     def _create_ssheet(self) -> dict:
@@ -156,11 +174,22 @@ class StyleManager:
         dict
             Empty dict or current style sheet.
         """
-        if widget:
+        if not widget: return
+        widgets = widget.split(",")
+        common = None
+        for widget in widgets:
             for sheet in self.sheets:
-                if widget in sheet:
-                    return sheet[widget]
-        return {}
+                if widget not in sheet:
+                    continue
+                if common is None:
+                    common = sheet[widget]
+                    continue
+                if not len(common):
+                    break
+                for prop, value in sheet[widget].values():
+                    if prop in common and common[prop] != value:
+                        del common[prop]
+        return common if common is not None else {}
 
     def saveToFile(self, path: str) -> None:  # pragma: nocover
         """

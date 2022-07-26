@@ -149,8 +149,11 @@ class PropsCombo(QComboBox):
         self.app = QApplication.instance()
         self.info = data
         self.tableItem = None
-        self.addItem("-")
+        self.addItem("")
         self.loadItems()
+        validator = PropsValidator(parent=self)
+        self.setEditable(True)
+        self.setValidator(validator)
         self.currentIndexChanged.connect(self.notifyTable)
         self.setSizeAdjustPolicy(self.sizeAdjustPolicy().AdjustToContents)
 
@@ -171,6 +174,37 @@ class PropsCombo(QComboBox):
             if self.itemText(i) == key:
                 self.setCurrentIndex(i)
                 break
+
+
+class PropsValidator(QValidator):
+    """Validator for Props Combo."""
+
+    def __init__(self, parent=None):
+        """Construct the validator class."""
+        super().__init__(parent=parent)
+        self.widget = parent
+        self.data = parent.info['properties']
+
+    def fixup(self, text):
+        """Fix invalid text."""
+        while text not in self.data:
+            text = text[:-1]
+
+    def validate(self, text, pos):
+        """Validate text contents."""
+        tlen = len(text)
+        inter = False
+        for prop in self.data:
+            prop_len = len(prop)
+            if tlen == prop_len:
+                if text == prop:
+                    return self.Acceptable
+            if tlen < prop_len:
+                if text in prop:
+                    inter = True
+        if inter:
+            return self.Intermediate
+        return self.Invalid
 
 
 class WidgetCombo(QComboBox):
@@ -286,8 +320,6 @@ class StylerTab(QWidget):
         self.layout.addLayout(self.hlayout4)
         self.layout.addWidget(self.table)
         self.layout.addWidget(self.button)
-        # self.control_combo.currentTextChanged.connect(self.emitChanges)
-        # self.state_combo.currentTextChanged.connect(self.emitChanges)
         self.plusbtn.clicked.connect(self.add_widget_combo)
         self.minusbtn.clicked.connect(self.minus_widget_combo)
         self.table.setNewRow.connect(self.addTableRow)
