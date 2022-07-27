@@ -111,7 +111,7 @@ class StyleManager:
         self.app = QApplication.instance()
         self.sheets = []
 
-    def addSheet(self, widget: str, prop: str, value: str):
+    def add_sheet(self, widget: str, prop: str, value: str):
         """
         Add sheet data for widget to list of stylesheets.
 
@@ -130,7 +130,7 @@ class StyleManager:
             if widg in widgets:
                 sheet[widg].update({prop:value})
                 widgets.remove(widg)
-        self.sheet += [{widget:{prop:value}} for widget in widgets]
+        self.sheets += [{widget:{prop:value}} for widget in widgets]
         self.set_sheet()
 
     def _create_ssheet(self) -> dict:
@@ -180,13 +180,13 @@ class StyleManager:
         for widget in widgets:
             for sheet in self.sheets:
                 if widget not in sheet:
-                    continue
+                    common = {}
                 if common is None:
                     common = sheet[widget]
                     continue
                 if not len(common):
                     break
-                for prop, value in sheet[widget].values():
+                for prop, value in sheet[widget].items():
                     if prop in common and common[prop] != value:
                         del common[prop]
         return common if common is not None else {}

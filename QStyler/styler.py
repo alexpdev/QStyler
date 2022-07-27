@@ -53,16 +53,15 @@ class Table(QTableWidget):
         self.widgetChanged.connect(self.loadProps)
 
     @blockSignals
-    def loadProps(self, widget=None):
+    def loadProps(self, common={}):
         """Load items into table."""
-        sheet = self.manager.get_sheet(widget)
         rowcount = self.rowCount()
-        for i, key in enumerate(sheet):
+        for i, key in enumerate(common):
             if i < rowcount:
-                self._setRowData(i, key, sheet[key])
+                self._setRowData(i, key, common[key])
             else:
-                self.addRow(key=key, value=sheet[key])
-        while self.rowCount() > len(sheet):
+                self.addRow(key=key, value=common[key])
+        while self.rowCount() > len(common):
             self.removeRow(self.rowCount() - 1)
         self.addRow()
 
@@ -106,7 +105,6 @@ class Table(QTableWidget):
         item.setFlags(flag1 | flag2 | flag3)
         self.setItem(rownum, 1, item)
         self._setRowData(rownum, key, value)
-        self.resizeRowsToContents()
 
     def saveProp(self, row, column):
         """Save the newly changed value into the current stylesheet."""
@@ -118,7 +116,7 @@ class Table(QTableWidget):
             title = self.widget.getWidgetState()
             if not prop or prop == "":
                 return  # pragma: nocover
-            self.manager.addSheet(title, prop, value)
+            self.manager.add_sheet(title, prop, value)
         self.setNewRow.emit()
 
     def currentSheet(self):
@@ -192,8 +190,9 @@ class PropsValidator(QValidator):
 
     def validate(self, text, pos):
         """Validate text contents."""
-        tlen = len(text)
-        inter = False
+        if text == '':
+            return self.Acceptable
+        tlen, inter = len(text), False
         for prop in self.data:
             prop_len = len(prop)
             if tlen == prop_len:
@@ -225,7 +224,7 @@ class WidgetCombo(QComboBox):
         self.setInsertPolicy(self.NoInsert)
         validator = WidgetValidator(parent=self)
         self.setValidator(validator)
-        self.currentTextChanged.connect(self.widgetChanged.emit)
+        self.currentIndexChanged.connect(self.widgetChanged.emit)
 
     def loadItems(self):
         """Populate combobox with data."""
@@ -281,6 +280,8 @@ class StateCombo(QComboBox):
 class StylerTab(QWidget):
     """Tab containing the table that changes the styling for the widgets."""
 
+    statusChanged = Signal([str])
+
     def __init__(self, parent=None):
         """Initialize the styler tab."""
         super().__init__(parent=parent)
@@ -323,7 +324,16 @@ class StylerTab(QWidget):
         self.plusbtn.clicked.connect(self.add_widget_combo)
         self.minusbtn.clicked.connect(self.minus_widget_combo)
         self.table.setNewRow.connect(self.addTableRow)
+        self.combo.widgetChanged.connect(self.statusChanged.emit)
+        self.state_combo.currentIndexChanged.connect(self.statusChanged.emit)
+        self.control_combo.currentIndexChanged.connect(self.statusChanged.emit)
+        self.statusChanged.connect(self.updateTable)
         self.boxgroups = []
+
+    def updateTable(self, _):
+        state = self.getWidgetState()
+        common = self.manager.get_sheet(state)
+        self.table.loadProps(common=common)
 
     def add_widget_combo(self):
         l = len(self.boxgroups)
@@ -446,3 +456,6 @@ class GroupBox(QGroupBox):
         self.layout.addWidget(self.combo)
         self.layout.addWidget(self.control_combo)
         self.layout.addWidget(self.state_combo)
+        self.state_combo.currentIndexChanged.connect(parent.statusChanged.emit)
+        self.control_combo.currentIndexChanged.connect(parent.statusChanged.emit)
+        self.combo.widgetChanged.connect(parent.statusChanged.emit)
