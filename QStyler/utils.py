@@ -106,7 +106,6 @@ def get_manager():
     return StyleManager.window.manager
 
 
-
 class StyleManager:
     """Style Factory for table widget."""
 
