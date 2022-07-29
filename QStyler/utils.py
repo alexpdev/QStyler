@@ -18,8 +18,8 @@
 ##############################################################################
 """Utility module."""
 
-import os
 import json
+import os
 from copy import deepcopy
 from pathlib import Path
 
@@ -31,16 +31,17 @@ class Memo:
     """Memoize data."""
 
     def __init__(self, func):
+        """Initialize the class instance."""
         self.cache = {}
         self.func = func
 
     def __call__(self, *args, **kwargs):
+        """Invoke function call and save results to cache."""
         if args in self.cache:
             return self.cache[args]
         result = self.func(*args, **kwargs)
         self.cache[args] = result
         return result
-
 
 
 class Lorem:
@@ -99,12 +100,11 @@ def load_records(filename):
 
     return json.load(open(path, encoding="utf-8"))
 
+
 def get_manager():
     """Get the manager from any module."""
-    try:
-        return StyleManager.window.manager
-    except AttributeError:
-        raise Exception("WTF")
+    return StyleManager.window.manager
+
 
 class StyleManager:
     """Style Factory for table widget."""
@@ -134,13 +134,13 @@ class StyleManager:
         value : str
             _description_
         """
-        widgets = widget.split(',')
+        widgets = widget.split(",")
         for sheet in self.sheets:
             widg = next(iter(sheet.keys()))
             if widg in widgets:
-                sheet[widg].update({prop:value})
+                sheet[widg].update({prop: value})
                 widgets.remove(widg)
-        self.sheets += [{widget:{prop:value}} for widget in widgets]
+        self.sheets += [{widget: {prop: value}} for widget in widgets]
         self.set_sheet()
 
     def _create_ssheet(self) -> dict:
@@ -184,13 +184,14 @@ class StyleManager:
         dict
             Empty dict or current style sheet.
         """
-        if not widget: return
+        if not widget:
+            return {}
         widgets = widget.split(",")
         styles = {}
         for sheet in self.sheets:
-            for widget in widgets:
-                if widget in sheet:
-                    styles[widget] = sheet[widget]
+            for widg in widgets:
+                if widg in sheet:
+                    styles[widg] = sheet[widg]
                     widgets.remove(widget)
                     break
         if len(widgets) >= 1:
@@ -198,7 +199,7 @@ class StyleManager:
         seq = iter(styles.values())
         first = next(seq)
         for sheet in seq:
-            if not len(first):
+            if not first:
                 return {}
             for key, value in sheet.items():
                 if key in first and value != first[key]:
@@ -220,7 +221,7 @@ class StyleManager:
 
 
 class QssParser:
-    """Qt Style Sheet Parser"""
+    """Qt Style Sheet Parser."""
 
     def __init__(self, path):
         """
@@ -241,7 +242,7 @@ class QssParser:
         self.collection = []
         self.lnum = 0
         self.total = len(self.lines)
-        self.parse()
+        self.parse_qss()
 
     @property
     def current(self):
@@ -295,11 +296,11 @@ class QssParser:
         """
         try:
             group = line.split(":")
-            key, val = group[0].strip(), ':'.join(group[1:]).strip()
+            key, val = group[0].strip(), ":".join(group[1:]).strip()
             if val.endswith(";"):
                 val = val[:-1]
             return {key: val}
-        except IndexError:
+        except IndexError:  # pragma: nocover
             return None
 
     def parse_qss(self):
@@ -308,7 +309,7 @@ class QssParser:
         """
         inblock = False
         widgets, props = [], {}
-        while self.location < self.total:
+        while self.lnum < self.total:
             if self.current == "":
                 self.lnum += 1
                 continue
@@ -322,7 +323,8 @@ class QssParser:
                     eblock = self.current.index("}")
                     prop = self.current[sblock:eblock]
                     prop = self.serialize_prop(prop)
-                    if prop: props.update(prop)
+                    if prop:
+                        props.update(prop)
                     self.add_widgets(widgets, props)
                     widgets, props = [], {}
                     self.lnum += 1
@@ -338,7 +340,8 @@ class QssParser:
                 continue
             if inblock:
                 prop = self.serialize_prop(self.current)
-                if prop: props.update(prop)
+                if prop:
+                    props.update(prop)
                 self.lnum += 1
                 continue
             widgets.append(self.current)

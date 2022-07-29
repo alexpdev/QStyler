@@ -20,17 +20,17 @@
 
 import json
 import os
-from pathlib import Path
 import webbrowser
+from pathlib import Path
 
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (QApplication, QDialog, QFileDialog, QHBoxLayout,
                                QInputDialog, QLabel, QLineEdit, QMenu,
-                               QMenuBar, QPushButton, QTextBrowser,
-                               QVBoxLayout, QWidget, QPlainTextEdit)
+                               QMenuBar, QPlainTextEdit, QPushButton,
+                               QTextBrowser, QVBoxLayout, QWidget)
 
-from QStyler.utils import exitApp, QssParser
+from QStyler.utils import QssParser, exitApp
 
 
 class MenuBar(QMenuBar):
@@ -142,7 +142,7 @@ class ThemeMenu(QMenu):
             self.themeMenu.addAction(action)
         self.themeMenu.addSeparator()
 
-    def getThemeFile(self, title, path):  # pragma: nocover
+    def getThemeFile(self, title, path):
         """Open and save data in file path as title theme."""
         if path and title:
             parser = QssParser(path)
@@ -322,10 +322,11 @@ class FileMenu(QMenu):
                 fd.write(sheet)
         return True
 
-    def editCurrentSheet(self):
+    def editCurrentSheet(self):  # pragma: nocover
+        """Edit the current sheet."""
         sheet = QApplication.instance().styleSheet()
         self.dialog = QWidget()
-        self.dialog.resize(400,280)
+        self.dialog.resize(400, 280)
         layout = QVBoxLayout()
         self.dialog.setLayout(layout)
         textEdit = QPlainTextEdit(self.dialog)
@@ -342,11 +343,13 @@ class FileMenu(QMenu):
         textEdit.setPlainText(sheet)
         self.dialog.open()
 
-    def closeDialog(self):
+    def closeDialog(self):  # pragma: nocover
+        """Exit dialog window."""
         self.dialog.close()
         self.dialog.deleteLater()
 
-    def applyStyleSheet(self):
+    def applyStyleSheet(self):  # pragma: nocover
+        """Apply theme to current app instance."""
         text = self.dialog.textEdit.toPlainText()
         parser = QssParser(text)
         self.parent().manager.sheets = parser.result

@@ -12,3 +12,20 @@ QLabel {
 
 
 }
+/* this is a comment*/
+
+
+QCheckBox::indicator {
+    background-color: red;
+}
+
+/* this is a longer
+comment that spans two lines */
+
+QPushButton:pressed {
+    border-width: 3px;
+    border-style: solid;
+    border-color: #F71;
+}
+
+QPushButton:hover {color: #080;}

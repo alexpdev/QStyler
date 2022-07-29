@@ -26,7 +26,7 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget,
 
 from QStyler.menubar import MenuBar
 from QStyler.styler import StylerTab
-from QStyler.utils import get_icon, StyleManager, get_manager
+from QStyler.utils import StyleManager, get_icon
 from QStyler.widgets import WidgetsTab
 
 

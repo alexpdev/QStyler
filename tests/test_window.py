@@ -26,36 +26,53 @@ import pytest
 from PySide6.QtWidgets import QApplication, QMainWindow
 
 from QStyler import __main__, version
-from QStyler.utils import StyleManager
+from QStyler.utils import QssParser, StyleManager, get_manager
 from QStyler.window import MainWindow
 
 
-@pytest.fixture(scope="module")
-def pre() -> tuple:
+@pytest.fixture(scope="package")
+def app() -> QApplication:
     """
-    Test fixture for Application and MainWindow.
+    Test fixture for Application.
+
+    Yields
+    ------
+    QApplication
+        The main app.
+    """
+    appl = QApplication(sys.argv)
+    yield appl
+    appl.quit()
+
+
+@pytest.fixture(scope="package")
+def wind(app) -> QMainWindow:
+    """
+    Create a MainWindow object.
 
     Parameters
     ----------
     app : QApplication
-        _description_
+        the application instance.
 
     Yields
     ------
-    Iterator[tuple]
-        _description_
+    Iterator[QMainWindow]
+        The main window instance.
     """
-    app = QApplication(sys.argv)
-    mainwindow: QMainWindow = MainWindow()
-    mainwindow.show()
-    yield mainwindow, app
-    app.quit()
+    _ = app
+    window = MainWindow()
+    window.show()
+    yield window
+    window.close()
+    window.deleteLater()
 
 
-def processtime(app):
+def processtime(app=None):
     """Process Events and sleep for a second."""
+    app = app if app else QApplication.instance()
     app.processEvents()
-    time.sleep(0.02)
+    time.sleep(0.06)
 
 
 def test_main_entry():
@@ -68,20 +85,20 @@ def test_version():
     assert isinstance(version.__version__, str)
 
 
-def test_main_window(pre: tuple):
+def test_main_window(wind):
     """
     Test the main window.
 
     Parameters
     ----------
-    pre: tuple
-        the app and window.
+    wind: QMainWindow
+        the window instance.
     """
-    assert pre[0]
-    assert pre[1]
+    assert hasattr(wind, "layout")
+    assert hasattr(wind, "central")
 
 
-def test_menu_bar(pre: tuple):
+def test_menu_bar(wind):
     """
     Test the menu bar.
 
@@ -90,12 +107,10 @@ def test_menu_bar(pre: tuple):
     pre: tuple
         the app and window.
     """
-    assert pre
-    processtime(pre[1])
-    assert pre[0]
+    assert wind
 
 
-def test_styler_widget_combo(pre: tuple):
+def test_plus_button(wind):
     """
     Test the styler tab widget combo box.
 
@@ -104,18 +119,18 @@ def test_styler_widget_combo(pre: tuple):
     window : tuple
         _description_
     """
-    app: QApplication = pre[1]
-    window: QMainWindow = pre[0]
-    assert app
+    window = wind
     window.tabWidget.setCurrentIndex(2)
-    processtime(app)
+    processtime()
     tab = window.styler
-    tab.widget_combo.setCurrentIndex(5)
-    text = tab.widget_combo.currentText()
-    assert text in tab.lineedit.text()
+    tab.combo.setCurrentIndex(5)
+    tab.plusbtn.click()
+    assert len(tab.boxgroups) > 0
+    tab.minusbtn.click()
+    assert len(tab.boxgroups) == 0
 
 
-def test_apply_theme(pre: tuple):
+def test_apply_theme(wind):
     """
     Test applying theme.
 
@@ -124,53 +139,54 @@ def test_apply_theme(pre: tuple):
     window : tuple
         _description_
     """
-    window, app = pre
+    window = wind
     window.tabWidget.setCurrentIndex(0)
-    processtime(app)
+    processtime()
     theme = next(iter(window.menubar.optionsMenu.themeactions))
     theme.trigger()
-    processtime(app)
+    processtime()
     tab = window.styler
-    for i in range(tab.widget_combo.count()):
-        text = tab.widget_combo.itemText(i)
+    for i in range(tab.combo.count()):
+        text = tab.combo.itemText(i)
         if text == "QPushButton":
             break
-    processtime(app)
-    text = tab.widget_combo.setCurrentIndex(i)
+    processtime()
+    text = tab.combo.setCurrentIndex(i)
     assert tab.table.rowCount() > 1
 
 
-def test_set_property(pre: tuple):
+def test_set_property(wind):
     """
     Test applying theme.
 
     Parameters
     ----------
-    window : tuple
-        _description_
+    window : QMainWindow
+        The MainWindow instance
     """
-    window, app = pre
-    window.tabWidget.setCurrentIndex(0)
-    processtime(app)
+    window = wind
+    window.tabWidget.setCurrentIndex(1)
+    processtime()
     tab = window.styler
-    for i in range(tab.widget_combo.count()):
-        text = tab.widget_combo.itemText(i)
+    for i in range(tab.combo.count()):
+        text = tab.combo.itemText(i)
         if text == "QLineEdit":
-            tab.widget_combo.setCurrentIndex(i)
+            tab.combo.setCurrentIndex(i)
             break
-    processtime(app)
+    processtime()
     propcombo = tab.table.cellWidget(0, 0)
     for j in range(propcombo.count()):
         if propcombo.itemText(j) == "background-color":
+            propcombo.setCurrentText("backround")
             propcombo.setCurrentIndex(j)
             tab.table.item(0, 1).setText("#000")
             break
-    processtime(app)
+    processtime()
     assert tab.table.item(0, 1).text() == "#000"
     assert tab.table.rowCount() > 1
 
 
-def test_reset_property(pre: tuple):
+def test_reset_property(wind):
     """
     Test applying theme.
 
@@ -178,42 +194,41 @@ def test_reset_property(pre: tuple):
     ----------
     window : tuple
     """
-    app: QApplication = pre[1]
-    window: QMainWindow = pre[0]
-    window.tabWidget.setCurrentIndex(0)
-    processtime(app)
+    window: QMainWindow = wind
+    window.tabWidget.setCurrentIndex(1)
+    processtime()
     tab = window.styler
-    for i in range(tab.widget_combo.count()):
-        text = tab.widget_combo.itemText(i)
+    for i in range(tab.combo.count()):
+        text = tab.combo.itemText(i)
         if text == "QComboBox":
-            tab.widget_combo.setCurrentIndex(i)
+            tab.combo.setCurrentIndex(i)
             break
-    processtime(app)
+    processtime()
     propcombo = tab.table.cellWidget(0, 0)
     for j in range(propcombo.count()):
         if propcombo.itemText(j) == "border-color":
             propcombo.setCurrentIndex(j)
             tab.table.item(0, 1).setText("#000")
             break
-    processtime(app)
+    processtime()
     assert tab.table.item(0, 1).text() == "#000"
     theme = next(iter(window.menubar.optionsMenu.themeactions))
     theme.trigger()
-    processtime(app)
-    for i in range(tab.widget_combo.count()):
-        text = tab.widget_combo.itemText(i)
-        if text == "QComboBox":
+    processtime()
+    for i in range(tab.combo.count()):
+        text = tab.combo.itemText(i)
+        if text == "QSpinBox":
             break
-    processtime(app)
-    text = tab.widget_combo.setCurrentIndex(i)
+    processtime()
+    text = tab.combo.setCurrentIndex(i)
     window.menubar.optionsMenu.resetAction.trigger()
-    processtime(app)
+    processtime()
     assert tab.table.rowCount() > 1
 
 
-def test_style_table_props(pre: tuple):
+def test_style_table_props(wind, app):
     """Test the props combos in the style table."""
-    window, app = pre
+    window = wind
     actions = window.menubar.optionsMenu.themeactions
     window.tabWidget.setCurrentIndex(1)
     processtime(app)
@@ -221,44 +236,120 @@ def test_style_table_props(pre: tuple):
     first_theme.trigger()
     processtime(app)
     styler = window.styler
-    styler.widget_combo.setCurrentText("QLineEdit")
+    styler.combo.setCurrentText("QLineEdit")
     processtime(app)
     window.tabWidget.setCurrentIndex(2)
     processtime(app)
     styler.table.cellWidget(0, 0).setCurrentText("color")
     styler.table.item(0, 1).setText("#F00")
-    processtime(app)
-    styler.checkbox.toggle()
-    processtime(app)
-    assert styler.checkbox.isChecked()
+    assert "color: #F00;" in app.styleSheet()
 
 
-def test_tickers(pre: tuple):
+def test_tickers(wind):
     """Test the tickers in slider widgets."""
-    window, app = pre
-    window.tabWidget.setCurrentIndex(1)
-    processtime(app)
+    window = wind
     window.tabWidget.setCurrentIndex(0)
-    processtime(app)
+    window.tabWidget.setCurrentIndex(0)
+    processtime()
     tab = window.widgets
-    val1 = tab.verticalSlider.value()
-    val2 = tab.horizontalSlider.value()
-    print(val1, val2)
     while tab.verticalSlider.value() < 99:
         tab.verticalSlider.triggerAction(
-            tab.verticalSlider.SliderSingleStepAdd)
+            tab.verticalSlider.SliderSingleStepAdd
+        )
         tab.horizontalSlider.triggerAction(
-            tab.horizontalSlider.SliderSingleStepAdd)
-        processtime(app)
+            tab.horizontalSlider.SliderSingleStepAdd
+        )
+        processtime()
     assert tab.verticalSlider.value() > 95
     assert tab.horizontalSlider.value() > 95
 
 
-def test_load_qss():
+@pytest.mark.parametrize("path", [True, False])
+def test_load_qss(path):
     """Test stylesheet parser."""
     testdir = os.path.dirname(os.path.abspath(__file__))
-    with open(os.path.join(testdir, "test.qss"), encoding="utf-8") as fd:
-        text = fd.read()
+    if path:
+        text = os.path.join(testdir, "test.qss")
+    else:
+        with open(os.path.join(testdir, "test.qss"), encoding="utf-8") as fd:
+            text = fd.read()
+    manager = QssParser(text)
+    manager.compile()
+    out = manager.result
+    assert len(out) == 7
+
+
+def test_get_theme_file(wind):
+    """Test get theme file method."""
+    wind.tabWidget.setCurrentIndex(0)
+    testdir = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(testdir, "test.qss")
+    qty = len(wind.menubar.optionsMenu.themeMenu.actions())
+    wind.menubar.optionsMenu.getThemeFile("test", path)
+    processtime()
+    assert qty < len(wind.menubar.optionsMenu.themeMenu.actions())
+
+
+def test_validator_combo(wind):
+    """Test the combo validator."""
+    wind.tabWidget.setCurrentIndex(1)
+    processtime()
+    combo = wind.styler.combo
+    combo.setCurrentText("QPushButton")
+    processtime()
+    combo.setCurrentText("QTableWidget")
+    processtime()
+    combo.setCurrentText("QTableWidget ")
+    processtime()
+    combo.setCurrentText("QTableWidget Fork")
+    processtime()
+    combo.setCurrentText("QTableWidget QLineEdit")
+    processtime()
+    wind.styler.state_combo.loadStates("QTableWidget QLineEdit")
+    processtime()
+    wind.styler.control_combo.loadControls("QTableWidget QLineEdit")
+    assert combo.currentText() == "QTableWidget QLineEdit"
+
+
+def test_combo_validator(wind):
+    """Test combo validator widget."""
+    wind.tabWidget.setCurrentIndex(1)
+    processtime()
+    wind.styler.combo.setCurrentText("QWidg")
+    wind.styler.combo.validator().validate("QWidg")
+    processtime()
+    wind.styler.combo.setCurrentText("QWidgt QLineEdit")
+    wind.styler.combo.validator().validate("QWidgt QLineEdit")
+    processtime()
+    wind.styler.combo.setCurrentText("QWidg ")
+    wind.styler.combo.validator().validate("QWidg ")
+    processtime()
+    wind.styler.combo.setCurrentText("Yohobaazul")
+    wind.styler.combo.validator().fixup("Yohobaazul")
+    processtime()
+    wind.styler.combo.setCurrentText("QCheckBox")
+    processtime()
+    wind.styler.control_combo.setCurrentText("indicator")
+    processtime()
+    wind.styler.state_combo.setCurrentText("unchecked")
+    processtime()
+    wind.styler.table.cellWidget(0, 0).setCurrentText("border")
+    processtime()
+    wind.styler.table.item(0, 1).setText("3px solid #080")
+    processtime()
+    wind.styler.combo.validator().validate("")
+    assert wind.styler.getWidgetState() == "QCheckBox:indicator::unchecked"
+
+
+def test_style_manager(app, wind):
+    """Test the style manager class object."""
+    _, _ = app, wind
     manager = StyleManager()
-    out = manager.parse(text)
-    assert len(out) == 3
+    name, theme = next(iter(manager.themes.items()))
+    for key, value in theme.items():
+        manager.sheets.append({key: value})
+    sheet = manager.get_sheet("QPushButton")
+    assert sheet
+    assert name
+    assert app == manager.app
+    assert get_manager()
