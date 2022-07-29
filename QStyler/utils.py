@@ -18,6 +18,7 @@
 ##############################################################################
 """Utility module."""
 
+import os
 import json
 from copy import deepcopy
 from pathlib import Path
@@ -98,9 +99,17 @@ def load_records(filename):
 
     return json.load(open(path, encoding="utf-8"))
 
+def get_manager():
+    """Get the manager from any module."""
+    try:
+        return StyleManager.window.manager
+    except AttributeError:
+        raise Exception("WTF")
 
 class StyleManager:
     """Style Factory for table widget."""
+
+    window = None
 
     def __init__(self):
         """
@@ -108,6 +117,7 @@ class StyleManager:
         """
         self.themes = load_records("themes.json")
         self.data = load_records("data.json")
+        self.extras = []
         self.app = QApplication.instance()
         self.sheets = []
 
@@ -176,20 +186,24 @@ class StyleManager:
         """
         if not widget: return
         widgets = widget.split(",")
-        common = None
-        for widget in widgets:
-            for sheet in self.sheets:
-                if widget not in sheet:
-                    common = {}
-                if common is None:
-                    common = sheet[widget]
-                    continue
-                if not len(common):
+        styles = {}
+        for sheet in self.sheets:
+            for widget in widgets:
+                if widget in sheet:
+                    styles[widget] = sheet[widget]
+                    widgets.remove(widget)
                     break
-                for prop, value in sheet[widget].items():
-                    if prop in common and common[prop] != value:
-                        del common[prop]
-        return common if common is not None else {}
+        if len(widgets) >= 1:
+            return {}
+        seq = iter(styles.values())
+        first = next(seq)
+        for sheet in seq:
+            if not len(first):
+                return {}
+            for key, value in sheet.items():
+                if key in first and value != first[key]:
+                    del first[key]
+        return first
 
     def saveToFile(self, path: str) -> None:  # pragma: nocover
         """
@@ -217,8 +231,11 @@ class QssParser:
         path : str
             path to qss file
         """
-        with open(path, "rt", encoding="utf-8") as fd:
-            content = fd.read().split("\n")
+        if not isinstance(path, str) or os.path.exists(path):
+            with open(path, "rt", encoding="utf-8") as fd:
+                content = fd.read().split("\n")
+        else:
+            content = path.split("\n")
         self.lines = content
         self.result = {}
         self.collection = []

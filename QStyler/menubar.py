@@ -28,7 +28,7 @@ from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (QApplication, QDialog, QFileDialog, QHBoxLayout,
                                QInputDialog, QLabel, QLineEdit, QMenu,
                                QMenuBar, QPushButton, QTextBrowser,
-                               QVBoxLayout, QWidget)
+                               QVBoxLayout, QWidget, QPlainTextEdit)
 
 from QStyler.utils import exitApp, QssParser
 
@@ -282,10 +282,17 @@ class FileMenu(QMenu):
         """
         super().__init__(text, parent=parent)
         self.exitAction = QAction("Exit")
+        self.editAction = QAction("Edit")
+        self.saveAction = QAction("Save")
         self.showAction = QAction("Show StyleSheet")
+        self.saveAction.triggered.connect(self.saveQss)
         self.exitAction.triggered.connect(exitApp)
         self.showAction.triggered.connect(self.showStyles)
+        self.editAction.triggered.connect(self.editCurrentSheet)
         self.addAction(self.showAction)
+        self.addAction(self.editAction)
+        self.addAction(self.saveAction)
+        self.addSeparator()
         self.addAction(self.exitAction)
         self.parent().window.styler.button.clicked.connect(self.showStyles)
 
@@ -314,3 +321,35 @@ class FileMenu(QMenu):
                 sheet = QApplication.instance().styleSheet()
                 fd.write(sheet)
         return True
+
+    def editCurrentSheet(self):
+        sheet = QApplication.instance().styleSheet()
+        self.dialog = QWidget()
+        self.dialog.resize(400,280)
+        layout = QVBoxLayout()
+        self.dialog.setLayout(layout)
+        textEdit = QPlainTextEdit(self.dialog)
+        self.dialog.setWindowTitle("StyleSheet Editor")
+        layout.addWidget(textEdit)
+        savebtn = QPushButton("Apply", parent=self.dialog)
+        cancelbtn = QPushButton("Cancel", parent=self.dialog)
+        savebtn.pressed.connect(self.applyStyleSheet)
+        cancelbtn.pressed.connect(self.closeDialog)
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(savebtn)
+        hlayout.addWidget(cancelbtn)
+        layout.addLayout(hlayout)
+        textEdit.setPlainText(sheet)
+        self.dialog.open()
+
+    def closeDialog(self):
+        self.dialog.close()
+        self.dialog.deleteLater()
+
+    def applyStyleSheet(self):
+        text = self.dialog.textEdit.toPlainText()
+        parser = QssParser(text)
+        self.parent().manager.sheets = parser.result
+        self.parent.manager.set_sheet()
+        self.dialog.close()
+        self.dialog.deleteLater()

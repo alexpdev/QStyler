@@ -26,7 +26,7 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget,
 
 from QStyler.menubar import MenuBar
 from QStyler.styler import StylerTab
-from QStyler.utils import get_icon, StyleManager
+from QStyler.utils import get_icon, StyleManager, get_manager
 from QStyler.widgets import WidgetsTab
 
 
@@ -40,6 +40,8 @@ class MainWindow(QMainWindow):
         The widgets parent.
     """
 
+    manager = None
+
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         """Initialize main window."""
         super().__init__(parent=parent)
@@ -49,10 +51,11 @@ class MainWindow(QMainWindow):
         self.central.setLayout(self.layout)
         self.setCentralWidget(self.central)
         self.setObjectName("MainWindow")
-        self.resize(700, 600)
+        self.resize(900, 700)
         self.tabWidget = QTabWidget()
         self.setWindowIcon(get_icon("QStylerIcon.png"))
-        self.manager = StyleManager()
+        StyleManager.window = self
+        MainWindow.manager = StyleManager()
         self.widgets = WidgetsTab(parent=self)
         self.styler = StylerTab(parent=self)
         self.tabWidget.addTab(self.widgets, "Widgets")

@@ -188,7 +188,7 @@ class PropsValidator(QValidator):
         while text not in self.data:
             text = text[:-1]
 
-    def validate(self, text, pos):
+    def validate(self, text, _):
         """Validate text contents."""
         if text == '':
             return self.Acceptable
@@ -224,8 +224,9 @@ class WidgetCombo(QComboBox):
         self.setInsertPolicy(self.NoInsert)
         validator = WidgetValidator(parent=self)
         self.setValidator(validator)
-        self.currentIndexChanged.connect(self.widgetChanged.emit)
+        validator.inputAccepted.connect(self.widgetChanged.emit)
 
+    @blockSignals
     def loadItems(self):
         """Populate combobox with data."""
         widgets = self.info["controls"]
@@ -253,7 +254,9 @@ class ControlCombo(QComboBox):
         self.addItem("")
         widgets = widget.split(" ")
         if len(widgets) > 1:
-            widget = widget[-1]
+            widget = widgets[-1]
+        else:
+            widget = widgets[0]
         if widget in self.info["controls"]:
             for control in self.info["controls"][widget]:
                 self.addItem(control)
@@ -268,13 +271,26 @@ class StateCombo(QComboBox):
         self.widget = parent
         self.info = data
         self.addItem("")
-        self.loadStates()
+        self.loadStates("")
         self.setSizeAdjustPolicy(QComboBox.AdjustToContents)
+        self.widget.combo.widgetChanged.connect(self.loadStates)
 
-    def loadStates(self):
+    @blockSignals
+    def loadStates(self, widget=""):
         """Populate with data from jsonfile."""
-        for state in self.info["states"]:
+        for _ in range(self.count()):
+            self.removeItem(0)
+        self.addItem("")
+        widgets = widget.split(" ")
+        if len(widgets) > 1:
+            widget = widgets[-1]
+        else:
+            widget = widgets[0]
+        for state in self.info["states"]["*"]:
             self.addItem(state)
+        if widget in self.info["states"]:
+            for state in self.info["states"][widget]:
+                self.addItem(state)
 
 
 class StylerTab(QWidget):
@@ -331,11 +347,13 @@ class StylerTab(QWidget):
         self.boxgroups = []
 
     def updateTable(self, _):
+        """Update table to new status."""
         state = self.getWidgetState()
         common = self.manager.get_sheet(state)
         self.table.loadProps(common=common)
 
     def add_widget_combo(self):
+        """Add a widget combo box group."""
         l = len(self.boxgroups)
         text = self.getWidgetState()
         if not text: return
@@ -345,13 +363,13 @@ class StylerTab(QWidget):
             self.boxgroups.append(groupbox)
 
     def minus_widget_combo(self):
+        """Remove a widget combo box group."""
         if len(self.boxgroups) > 0:
             box = self.boxgroups[-1]
             del self.boxgroups[-1]
             box.deleteLater()
             box.destroy()
             self.layout.removeWidget(box)
-
 
     def addTableRow(self):
         """Add a new row to the table."""
@@ -394,6 +412,8 @@ class WidgetValidator(QValidator):
     Text validator for Widget Combo Box.
     """
 
+    inputAccepted = Signal([str])
+
     def __init__(self, parent=None):
         """Construct the validator."""
         super().__init__(parent=parent)
@@ -420,6 +440,7 @@ class WidgetValidator(QValidator):
                     continue
                 if len(widget) == l:
                     if text == widget:
+                        self.inputAccepted.emit(text)
                         return self.Acceptable
                 if len(widget) > l:
                     if text in widget:
