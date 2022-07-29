@@ -22,9 +22,9 @@ import re
 
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QValidator
-from PySide6.QtWidgets import (QApplication, QComboBox, QHBoxLayout,
-                               QLabel, QPushButton, QTableWidget,
-                               QTableWidgetItem, QVBoxLayout, QWidget, QGroupBox)
+from PySide6.QtWidgets import (QApplication, QComboBox, QHBoxLayout, QLabel,
+                               QPushButton, QTableWidget, QTableWidgetItem,
+                               QVBoxLayout, QWidget, QGroupBox)
 
 from QStyler.utils import blockSignals
 
@@ -308,7 +308,7 @@ class StylerTab(QWidget):
         self.widget_label = QLabel("Widget(s)")
         self.control_label = QLabel("Control")
         self.state_label = QLabel("State")
-        self.plusbtn = QPushButton("+",parent=self)
+        self.plusbtn = QPushButton("+", parent=self)
         self.minusbtn = QPushButton("-", parent=self)
         self.combo = WidgetCombo(self.data, parent=self)
         self.control_combo = ControlCombo(self.data, parent=self)
@@ -356,8 +356,9 @@ class StylerTab(QWidget):
         """Add a widget combo box group."""
         l = len(self.boxgroups)
         text = self.getWidgetState()
-        if not text: return
-        if len(text.split(",")) >= l+1:
+        if not text:
+            return
+        if len(text.split(",")) >= l + 1:
             groupbox = GroupBox(parent=self)
             self.layout.insertWidget(l + 1, groupbox)
             self.boxgroups.append(groupbox)
@@ -428,10 +429,11 @@ class WidgetValidator(QValidator):
         while self.validate(text) == self.Invalid:
             text = text[:-1]
 
-    def validate(self,text, _=None):
+    def validate(self, text, _=None):
         """Authenticate whether text is valid."""
         if text == "":
             return self.Intermediate
+
         def test_match(text):
             """Test text to see if it is valid."""
             l = len(text)
@@ -445,6 +447,7 @@ class WidgetValidator(QValidator):
                 if len(widget) > l:
                     if text in widget:
                         return self.Intermediate
+
         pat1 = re.compile(r"^\w+?\s$")
         pat2 = re.compile(r"^\w+?\s\w+$")
         if pat2.match(text):
@@ -460,6 +463,7 @@ class WidgetValidator(QValidator):
             return self.Invalid
         result = test_match(text)
         return self.Invalid if result is None else result
+
 
 class GroupBox(QGroupBox):
     """Custom Group Box."""
@@ -478,5 +482,6 @@ class GroupBox(QGroupBox):
         self.layout.addWidget(self.control_combo)
         self.layout.addWidget(self.state_combo)
         self.state_combo.currentIndexChanged.connect(parent.statusChanged.emit)
-        self.control_combo.currentIndexChanged.connect(parent.statusChanged.emit)
+        self.control_combo.currentIndexChanged.connect(
+            parent.statusChanged.emit)
         self.combo.widgetChanged.connect(parent.statusChanged.emit)

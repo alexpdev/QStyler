@@ -42,7 +42,6 @@ class Memo:
         return result
 
 
-
 class Lorem:
     """Generator of standard lorem ipsum dummy text."""
 
@@ -99,12 +98,14 @@ def load_records(filename):
 
     return json.load(open(path, encoding="utf-8"))
 
+
 def get_manager():
     """Get the manager from any module."""
     try:
         return StyleManager.window.manager
     except AttributeError:
         raise Exception("WTF")
+
 
 class StyleManager:
     """Style Factory for table widget."""
@@ -138,9 +139,9 @@ class StyleManager:
         for sheet in self.sheets:
             widg = next(iter(sheet.keys()))
             if widg in widgets:
-                sheet[widg].update({prop:value})
+                sheet[widg].update({prop: value})
                 widgets.remove(widg)
-        self.sheets += [{widget:{prop:value}} for widget in widgets]
+        self.sheets += [{widget: {prop: value}} for widget in widgets]
         self.set_sheet()
 
     def _create_ssheet(self) -> dict:
@@ -184,7 +185,8 @@ class StyleManager:
         dict
             Empty dict or current style sheet.
         """
-        if not widget: return
+        if not widget:
+            return
         widgets = widget.split(",")
         styles = {}
         for sheet in self.sheets:
@@ -322,7 +324,8 @@ class QssParser:
                     eblock = self.current.index("}")
                     prop = self.current[sblock:eblock]
                     prop = self.serialize_prop(prop)
-                    if prop: props.update(prop)
+                    if prop:
+                        props.update(prop)
                     self.add_widgets(widgets, props)
                     widgets, props = [], {}
                     self.lnum += 1
@@ -338,7 +341,8 @@ class QssParser:
                 continue
             if inblock:
                 prop = self.serialize_prop(self.current)
-                if prop: props.update(prop)
+                if prop:
+                    props.update(prop)
                 self.lnum += 1
                 continue
             widgets.append(self.current)

@@ -325,7 +325,7 @@ class FileMenu(QMenu):
     def editCurrentSheet(self):
         sheet = QApplication.instance().styleSheet()
         self.dialog = QWidget()
-        self.dialog.resize(400,280)
+        self.dialog.resize(400, 280)
         layout = QVBoxLayout()
         self.dialog.setLayout(layout)
         textEdit = QPlainTextEdit(self.dialog)
