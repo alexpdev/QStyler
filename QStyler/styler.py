@@ -194,15 +194,12 @@ class PropsValidator(QValidator):
         """Validate text contents."""
         if text == "":
             return self.Acceptable
-        tlen, inter = len(text), False
+        inter = False
         for prop in self.data:
-            prop_len = len(prop)
-            if tlen == prop_len:
-                if text == prop:
-                    return self.Acceptable
-            if tlen < prop_len:
-                if text in prop:
-                    inter = True
+            if len(text) == len(prop) and text == prop:
+                return self.Acceptable
+            if len(text) < len(prop) and text in prop:
+                inter = True
         if inter:
             return self.Intermediate
         return self.Invalid
@@ -438,18 +435,13 @@ class WidgetValidator(QValidator):
 
         def test_match(text):
             """Test text to see if it is valid."""
-            tlen = len(text)
             for widget in self.widget_list:
-                if len(widget) < tlen:
-                    continue
-                if len(widget) == tlen:
-                    if text == widget:
-                        self.inputAccepted.emit(text)
-                        return self.Acceptable
-                if len(widget) > tlen:
-                    if text in widget:
-                        return self.Intermediate
-            return self.Intermediate
+                if len(widget) == len(text) and text == widget:
+                    self.inputAccepted.emit(text)
+                    return self.Acceptable
+                if len(widget) > len(text) and text in widget:
+                    return self.Intermediate
+            return self.Invalid
 
         pat1 = re.compile(r"^\w+?\s$")
         pat2 = re.compile(r"^\w+?\s\w+$")
@@ -464,8 +456,7 @@ class WidgetValidator(QValidator):
             if widgets[0] in self.widget_list:
                 return self.Intermediate
             return self.Invalid
-        result = test_match(text)
-        return self.Invalid if result is None else result
+        return test_match(text)
 
 
 class GroupBox(QGroupBox):
