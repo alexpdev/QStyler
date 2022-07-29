@@ -19,11 +19,29 @@
 """Utility module."""
 
 import json
+import os
 from copy import deepcopy
 from pathlib import Path
 
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
+
+
+class Memo:
+    """Memoize data."""
+
+    def __init__(self, func):
+        """Initialize the class instance."""
+        self.cache = {}
+        self.func = func
+
+    def __call__(self, *args, **kwargs):
+        """Invoke function call and save results to cache."""
+        if args in self.cache:
+            return self.cache[args]
+        result = self.func(*args, **kwargs)
+        self.cache[args] = result
+        return result
 
 
 class Lorem:
@@ -75,6 +93,7 @@ def get_icon(filename=None):
     return QIcon(str(path))
 
 
+@Memo
 def load_records(filename):
     """Return data regarding QWidgets and styles."""
     path = get_src_dir() / "style" / filename
@@ -82,8 +101,15 @@ def load_records(filename):
     return json.load(open(path, encoding="utf-8"))
 
 
+def get_manager():
+    """Get the manager from any module."""
+    return StyleManager.window.manager
+
+
 class StyleManager:
     """Style Factory for table widget."""
+
+    window = None
 
     def __init__(self):
         """
@@ -91,10 +117,11 @@ class StyleManager:
         """
         self.themes = load_records("themes.json")
         self.data = load_records("data.json")
+        self.extras = []
         self.app = QApplication.instance()
         self.sheets = []
 
-    def addSheet(self, widget: object, prop: str, value: str):
+    def add_sheet(self, widget: str, prop: str, value: str):
         """
         Add sheet data for widget to list of stylesheets.
 
@@ -107,12 +134,13 @@ class StyleManager:
         value : str
             _description_
         """
+        widgets = widget.split(",")
         for sheet in self.sheets:
-            if widget in sheet:
-                sheet[widget][prop] = value
-                break
-        else:
-            self.sheets.append({widget: {prop: value}})
+            widg = next(iter(sheet.keys()))
+            if widg in widgets:
+                sheet[widg].update({prop: value})
+                widgets.remove(widg)
+        self.sheets += [{widget: {prop: value}} for widget in widgets]
         self.set_sheet()
 
     def _create_ssheet(self) -> dict:
@@ -156,11 +184,27 @@ class StyleManager:
         dict
             Empty dict or current style sheet.
         """
-        if widget:
-            for sheet in self.sheets:
-                if widget in sheet:
-                    return sheet[widget]
-        return {}
+        if not widget:
+            return {}
+        widgets = widget.split(",")
+        styles = {}
+        for sheet in self.sheets:
+            for widg in widgets:
+                if widg in sheet:
+                    styles[widg] = sheet[widg]
+                    widgets.remove(widg)
+                    break
+        if len(widgets) >= 1:
+            return {}
+        seq = iter(styles.values())
+        first = next(seq)
+        for sheet in seq:
+            if not first:
+                return {}
+            for key, value in sheet.items():
+                if key in first and value != first[key]:
+                    del first[key]
+        return first
 
     def saveToFile(self, path: str) -> None:  # pragma: nocover
         """
@@ -175,48 +219,143 @@ class StyleManager:
         with open(path, "wt", encoding="utf-8") as fd:
             fd.write(stylesheet)
 
+
+class QssParser:
+    """Qt Style Sheet Parser."""
+
+    def __init__(self, path):
+        """
+        Initialize and construct the qss parser object.
+
+        Parameters
+        ----------
+        path : str
+            path to qss file
+        """
+        if not isinstance(path, str) or os.path.exists(path):
+            with open(path, "rt", encoding="utf-8") as fd:
+                content = fd.read().split("\n")
+        else:
+            content = path.split("\n")
+        self.lines = content
+        self.result = {}
+        self.collection = []
+        self.lnum = 0
+        self.total = len(self.lines)
+        self.parse_qss()
+
+    @property
+    def current(self):
+        """
+        Return the current line.
+
+        Returns
+        -------
+        str
+            The current line
+        """
+        return self.lines[self.lnum]
+
+    def skipcomment(self):
+        """
+        Skip all lines until parser reaches the end comment token.
+        """
+        while "*/" not in self.current:
+            self.lnum += 1
+        self.lnum += 1
+
+    def add_widgets(self, widgets, props):
+        """
+        Add widgets to the the master collection.
+
+        Parameters
+        ----------
+        widgets : str
+            The widgets name
+        props : dict
+            the property names and values
+        """
+        widget_str = "".join(widgets)
+        widgets = widget_str.split(",")
+        for widget in widgets:
+            self.collection.append({widget.strip(): deepcopy(props)})
+
     @staticmethod
-    def sanatize_prop(prop):
-        """Sanatize property text."""
-        prop = prop.strip()
-        lst = prop.split(":")
+    def serialize_prop(line):
+        """
+        Normalize property string into name and value.
+
+        Parameters
+        ----------
+        line : str
+            the current line
+
+        Returns
+        -------
+        dict
+            the key,value pair of the normalized results
+        """
         try:
-            properte, value = lst[0], ":".join(lst[1:])
-            if value[-1] == ";":
-                value = value[:-1]
-            return properte.strip(), value.strip()
-        except IndexError:
+            group = line.split(":")
+            key, val = group[0].strip(), ":".join(group[1:]).strip()
+            if val.endswith(";"):
+                val = val[:-1]
+            return {key: val}
+        except IndexError:  # pragma: nocover
             return None
 
-    def parse(self, content):
-        """Parse lines from file."""
-        lines = content.split("\n")
-        size = len(lines)
-        out = []
-        start = 0
-        while start < size - 1:
-            states = []
-            while "{" not in lines[start]:
-                states.append(lines[start])
-                start += 1
-                if start > size:
-                    return out  # pragma: nocover
-            states.append(lines[start][:lines[start].index("{")])
-            props = {}
-            start += 1
-            while "}" not in lines[start]:
-                result = self.sanatize_prop(lines[start])
-                if result:
-                    prop, value = result
-                    props[prop] = value
-                start += 1
-                if start > size:
-                    return out  # pragma: nocover
-            widgets = [i.strip() for i in "".join(states).split(",")]
-            for widget in widgets:
-                out.append({widget: deepcopy(props)})
-            start += 1
-        return out
+    def parse_qss(self):
+        """
+        Parse the content of the qss file one line at a time.
+        """
+        inblock = False
+        widgets, props = [], {}
+        while self.lnum < self.total:
+            if self.current == "":
+                self.lnum += 1
+                continue
+            if "/*" in self.current:
+                self.skipcomment()
+                continue
+            if "{" in self.current:
+                sblock = self.current.index("{")
+                widgets.append(self.current[:sblock])
+                if "}" in self.current:
+                    eblock = self.current.index("}")
+                    prop = self.current[sblock:eblock]
+                    prop = self.serialize_prop(prop)
+                    if prop:
+                        props.update(prop)
+                    self.add_widgets(widgets, props)
+                    widgets, props = [], {}
+                    self.lnum += 1
+                    continue
+                self.lnum += 1
+                inblock = True
+                continue
+            if "}" in self.current:
+                inblock = False
+                self.add_widgets(widgets, props)
+                self.lnum += 1
+                widgets, props = [], {}
+                continue
+            if inblock:
+                prop = self.serialize_prop(self.current)
+                if prop:
+                    props.update(prop)
+                self.lnum += 1
+                continue
+            widgets.append(self.current)
+            print(self.current)
+            self.lnum += 1
+        self.add_widgets(widgets, props)
+
+    def compile(self):
+        """
+        Gather and group all results into one dictionary.
+        """
+        for row in self.collection:
+            self.result.update(row)
 
 
 def blockSignals(func):

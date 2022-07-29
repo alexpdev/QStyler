@@ -18,12 +18,15 @@
 ##############################################################################
 """Module for styler tab and styler table."""
 
+import re
+
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QHBoxLayout,
-                               QLabel, QLineEdit, QPushButton, QTableWidget,
+from PySide6.QtGui import QValidator
+from PySide6.QtWidgets import (QApplication, QComboBox, QGroupBox, QHBoxLayout,
+                               QLabel, QPushButton, QTableWidget,
                                QTableWidgetItem, QVBoxLayout, QWidget)
 
-from QStyler.utils import StyleManager, blockSignals
+from QStyler.utils import blockSignals
 
 
 class Table(QTableWidget):
@@ -50,16 +53,17 @@ class Table(QTableWidget):
         self.widgetChanged.connect(self.loadProps)
 
     @blockSignals
-    def loadProps(self, widget=None):
+    def loadProps(self, common=None):
         """Load items into table."""
-        sheet = self.manager.get_sheet(widget)
+        if common is None:
+            common = {}
         rowcount = self.rowCount()
-        for i, key in enumerate(sheet):
+        for i, key in enumerate(common):
             if i < rowcount:
-                self._setRowData(i, key, sheet[key])
+                self._setRowData(i, key, common[key])
             else:
-                self.addRow(key=key, value=sheet[key])
-        while self.rowCount() > len(sheet):
+                self.addRow(key=key, value=common[key])
+        while self.rowCount() > len(common):
             self.removeRow(self.rowCount() - 1)
         self.addRow()
 
@@ -103,7 +107,6 @@ class Table(QTableWidget):
         item.setFlags(flag1 | flag2 | flag3)
         self.setItem(rownum, 1, item)
         self._setRowData(rownum, key, value)
-        self.resizeRowsToContents()
 
     def saveProp(self, row, column):
         """Save the newly changed value into the current stylesheet."""
@@ -115,7 +118,7 @@ class Table(QTableWidget):
             title = self.widget.getWidgetState()
             if not prop or prop == "":
                 return  # pragma: nocover
-            self.manager.addSheet(title, prop, value)
+            self.manager.add_sheet(title, prop, value)
         self.setNewRow.emit()
 
     def currentSheet(self):
@@ -131,7 +134,7 @@ class Table(QTableWidget):
         prop = cbox.currentText()
         sheet = self.currentSheet()
         if prop in sheet:
-            self.item(row, 1).setText(sheet[prop])
+            self.item(row, 1).setText(sheet[prop])  # pragma: nocover
         else:
             self.item(row, 1).setText("")
 
@@ -146,8 +149,11 @@ class PropsCombo(QComboBox):
         self.app = QApplication.instance()
         self.info = data
         self.tableItem = None
-        self.addItem("-")
+        self.addItem("")
         self.loadItems()
+        validator = PropsValidator(parent=self)
+        self.setEditable(True)
+        self.setValidator(validator)
         self.currentIndexChanged.connect(self.notifyTable)
         self.setSizeAdjustPolicy(self.sizeAdjustPolicy().AdjustToContents)
 
@@ -170,6 +176,35 @@ class PropsCombo(QComboBox):
                 break
 
 
+class PropsValidator(QValidator):
+    """Validator for Props Combo."""
+
+    def __init__(self, parent=None):
+        """Construct the validator class."""
+        super().__init__(parent=parent)
+        self.widget = parent
+        self.data = parent.info["properties"]
+
+    def fixup(self, text):
+        """Fix invalid text."""
+        while text not in self.data:  # pragma: nocover
+            text = text[:-1]
+
+    def validate(self, text, _):
+        """Validate text contents."""
+        if text == "":
+            return self.Acceptable  # pragma: nocover
+        inter = False
+        for prop in self.data:
+            if len(text) == len(prop) and text == prop:
+                return self.Acceptable
+            if len(text) < len(prop) and text in prop:
+                inter = True
+        if inter:
+            return self.Intermediate  # pragma: nocover
+        return self.Invalid
+
+
 class WidgetCombo(QComboBox):
     """Combo box containing all of the available widgets."""
 
@@ -180,11 +215,17 @@ class WidgetCombo(QComboBox):
         super().__init__(parent=parent)
         self.widget = parent
         self.info = data
+        self.addItem("")
         self.addItem("*")
         self.loadItems()
+        self.setEditable(True)
         self.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        self.currentTextChanged.connect(self.widgetChanged.emit)
+        self.setInsertPolicy(self.NoInsert)
+        validator = WidgetValidator(parent=self)
+        self.setValidator(validator)
+        validator.inputAccepted.connect(self.widgetChanged.emit)
 
+    @blockSignals
     def loadItems(self):
         """Populate combobox with data."""
         widgets = self.info["controls"]
@@ -202,7 +243,7 @@ class ControlCombo(QComboBox):
         self.info = data
         self.addItem("")
         self.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        self.widget.widget_combo.currentTextChanged.connect(self.loadControls)
+        self.widget.combo.widgetChanged.connect(self.loadControls)
 
     @blockSignals
     def loadControls(self, widget):
@@ -210,9 +251,14 @@ class ControlCombo(QComboBox):
         for _ in range(self.count()):
             self.removeItem(0)
         self.addItem("")
-        widget = "*" if widget == "-" else widget
-        for control in self.info["controls"][widget]:
-            self.addItem(control)
+        widgets = widget.split(" ")
+        if len(widgets) > 1:
+            widget = widgets[-1]
+        else:
+            widget = widgets[0]
+        if widget in self.info["controls"]:
+            for control in self.info["controls"][widget]:
+                self.addItem(control)
 
 
 class StateCombo(QComboBox):
@@ -224,99 +270,114 @@ class StateCombo(QComboBox):
         self.widget = parent
         self.info = data
         self.addItem("")
-        self.loadStates()
+        self.loadStates("")
         self.setSizeAdjustPolicy(QComboBox.AdjustToContents)
+        self.widget.combo.widgetChanged.connect(self.loadStates)
 
-    def loadStates(self):
+    @blockSignals
+    def loadStates(self, widget=""):
         """Populate with data from jsonfile."""
-        for state in self.info["states"]:
+        for _ in range(self.count()):
+            self.removeItem(0)
+        self.addItem("")
+        widgets = widget.split(" ")
+        if len(widgets) > 1:
+            widget = widgets[-1]
+        else:
+            widget = widgets[0]
+        for state in self.info["states"]["*"]:
             self.addItem(state)
+        if widget in self.info["states"]:
+            for state in self.info["states"][widget]:
+                self.addItem(state)
 
 
 class StylerTab(QWidget):
     """Tab containing the table that changes the styling for the widgets."""
 
+    statusChanged = Signal([str])
+
     def __init__(self, parent=None):
         """Initialize the styler tab."""
         super().__init__(parent=parent)
-        self.manager = StyleManager()
+        self.manager = parent.manager
+        self.data = self.manager.data
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
-        self.data = self.manager.data
-        self.widget_label = QLabel("Widget")
+        self.widget_label = QLabel("Widget(s)")
         self.control_label = QLabel("Control")
         self.state_label = QLabel("State")
-        self.lineedit = QLineEdit(parent=self)
-        self.linelabel = QLabel("Target")
-        for label in [self.widget_label, self.control_label, self.state_label]:
-            label.setAlignment(Qt.AlignJustify)
-        self.widget_combo = WidgetCombo(self.data, parent=self)
+        self.plusbtn = QPushButton("+", parent=self)
+        self.minusbtn = QPushButton("-", parent=self)
+        self.combo = WidgetCombo(self.data, parent=self)
         self.control_combo = ControlCombo(self.data, parent=self)
         self.state_combo = StateCombo(self.data, parent=self)
-        self.checkbox = QCheckBox("Read Only", parent=self)
-        self.combos = [self.widget_combo, self.control_combo, self.state_combo]
-        self.hlayout = QHBoxLayout()
-        self.hlayout.addWidget(self.widget_label)
-        self.hlayout.addWidget(self.widget_combo)
-        self.hlayout.addWidget(self.control_label)
-        self.hlayout.addWidget(self.control_combo)
-        self.hlayout.addWidget(self.state_label)
-        self.hlayout.addWidget(self.state_combo)
-        self.hlayout2 = QHBoxLayout()
-        self.hlayout2.addWidget(self.linelabel)
-        self.hlayout2.addWidget(self.lineedit)
-        self.hlayout2.addWidget(self.checkbox)
         self.button = QPushButton("Save Theme", parent=self)
         self.table = Table(self.manager, parent=self)
-        self.layout.addLayout(self.hlayout)
-        self.layout.addLayout(self.hlayout2)
+        self.vlayout1 = QVBoxLayout()
+        self.vlayout2 = QVBoxLayout()
+        self.vlayout3 = QVBoxLayout()
+        self.hlayout4 = QHBoxLayout()
+        self.vlayout1.addWidget(self.widget_label)
+        self.vlayout1.addWidget(self.combo)
+        self.vlayout2.addWidget(self.control_label)
+        self.vlayout2.addWidget(self.control_combo)
+        self.vlayout3.addWidget(self.state_label)
+        self.vlayout3.addWidget(self.state_combo)
+        self.mainGroup = QGroupBox(parent=self)
+        self.hlayout = QHBoxLayout()
+        self.mainGroup.setLayout(self.hlayout)
+        self.hlayout4.addWidget(self.plusbtn)
+        self.hlayout4.addWidget(self.minusbtn)
+        self.hlayout.addLayout(self.vlayout1)
+        self.hlayout.addLayout(self.vlayout2)
+        self.hlayout.addLayout(self.vlayout3)
+        self.layout.addWidget(self.mainGroup)
+        self.layout.addLayout(self.hlayout4)
         self.layout.addWidget(self.table)
         self.layout.addWidget(self.button)
-        self.widget_combo.currentTextChanged.connect(self.emitChanges)
-        self.control_combo.currentTextChanged.connect(self.emitChanges)
-        self.state_combo.currentTextChanged.connect(self.emitChanges)
-        self.checkbox.toggled.connect(self.setLineReadOnly)
+        self.plusbtn.clicked.connect(self.add_widget_combo)
+        self.minusbtn.clicked.connect(self.minus_widget_combo)
         self.table.setNewRow.connect(self.addTableRow)
+        self.combo.widgetChanged.connect(self.statusChanged.emit)
+        self.state_combo.currentIndexChanged.connect(self.statusChanged.emit)
+        self.control_combo.currentIndexChanged.connect(self.statusChanged.emit)
+        self.statusChanged.connect(self.updateTable)
+        self.boxgroups = []
+
+    def updateTable(self, _):
+        """Update table to new status."""
+        state = self.getWidgetState()
+        common = self.manager.get_sheet(state)
+        self.table.loadProps(common=common)
+
+    def add_widget_combo(self):
+        """Add a widget combo box group."""
+        boxlen = len(self.boxgroups)
+        text = self.getWidgetState()
+        if not text:
+            return  # pragma: nocover
+        if len(text.split(",")) >= boxlen + 1:
+            groupbox = GroupBox(parent=self)
+            self.layout.insertWidget(boxlen + 1, groupbox)
+            self.boxgroups.append(groupbox)
+
+    def minus_widget_combo(self):
+        """Remove a widget combo box group."""
+        if len(self.boxgroups) > 0:
+            box = self.boxgroups[-1]
+            del self.boxgroups[-1]
+            box.deleteLater()
+            box.destroy()
+            self.layout.removeWidget(box)
 
     def addTableRow(self):
-        """
-        Add a new row to the table.
-        """
+        """Add a new row to the table."""
         for row in range(self.table.rowCount()):
             text = self.table.cellWidget(row, 0).currentText()
-            if text == "-":
+            if text in ["", "-"]:
                 return
         self.table.addRow()
-
-    def setLineReadOnly(self, ischecked: bool):
-        """
-        Set the line edit as read only.
-
-        Parameters
-        ----------
-        ischecked : bool
-            if is checked.
-        """
-        self.lineedit.setReadOnly(ischecked)
-
-    @blockSignals
-    def emitChanges(self, _: str) -> None:
-        """
-        Send signals to table widget.
-
-        Parameters
-        ----------
-        data : str
-            _description_
-        """
-        self.lineedit.clear()
-        text = self.widget_combo.currentText()
-        control = self.control_combo.currentText()
-        state = self.state_combo.currentText()
-        result = "".join([i for i in [text, control, state] if i])
-        result = "*" if not result else result
-        self.lineedit.setText(result)
-        self.table.widgetChanged.emit(result)
 
     def getWidgetState(self) -> str:
         """
@@ -327,5 +388,94 @@ class StylerTab(QWidget):
         str
             the current state as a string
         """
-        text = self.lineedit.text()
-        return text if text else "*"
+        widgets = []
+        for box in self.boxgroups + [self]:
+            widget = box.combo.currentText()
+            control = box.control_combo.currentText()
+            state = box.state_combo.currentText()
+            parts = []
+            if widget:
+                parts.append(widget)
+            if control:
+                parts += [":", control]
+            if state:
+                parts += ["::", state]
+            full = "".join(parts)
+            if full:
+                widgets.append(full)
+        text = ",".join(widgets)
+        return text
+
+
+class WidgetValidator(QValidator):
+    """
+    Text validator for Widget Combo Box.
+    """
+
+    inputAccepted = Signal([str])
+
+    def __init__(self, parent=None):
+        """Construct the validator."""
+        super().__init__(parent=parent)
+        self.widget = parent
+        self.widget_list = []
+        for i in range(self.widget.count()):
+            text = self.widget.itemText(i)
+            self.widget_list.append(text)
+
+    def fixup(self, text):
+        """Fix the text when it is invalid."""
+        while self.validate(text) == self.Invalid:
+            text = text[:-1]
+
+    def validate(self, text, _=None):
+        """Authenticate whether text is valid."""
+        if text == "":
+            return self.Intermediate
+
+        def test_match(text):
+            """Test text to see if it is valid."""
+            for widget in self.widget_list:
+                if len(widget) == len(text) and text == widget:
+                    self.inputAccepted.emit(text)
+                    return self.Acceptable
+                if len(widget) > len(text) and text in widget:
+                    return self.Intermediate
+            return self.Invalid
+
+        pat1 = re.compile(r"^\w+?\s$")
+        pat2 = re.compile(r"^\w+?\s\w+$")
+        if pat2.match(text):
+            widgets = text.split(" ")
+            if widgets[0] in self.widget_list:
+                result = test_match(widgets[1])
+                return self.Invalid if result is None else result
+            return self.Invalid
+        if pat1.match(text):
+            widgets = text.split(" ")
+            if widgets[0] in self.widget_list:
+                return self.Intermediate
+            return self.Invalid
+        return test_match(text)
+
+
+class GroupBox(QGroupBox):
+    """Custom Group Box."""
+
+    def __init__(self, parent=None):
+        """Initialize Group Box Constructor."""
+        super().__init__(parent=parent)
+        self.widget = parent
+        self.data = parent.data
+        self.layout = QHBoxLayout()
+        self.setLayout(self.layout)
+        self.combo = WidgetCombo(self.data, parent=self)
+        self.control_combo = ControlCombo(self.data, parent=self)
+        self.state_combo = StateCombo(self.data, parent=self)
+        self.layout.addWidget(self.combo)
+        self.layout.addWidget(self.control_combo)
+        self.layout.addWidget(self.state_combo)
+        self.state_combo.currentIndexChanged.connect(parent.statusChanged.emit)
+        self.control_combo.currentIndexChanged.connect(
+            parent.statusChanged.emit)
+        self.combo.widgetChanged.connect(parent.statusChanged.emit)

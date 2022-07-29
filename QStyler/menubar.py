@@ -20,17 +20,17 @@
 
 import json
 import os
-from pathlib import Path
 import webbrowser
+from pathlib import Path
 
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (QApplication, QDialog, QFileDialog, QHBoxLayout,
                                QInputDialog, QLabel, QLineEdit, QMenu,
-                               QMenuBar, QPushButton, QTextBrowser,
-                               QVBoxLayout, QWidget)
+                               QMenuBar, QPlainTextEdit, QPushButton,
+                               QTextBrowser, QVBoxLayout, QWidget)
 
-from QStyler.utils import exitApp
+from QStyler.utils import QssParser, exitApp
 
 
 class MenuBar(QMenuBar):
@@ -142,21 +142,17 @@ class ThemeMenu(QMenu):
             self.themeMenu.addAction(action)
         self.themeMenu.addSeparator()
 
-    def getThemeFile(self, title, path):  # pragma: nocover
+    def getThemeFile(self, title, path):
         """Open and save data in file path as title theme."""
         if path and title:
-            with open(path, "rt", encoding="utf-8") as fd:
-                qss = fd.read()
-            manager = self.parent().manager
-            theme = manager.parse(qss)
+            parser = QssParser(path)
+            theme = parser.result
             final = {}
             for row in theme:
-                for k, v in row.items():
-                    final[k] = v
-            theme = final
+                final.update(row)
             action = QAction(title)
             action.setObjectName(title + "action")
-            self.themes[title] = theme
+            self.themes[title] = final
             self.themeactions[action] = title
             self.themeMenu.addAction(action)
             action.triggered.connect(self.applyTheme)
@@ -286,10 +282,17 @@ class FileMenu(QMenu):
         """
         super().__init__(text, parent=parent)
         self.exitAction = QAction("Exit")
+        self.editAction = QAction("Edit")
+        self.saveAction = QAction("Save")
         self.showAction = QAction("Show StyleSheet")
+        self.saveAction.triggered.connect(self.saveQss)
         self.exitAction.triggered.connect(exitApp)
         self.showAction.triggered.connect(self.showStyles)
+        self.editAction.triggered.connect(self.editCurrentSheet)
         self.addAction(self.showAction)
+        self.addAction(self.editAction)
+        self.addAction(self.saveAction)
+        self.addSeparator()
         self.addAction(self.exitAction)
         self.parent().window.styler.button.clicked.connect(self.showStyles)
 
@@ -318,3 +321,38 @@ class FileMenu(QMenu):
                 sheet = QApplication.instance().styleSheet()
                 fd.write(sheet)
         return True
+
+    def editCurrentSheet(self):  # pragma: nocover
+        """Edit the current sheet."""
+        sheet = QApplication.instance().styleSheet()
+        self.dialog = QWidget()
+        self.dialog.resize(400, 280)
+        layout = QVBoxLayout()
+        self.dialog.setLayout(layout)
+        textEdit = QPlainTextEdit(self.dialog)
+        self.dialog.setWindowTitle("StyleSheet Editor")
+        layout.addWidget(textEdit)
+        savebtn = QPushButton("Apply", parent=self.dialog)
+        cancelbtn = QPushButton("Cancel", parent=self.dialog)
+        savebtn.pressed.connect(self.applyStyleSheet)
+        cancelbtn.pressed.connect(self.closeDialog)
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(savebtn)
+        hlayout.addWidget(cancelbtn)
+        layout.addLayout(hlayout)
+        textEdit.setPlainText(sheet)
+        self.dialog.show()
+
+    def closeDialog(self):  # pragma: nocover
+        """Exit dialog window."""
+        self.dialog.close()
+        self.dialog.deleteLater()
+
+    def applyStyleSheet(self):  # pragma: nocover
+        """Apply theme to current app instance."""
+        text = self.dialog.textEdit.toPlainText()
+        parser = QssParser(text)
+        self.parent().manager.sheets = parser.result
+        self.parent.manager.set_sheet()
+        self.dialog.close()
+        self.dialog.deleteLater()
