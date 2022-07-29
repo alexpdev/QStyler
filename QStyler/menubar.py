@@ -341,7 +341,7 @@ class FileMenu(QMenu):
         hlayout.addWidget(cancelbtn)
         layout.addLayout(hlayout)
         textEdit.setPlainText(sheet)
-        self.dialog.open()
+        self.dialog.show()
 
     def closeDialog(self):  # pragma: nocover
         """Exit dialog window."""

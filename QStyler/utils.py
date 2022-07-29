@@ -106,7 +106,6 @@ def get_manager():
     return StyleManager.window.manager
 
 
-
 class StyleManager:
     """Style Factory for table widget."""
 
@@ -193,7 +192,7 @@ class StyleManager:
             for widg in widgets:
                 if widg in sheet:
                     styles[widg] = sheet[widg]
-                    widgets.remove(widget)
+                    widgets.remove(widg)
                     break
         if len(widgets) >= 1:
             return {}
@@ -281,7 +280,8 @@ class QssParser:
         for widget in widgets:
             self.collection.append({widget.strip(): deepcopy(props)})
 
-    def serialize_prop(self, line):
+    @staticmethod
+    def serialize_prop(line):
         """
         Normalize property string into name and value.
 
