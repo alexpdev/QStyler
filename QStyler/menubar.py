@@ -30,7 +30,7 @@ from PySide6.QtWidgets import (QApplication, QDialog, QFileDialog, QHBoxLayout,
                                QMenuBar, QPlainTextEdit, QPushButton,
                                QTextBrowser, QVBoxLayout, QWidget)
 
-from QStyler.utils import QssParser, exitApp
+from QStyler.utils import QssParser, exitApp, get_manager
 
 
 class MenuBar(QMenuBar):
@@ -54,7 +54,7 @@ class MenuBar(QMenuBar):
         """
         super().__init__(parent)
         self.window = parent
-        self.manager = parent.styler.manager
+        self.manager = get_manager()
         self.fileMenu = FileMenu("File", parent=self)
         self.optionsMenu = ThemeMenu("Theme", parent=self)
         self.helpMenu = HelpMenu("Help", parent=self)
@@ -124,7 +124,8 @@ class ThemeMenu(QMenu):
             the parent of the widget, by default None
         """
         super().__init__(text, parent=parent)
-        self.themes = self.parent().manager.themes
+        self.manager = get_manager()
+        self.themes = self.manager.themes
         self.resetAction = QAction("Reset Theme")
         self.loadAction = QAction("Load Theme")
         self.loadAction.triggered.connect(self.loadTheme)
@@ -165,7 +166,7 @@ class ThemeMenu(QMenu):
 
     def createTheme(self):  # pragma: nocover
         """Save the current stylesheet as a theme to use in the future."""
-        sheets = self.parent().manager.sheets
+        sheets = self.manager.sheets
         name, status = QInputDialog.getText(self, "Enter Theme Name",
                                             "Theme Name", QLineEdit.Normal, "")
         if status and name not in self.themes:
@@ -186,17 +187,17 @@ class ThemeMenu(QMenu):
         sheet = []
         for key, val in theme.items():
             sheet.append({key: val})
-        self.parent().manager.sheets = sheet
-        self.parent().manager.set_sheet()
+        self.manager.sheets = sheet
+        self.manager.set_sheet()
 
     def resetStyleSheet(self):
         """Reset the current style sheet to blank."""
-        parent = self.parent()
-        parent.manager.sheets = []
-        sheet = parent.manager.set_sheet()
+
+        self.manager.sheets = []
+        sheet = self.manager.set_sheet()
         self.parent().window.setStyleSheet(sheet)
-        parent.window.widgets.setStyleSheet(sheet)
-        parent.window.styler.setStyleSheet(sheet)
+        self.parent().window.widgets.setStyleSheet(sheet)
+        self.parent().window.styler.setStyleSheet(sheet)
 
 
 class ThemeLoadDialog(QDialog):  # pragma: nocover

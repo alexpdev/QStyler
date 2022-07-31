@@ -21,12 +21,12 @@
 import sys
 from typing import Optional
 
-from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget,
+from PySide6.QtWidgets import (QMainWindow, QTabWidget,
                                QVBoxLayout, QWidget)
 
 from QStyler.menubar import MenuBar
 from QStyler.styler import StylerTab
-from QStyler.utils import StyleManager, get_icon
+from QStyler.utils import get_icon, Application, get_manager
 from QStyler.widgets import WidgetsTab
 
 
@@ -54,8 +54,7 @@ class MainWindow(QMainWindow):
         self.resize(900, 700)
         self.tabWidget = QTabWidget()
         self.setWindowIcon(get_icon("QStylerIcon.png"))
-        StyleManager.window = self
-        MainWindow.manager = StyleManager()
+        self.manager = get_manager()
         self.widgets = WidgetsTab(parent=self)
         self.styler = StylerTab(parent=self)
         self.tabWidget.addTab(self.widgets, "Widgets")
@@ -67,7 +66,7 @@ class MainWindow(QMainWindow):
 
 def execute():  # pragma: nocover
     """Entry point for cli and execution."""
-    app = QApplication(sys.argv)
+    app = Application(sys.argv)
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
