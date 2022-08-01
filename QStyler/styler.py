@@ -27,6 +27,7 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QGroupBox, QHBoxLayout,
                                QTableWidgetItem, QVBoxLayout, QWidget)
 
 from QStyler.utils import blockSignals
+from QStyler.toolbar import ToolBar
 
 
 class Table(QTableWidget):
@@ -118,7 +119,7 @@ class Table(QTableWidget):
             title = self.widget.getWidgetState()
             if not prop or prop == "":
                 return  # pragma: nocover
-            self.manager.add_sheet(title, prop, value)
+            self.manager.append_sheet(title, prop, value)
         self.setNewRow.emit()
 
     def currentSheet(self):
@@ -314,6 +315,12 @@ class StylerTab(QWidget):
         self.state_combo = StateCombo(self.data, parent=self)
         self.button = QPushButton("Save Theme", parent=self)
         self.table = Table(self.manager, parent=self)
+        self.toolbar = ToolBar(parent=self)
+        self.hlayout2 = QHBoxLayout()
+        self.hlayout2.addStretch(0)
+        self.hlayout2.addWidget(self.toolbar)
+        self.hlayout2.addStretch(0)
+        self.layout.addLayout(self.hlayout2)
         self.vlayout1 = QVBoxLayout()
         self.vlayout2 = QVBoxLayout()
         self.vlayout3 = QVBoxLayout()
@@ -358,8 +365,9 @@ class StylerTab(QWidget):
         if not text:
             return  # pragma: nocover
         if len(text.split(",")) >= boxlen + 1:
+
             groupbox = GroupBox(parent=self)
-            self.layout.insertWidget(boxlen + 1, groupbox)
+            self.layout.insertWidget(boxlen + 2, groupbox)
             self.boxgroups.append(groupbox)
 
     def minus_widget_combo(self):

@@ -233,8 +233,9 @@ class StyleManager:
         self.sheets = []
         self.update_theme()
 
-    def apply_theme(self, theme):
+    def apply_theme(self, name):
         """Apply given theme as current theme."""
+        theme = self.themes[name]
         sheets = self.convert_to_sheets(theme)
         self.sheets = sheets
         self.update_theme()
