@@ -20,9 +20,10 @@
 
 from PySide6.QtGui import QAction
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QToolBar, QToolButton, QComboBox
+from PySide6.QtWidgets import QToolBar, QComboBox
 
 from QStyler.utils import get_manager, get_icon
+from QStyler.actions import ShowAction, EditAction, saveQss
 
 
 class ThemeCombo(QComboBox):
@@ -46,34 +47,45 @@ class ToolBar(QToolBar):
         self.manager = get_manager()
         self.themecombo = ThemeCombo(parent=self)
         self.addWidget(self.themecombo)
-        self.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
         self.apply_theme_action = QAction()
         self.apply_theme_action.setIcon(get_icon('confirm'))
-        # self.apply_theme_action.setText("Apply")
+        self.apply_theme_action.setToolTip('Apply Theme')
         self.addAction(self.apply_theme_action)
         self.addSeparator()
-        self.view_current_action = QAction()
-        self.view_current_action.setText("View")
+        self.view_current_action = ShowAction()
+        self.view_current_action.setToolTip("View current theme")
         self.view_current_action.setIcon(get_icon("file"))
         self.addAction(self.view_current_action)
         self.save_current_action = QAction()
-        self.save_current_action.setText("Save")
+        self.save_current_action.setToolTip("Save")
         self.save_current_action.setIcon(get_icon("floppy-disk"))
         self.addAction(self.save_current_action)
         self.load_theme_action = QAction()
-        self.load_theme_action.setText("Load")
+        self.load_theme_action.setToolTip("Load")
         self.load_theme_action.setIcon(get_icon("import"))
         self.addAction(self.load_theme_action)
         self.reset_theme_action = QAction()
-        self.reset_theme_action.setText("Reset")
+        self.reset_theme_action.setToolTip("Reset")
         self.reset_theme_action.setIcon(get_icon("reset"))
         self.addAction(self.reset_theme_action)
-        self.edit_theme_action = QAction()
-        self.edit_theme_action.setText("Edit")
+        self.edit_theme_action = EditAction()
+        self.edit_theme_action.setIcon(get_icon("edit"))
+        self.edit_theme_action.setToolTip("Edit Current Theme")
         self.edit_theme_action.setIcon(get_icon("edit"))
         self.addAction(self.edit_theme_action)
+        self.view_current_action.triggered.connect(self.view_current_action.showStyles)
         self.reset_theme_action.triggered.connect(self.manager.reset)
         self.apply_theme_action.triggered.connect(self.apply_theme)
+        self.edit_theme_action.triggered.connect(self.edit_theme_action.edit_current_sheet)
+        self.save_current_action.triggered.connect(saveQss)
+
+    def activate_load_item(self):
+        loadAction = self.parent().window.menubar.loadAction
+        loadAction.loaded.connect(self.load_new_theme)
+        self.load_theme_action.triggered.connect(loadAction.trigger)
+
+    def load_new_theme(self, theme, title):
+        self.themecombo.addItem(title)
 
 
     def apply_theme(self):

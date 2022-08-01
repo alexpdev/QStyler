@@ -31,7 +31,7 @@ from PySide6.QtWidgets import (QApplication, QDialog, QFileDialog, QHBoxLayout,
                                QTextBrowser, QVBoxLayout, QWidget)
 
 from QStyler.utils import QssParser, exitApp, get_manager
-from QStyler.actions import LoadAction
+from QStyler.actions import LoadAction, EditAction, ShowAction, saveQss
 
 
 class MenuBar(QMenuBar):
@@ -56,6 +56,8 @@ class MenuBar(QMenuBar):
         super().__init__(parent)
         self.window = parent
         self.manager = get_manager()
+        self.loadAction = LoadAction()
+        self.loadAction.setText("Load Theme File")
         self.fileMenu = FileMenu("File", parent=self)
         self.optionsMenu = ThemeMenu("Theme", parent=self)
         self.helpMenu = HelpMenu("Help", parent=self)
@@ -128,13 +130,14 @@ class ThemeMenu(QMenu):
         self.manager = get_manager()
         self.themes = self.manager.themes
         self.resetAction = QAction("Reset Theme")
-        self.loadAction = LoadAction("Load Theme")
         self.saveCurrent = QAction("Save Current Theme")
         self.resetAction.triggered.connect(self.manager.reset)
-        self.loadAction.loaded.connect(self.add_new_theme)
+        toolbar = parent.window.styler.toolbar
+        toolbar.loadAction = self.parent().loadAction
+        self.parent().loadAction.loaded.connect(self.add_new_theme)
         self.themeMenu = QMenu("Themes", parent=self)
         self.saveCurrent.triggered.connect(self.createTheme)
-        self.addAction(self.loadAction)
+        self.addAction(self.parent().loadAction)
         self.addAction(self.saveCurrent)
         self.addMenu(self.themeMenu)
         self.addAction(self.resetAction)
@@ -202,71 +205,19 @@ class FileMenu(QMenu):
         """
         super().__init__(text, parent=parent)
         self.exitAction = QAction("Exit")
-        self.editAction = QAction("Edit")
+        self.editAction = EditAction("Edit")
         self.saveAction = QAction("Save")
-        self.showAction = QAction("Show StyleSheet")
-        self.saveAction.triggered.connect(self.saveQss)
+        self.showAction = ShowAction("Show StyleSheet")
+        self.saveAction.triggered.connect(saveQss)
         self.exitAction.triggered.connect(exitApp)
-        self.showAction.triggered.connect(self.showStyles)
-        self.editAction.triggered.connect(self.editCurrentSheet)
+        self.showAction.triggered.connect(self.showAction.showStyles)
+        self.editAction.triggered.connect(self.editAction.edit_current_sheet)
         self.addAction(self.showAction)
         self.addAction(self.editAction)
         self.addAction(self.saveAction)
         self.addSeparator()
         self.addAction(self.exitAction)
-        self.parent().window.styler.button.clicked.connect(self.showStyles)
 
-    def showStyles(self):  # pragma: nocover
-        """Show the current stylesheet in a separate widget."""
-        sheet = QApplication.instance().styleSheet()
-        self.dialog = QWidget()
-        self.dialog.resize(300, 200)
-        layout = QVBoxLayout()
-        self.dialog.setLayout(layout)
-        self.dialog.setWindowTitle("Current Style Sheet")
-        textEdit = QTextBrowser(parent=self.dialog)
-        textEdit.setPlainText(sheet)
-        layout.addWidget(textEdit)
-        self.dialog.show()
-        button = QPushButton("Save", parent=self)
-        layout.addWidget(button)
-        button.clicked.connect(self.saveQss)
-
-    def saveQss(self):  # pragma: nocover
-        """Save current style to file."""
-        path = QFileDialog.getSaveFileName(self, "Save File", str(Path.home()),
-                                           "QSS (*.qss); Any (*)")
-        if path:
-            with open(path, "wt", encoding="utf-8") as fd:
-                sheet = QApplication.instance().styleSheet()
-                fd.write(sheet)
-        return True
-
-    def editCurrentSheet(self):  # pragma: nocover
-        """Edit the current sheet."""
-        sheet = QApplication.instance().styleSheet()
-        self.dialog = QWidget()
-        self.dialog.resize(400, 280)
-        layout = QVBoxLayout()
-        self.dialog.setLayout(layout)
-        textEdit = QPlainTextEdit(self.dialog)
-        self.dialog.setWindowTitle("StyleSheet Editor")
-        layout.addWidget(textEdit)
-        savebtn = QPushButton("Apply", parent=self.dialog)
-        cancelbtn = QPushButton("Cancel", parent=self.dialog)
-        savebtn.pressed.connect(self.applyStyleSheet)
-        cancelbtn.pressed.connect(self.closeDialog)
-        hlayout = QHBoxLayout()
-        hlayout.addWidget(savebtn)
-        hlayout.addWidget(cancelbtn)
-        layout.addLayout(hlayout)
-        textEdit.setPlainText(sheet)
-        self.dialog.show()
-
-    def closeDialog(self):  # pragma: nocover
-        """Exit dialog window."""
-        self.dialog.close()
-        self.dialog.deleteLater()
 
     def applyStyleSheet(self):  # pragma: nocover
         """Apply theme to current app instance."""

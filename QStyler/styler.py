@@ -301,6 +301,7 @@ class StylerTab(QWidget):
     def __init__(self, parent=None):
         """Initialize the styler tab."""
         super().__init__(parent=parent)
+        self.window = parent
         self.manager = parent.manager
         self.data = self.manager.data
         self.layout = QVBoxLayout()

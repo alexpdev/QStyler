@@ -21,9 +21,9 @@
 import os
 from pathlib import Path
 
-from PySide6.QtCore import Signal, Qt
+from PySide6.QtCore import Signal, Qt, QObject
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton, QHBoxLayout, QFileDialog
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton, QHBoxLayout, QFileDialog, QApplication, QPlainTextEdit, QWidget, QTextBrowser
 
 from QStyler.utils import QssParser
 
@@ -110,3 +110,75 @@ class LoadAction(QAction):
             for row in theme:
                 final.update(row)
             self.loaded.emit(final, title)
+
+
+class EditAction(QAction):
+    """Edit action object."""
+
+    def edit_current_sheet(self):  # pragma: nocover
+        """Edit the current sheet."""
+        sheet = QApplication.instance().styleSheet()
+        self.dialog = QWidget()
+        self.dialog.resize(400, 280)
+        layout = QVBoxLayout()
+        self.dialog.setLayout(layout)
+        textEdit = QPlainTextEdit(self.dialog)
+        self.dialog.setWindowTitle("StyleSheet Editor")
+        layout.addWidget(textEdit)
+        savebtn = QPushButton("Apply", parent=self.dialog)
+        cancelbtn = QPushButton("Cancel", parent=self.dialog)
+        savebtn.pressed.connect(self.applyStyleSheet)
+        cancelbtn.pressed.connect(self.closeDialog)
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(savebtn)
+        hlayout.addWidget(cancelbtn)
+        layout.addLayout(hlayout)
+        textEdit.setPlainText(sheet)
+        self.dialog.show()
+
+    def closeDialog(self):  # pragma: nocover
+        """Exit dialog window."""
+        self.dialog.close()
+        self.dialog.deleteLater()
+
+    def applyStyleSheet(self):  # pragma: nocover
+        """Apply theme to current app instance."""
+        text = self.dialog.textEdit.toPlainText()
+        parser = QssParser(text)
+        self.parent().manager.sheets = parser.result
+        self.parent.manager.set_sheet()
+        self.dialog.close()
+        self.dialog.deleteLater()
+
+
+class ShowAction(QAction):
+    """Show Action object."""
+
+    def showStyles(self):  # pragma: nocover
+        """Show the current stylesheet in a separate widget."""
+        sheet = QApplication.instance().styleSheet()
+        self.dialog = QWidget()
+        self.dialog.resize(300, 200)
+        layout = QVBoxLayout()
+        self.dialog.setLayout(layout)
+        self.dialog.setWindowTitle("Current Style Sheet")
+        textEdit = QTextBrowser(parent=self.dialog)
+        textEdit.setPlainText(sheet)
+        layout.addWidget(textEdit)
+        self.dialog.show()
+        button = QPushButton("Save", parent=self)
+        layout.addWidget(button)
+        button.clicked.connect(saveQss)
+
+
+
+
+def saveQss():  # pragma: nocover
+    """Save current style to file."""
+    path = QFileDialog.getSaveFileName(None, "Save File", str(Path.home()),
+                                        "QSS (*.qss); Any (*)")
+    if path:
+        with open(path, "wt", encoding="utf-8") as fd:
+            sheet = QApplication.instance().styleSheet()
+            fd.write(sheet)
+    return True
