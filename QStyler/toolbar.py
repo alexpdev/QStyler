@@ -51,7 +51,6 @@ class ToolBar(QToolBar):
         self.manager = get_manager()
         self.setIconSize(QSize(40, 40))
         self.themecombo = ThemeCombo(parent=self)
-        # self.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
         self.addWidget(self.themecombo)
         self.apply_theme_action = QAction()
         self.apply_theme_action.setIcon(get_icon("confirm"))
