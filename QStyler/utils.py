@@ -168,6 +168,8 @@ class StyleManager:
             sheets = self.sheets
         for row in sheets:
             for k, v in row.items():
+                if not k or not v:
+                    continue
                 ssheet += k + " {\n"
                 for key, val in v.items():
                     ssheet += "    " + key + ": " + val + ";\n"
@@ -264,6 +266,7 @@ class QssParser:
         self.lnum = 0
         self.total = len(self.lines)
         self.parse_qss()
+        self.compile()
 
     @property
     def current(self):
@@ -367,7 +370,6 @@ class QssParser:
                 self.lnum += 1
                 continue
             widgets.append(self.current)
-            print(self.current)
             self.lnum += 1
         self.add_widgets(widgets, props)
 

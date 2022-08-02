@@ -19,19 +19,14 @@
 """Module for initializing the menubar."""
 
 import json
-import os
 import webbrowser
-from pathlib import Path
 
-from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import (QApplication, QDialog, QFileDialog, QHBoxLayout,
-                               QInputDialog, QLabel, QLineEdit, QMenu,
-                               QMenuBar, QPlainTextEdit, QPushButton,
-                               QTextBrowser, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QInputDialog, QLineEdit, QMenu,
+                               QMenuBar)
 
+from QStyler.actions import EditAction, LoadAction, ShowAction, saveQss
 from QStyler.utils import QssParser, exitApp, get_manager
-from QStyler.actions import LoadAction, EditAction, ShowAction, saveQss
 
 
 class MenuBar(QMenuBar):
@@ -217,7 +212,6 @@ class FileMenu(QMenu):
         self.addAction(self.saveAction)
         self.addSeparator()
         self.addAction(self.exitAction)
-
 
     def applyStyleSheet(self):  # pragma: nocover
         """Apply theme to current app instance."""

@@ -21,11 +21,14 @@
 import os
 from pathlib import Path
 
-from PySide6.QtCore import Signal, Qt, QObject
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton, QHBoxLayout, QFileDialog, QApplication, QPlainTextEdit, QWidget, QTextBrowser
+from PySide6.QtWidgets import (QApplication, QDialog, QFileDialog, QHBoxLayout,
+                               QLabel, QLineEdit, QPlainTextEdit, QPushButton,
+                               QTextBrowser, QVBoxLayout, QWidget)
 
-from QStyler.utils import QssParser
+from QStyler.utils import QssParser, get_manager
+
 
 class ThemeLoadDialog(QDialog):  # pragma: nocover
     """
@@ -106,10 +109,7 @@ class LoadAction(QAction):
         if path and title:
             parser = QssParser(path)
             theme = parser.result
-            final = {}
-            for row in theme:
-                final.update(row)
-            self.loaded.emit(final, title)
+            self.loaded.emit(theme, title)
 
 
 class EditAction(QAction):
@@ -118,6 +118,7 @@ class EditAction(QAction):
     def edit_current_sheet(self):  # pragma: nocover
         """Edit the current sheet."""
         sheet = QApplication.instance().styleSheet()
+        self.manager = get_manager()
         self.dialog = QWidget()
         self.dialog.resize(400, 280)
         layout = QVBoxLayout()
@@ -144,9 +145,10 @@ class EditAction(QAction):
     def applyStyleSheet(self):  # pragma: nocover
         """Apply theme to current app instance."""
         text = self.dialog.textEdit.toPlainText()
-        parser = QssParser(text)
-        self.parent().manager.sheets = parser.result
-        self.parent.manager.set_sheet()
+        converter = QssParser(text)
+        self.manager.reset()
+        self.manager.sheets = converter.result
+        self.manager.set_sheet()
         self.dialog.close()
         self.dialog.deleteLater()
 
@@ -171,12 +173,10 @@ class ShowAction(QAction):
         button.clicked.connect(saveQss)
 
 
-
-
 def saveQss():  # pragma: nocover
     """Save current style to file."""
     path = QFileDialog.getSaveFileName(None, "Save File", str(Path.home()),
-                                        "QSS (*.qss); Any (*)")
+                                       "QSS (*.qss); Any (*)")
     if path:
         with open(path, "wt", encoding="utf-8") as fd:
             sheet = QApplication.instance().styleSheet()

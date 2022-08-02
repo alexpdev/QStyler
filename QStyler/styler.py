@@ -23,11 +23,11 @@ import re
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QValidator
 from PySide6.QtWidgets import (QApplication, QComboBox, QGroupBox, QHBoxLayout,
-                               QLabel, QPushButton, QTableWidget,
-                               QTableWidgetItem, QVBoxLayout, QWidget)
+                               QLabel, QTableWidget, QTableWidgetItem,
+                               QVBoxLayout, QWidget)
 
-from QStyler.utils import blockSignals
 from QStyler.toolbar import ToolBar
+from QStyler.utils import blockSignals
 
 
 class Table(QTableWidget):
@@ -309,12 +309,12 @@ class StylerTab(QWidget):
         self.widget_label = QLabel("Widget(s)")
         self.control_label = QLabel("Control")
         self.state_label = QLabel("State")
-        self.plusbtn = QPushButton("+", parent=self)
-        self.minusbtn = QPushButton("-", parent=self)
+        # self.plusbtn = QPushButton("+", parent=self)
+        # self.minusbtn = QPushButton("-", parent=self)
         self.combo = WidgetCombo(self.data, parent=self)
         self.control_combo = ControlCombo(self.data, parent=self)
         self.state_combo = StateCombo(self.data, parent=self)
-        self.button = QPushButton("Save Theme", parent=self)
+        # self.button = QPushButton("Save Theme", parent=self)
         self.table = Table(self.manager, parent=self)
         self.toolbar = ToolBar(parent=self)
         self.hlayout2 = QHBoxLayout()
@@ -325,7 +325,6 @@ class StylerTab(QWidget):
         self.vlayout1 = QVBoxLayout()
         self.vlayout2 = QVBoxLayout()
         self.vlayout3 = QVBoxLayout()
-        self.hlayout4 = QHBoxLayout()
         self.vlayout1.addWidget(self.widget_label)
         self.vlayout1.addWidget(self.combo)
         self.vlayout2.addWidget(self.control_label)
@@ -335,17 +334,12 @@ class StylerTab(QWidget):
         self.mainGroup = QGroupBox(parent=self)
         self.hlayout = QHBoxLayout()
         self.mainGroup.setLayout(self.hlayout)
-        self.hlayout4.addWidget(self.plusbtn)
-        self.hlayout4.addWidget(self.minusbtn)
         self.hlayout.addLayout(self.vlayout1)
         self.hlayout.addLayout(self.vlayout2)
         self.hlayout.addLayout(self.vlayout3)
         self.layout.addWidget(self.mainGroup)
-        self.layout.addLayout(self.hlayout4)
         self.layout.addWidget(self.table)
-        self.layout.addWidget(self.button)
-        self.plusbtn.clicked.connect(self.add_widget_combo)
-        self.minusbtn.clicked.connect(self.minus_widget_combo)
+
         self.table.setNewRow.connect(self.addTableRow)
         self.combo.widgetChanged.connect(self.statusChanged.emit)
         self.state_combo.currentIndexChanged.connect(self.statusChanged.emit)

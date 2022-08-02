@@ -27,7 +27,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow
 
 from QStyler import __main__, version
 from QStyler.utils import QssParser, StyleManager, get_manager
-from QStyler.window import MainWindow
+from QStyler.window import Application, MainWindow
 
 
 @pytest.fixture(scope="package")
@@ -40,7 +40,7 @@ def app() -> QApplication:
     QApplication
         The main app.
     """
-    appl = QApplication(sys.argv)
+    appl = Application(sys.argv)
     yield appl
     appl.quit()
 
@@ -122,10 +122,11 @@ def test_plus_button(wind):
     window.tabWidget.setCurrentIndex(2)
     processtime()
     tab = window.styler
+    toolbar = tab.toolbar
     tab.combo.setCurrentIndex(5)
-    tab.plusbtn.click()
+    toolbar.plus_button_action.trigger()
     assert len(tab.boxgroups) > 0
-    tab.minusbtn.click()
+    toolbar.minus_button_action.trigger()
     assert len(tab.boxgroups) == 0
 
 
@@ -253,9 +254,11 @@ def test_tickers(wind):
     tab = window.widgets
     while tab.verticalSlider.value() < 99:
         tab.verticalSlider.triggerAction(
-            tab.verticalSlider.SliderSingleStepAdd)
+            tab.verticalSlider.SliderSingleStepAdd
+        )
         tab.horizontalSlider.triggerAction(
-            tab.horizontalSlider.SliderSingleStepAdd)
+            tab.horizontalSlider.SliderSingleStepAdd
+        )
         processtime()
     assert tab.verticalSlider.value() > 95
     assert tab.horizontalSlider.value() > 95
@@ -276,15 +279,15 @@ def test_load_qss(path):
     assert len(out) == 7
 
 
-def test_get_theme_file(wind):
-    """Test get theme file method."""
-    wind.tabWidget.setCurrentIndex(0)
-    testdir = os.path.dirname(os.path.abspath(__file__))
-    path = os.path.join(testdir, "test.qss")
-    qty = len(wind.menubar.optionsMenu.themeMenu.actions())
-    wind.menubar.optionsMenu.getThemeFile("test", path)
-    processtime()
-    assert qty < len(wind.menubar.optionsMenu.themeMenu.actions())
+# def test_get_theme_file(wind):
+#     """Test get theme file method."""
+#     wind.tabWidget.setCurrentIndex(0)
+#     testdir = os.path.dirname(os.path.abspath(__file__))
+#     path = os.path.join(testdir, "test.qss")
+#     qty = len(wind.menubar.optionsMenu.themeMenu.actions())
+#     wind.menubar.optionsMenu.getThemeFile("test", path)
+#     processtime()
+#     assert qty < len(wind.menubar.optionsMenu.themeMenu.actions())
 
 
 def test_validator_combo(wind):
