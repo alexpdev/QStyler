@@ -98,7 +98,7 @@ class LoadAction(QAction):
         super().__init__(*args, **kwargs)
         self.triggered.connect(self.loadTheme)
 
-    def loadTheme(self):
+    def loadTheme(self):  # pragma: nocover
         """Start the dialog and get the file."""
         self.dialog = ThemeLoadDialog()
         self.dialog.closing.connect(self.getThemeFile)

@@ -169,7 +169,7 @@ class StyleManager:
         for row in sheets:
             for k, v in row.items():
                 if not k or not v:
-                    continue
+                    continue  # pragma: nocover
                 ssheet += k + " {\n"
                 for key, val in v.items():
                     ssheet += "    " + key + ": " + val + ";\n"
@@ -198,24 +198,32 @@ class StyleManager:
         if not widget:
             return {}
         widgets = widget.split(",")
-        styles = {}
-        for sheet in self.sheets:
-            for widg in widgets:
-                if widg in sheet:
-                    styles[widg] = sheet[widg]
-                    widgets.remove(widg)
-                    break
-        if len(widgets) >= 1:
+        sheets = []
+        if len(widgets) == 1:
+            for sheet in self.sheets:
+                if widget in sheet:
+                    return sheet[widget]
+        else:
+            for sheet in self.sheets:
+                widg = next(iter(sheet))
+                if widg in widgets:
+                    sheets.append(sheet)
+        if len(sheets) != len(widgets):
             return {}
-        seq = iter(styles.values())
-        first = next(seq)
-        for sheet in seq:
-            if not first:
+        seqs = None
+        for sheet in sheets:
+            for key in sheet:
+                seq = set()
+                props = sheet[key]
+                for k, v in props.items():
+                    seq.add((k, v))
+                if seqs is None:
+                    seqs = seq
+                else:
+                    seqs &= seq
+            if not seqs:
                 return {}
-            for key, value in sheet.items():
-                if key in first and value != first[key]:
-                    del first[key]
-        return first
+        return dict(seqs)
 
     def saveToFile(self, path: str) -> None:  # pragma: nocover
         """
@@ -235,9 +243,9 @@ class StyleManager:
         self.sheets = []
         self.update_theme()
 
-    def apply_theme(self, name):
+    def apply_theme(self, name: str) -> None:
         """Apply given theme as current theme."""
-        theme = self.themes[name]
+        theme = self.get_theme(name)
         sheets = self.convert_to_sheets(theme)
         self.sheets = sheets
         self.update_theme()

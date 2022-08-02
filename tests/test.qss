@@ -17,6 +17,7 @@ QLabel {
 
 QCheckBox::indicator {
     background-color: red;
+    margin: ;
 }
 
 /* this is a longer
