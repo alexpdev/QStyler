@@ -1,5 +1,14 @@
 # QStyler CHANGELOG
 
+## Version 0.1.3
+
+-   Added toolbar to styler menu
+-   Improved and added unittests
+-   Better CI integration
+-   Better coverage and autoformatting
+
+* * *
+
 ## Version 0.1.2
 
 -   Cleanup

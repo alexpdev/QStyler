@@ -103,25 +103,36 @@ def load_records(filename):
 
 def get_manager():
     """Get the manager from any module."""
-    return StyleManager.window.manager
+    return Application.instance().manager
 
 
 class StyleManager:
-    """Style Factory for table widget."""
-
-    window = None
+    """Style Sheet Manager."""
 
     def __init__(self):
-        """
-        Initialize the Style Factory class.
-        """
+        """Initialize the Style Factory class."""
         self.themes = load_records("themes.json")
         self.data = load_records("data.json")
         self.extras = []
         self.app = QApplication.instance()
         self.sheets = []
 
-    def add_sheet(self, widget: str, prop: str, value: str):
+    def get_theme(self, name: str) -> dict:
+        """Return the theme associated with the given name."""
+        if name in self.themes:
+            return self.themes[name]
+        return {}
+
+    @staticmethod
+    def convert_to_sheets(theme: dict) -> list:
+        """Convert dictionary theme to sheets."""
+        sheets = []
+        for key, value in theme.items():
+            sheet = {key: value}
+            sheets.append(sheet)
+        return sheets
+
+    def append_sheet(self, widget: str, prop: str, value: str):
         """
         Add sheet data for widget to list of stylesheets.
 
@@ -141,9 +152,9 @@ class StyleManager:
                 sheet[widg].update({prop: value})
                 widgets.remove(widg)
         self.sheets += [{widget: {prop: value}} for widget in widgets]
-        self.set_sheet()
+        self.update_theme()
 
-    def _create_ssheet(self) -> dict:
+    def _create_ssheet(self, sheets=None) -> dict:
         """
         Update the sheet with data from table.
 
@@ -153,22 +164,22 @@ class StyleManager:
             the changed sheet
         """
         ssheet = ""
-        for row in self.sheets:
+        if not sheets:
+            sheets = self.sheets
+        for row in sheets:
             for k, v in row.items():
+                if not k or not v:
+                    continue  # pragma: nocover
                 ssheet += k + " {\n"
                 for key, val in v.items():
                     ssheet += "    " + key + ": " + val + ";\n"
                 ssheet += "}\n"
         return ssheet
 
-    def set_sheet(self):
+    def update_theme(self):
         """Apply current sheet to widget."""
         ssheet = self._create_ssheet()
         self.app.setStyleSheet(ssheet)
-
-    def get_style_sheet(self):
-        """Return the full style sheet as a string."""
-        return self._create_ssheet()  # pragma: nocover
 
     def get_sheet(self, widget: str) -> dict:
         """
@@ -187,24 +198,32 @@ class StyleManager:
         if not widget:
             return {}
         widgets = widget.split(",")
-        styles = {}
-        for sheet in self.sheets:
-            for widg in widgets:
-                if widg in sheet:
-                    styles[widg] = sheet[widg]
-                    widgets.remove(widg)
-                    break
-        if len(widgets) >= 1:
+        sheets = []
+        if len(widgets) == 1:
+            for sheet in self.sheets:
+                if widget in sheet:
+                    return sheet[widget]
+        else:
+            for sheet in self.sheets:
+                widg = next(iter(sheet))
+                if widg in widgets:
+                    sheets.append(sheet)
+        if len(sheets) != len(widgets):
             return {}
-        seq = iter(styles.values())
-        first = next(seq)
-        for sheet in seq:
-            if not first:
+        seqs = None
+        for sheet in sheets:
+            for key in sheet:
+                seq = set()
+                props = sheet[key]
+                for k, v in props.items():
+                    seq.add((k, v))
+                if seqs is None:
+                    seqs = seq
+                else:
+                    seqs &= seq
+            if not seqs:
                 return {}
-            for key, value in sheet.items():
-                if key in first and value != first[key]:
-                    del first[key]
-        return first
+        return dict(seqs)
 
     def saveToFile(self, path: str) -> None:  # pragma: nocover
         """
@@ -218,6 +237,18 @@ class StyleManager:
         stylesheet = self._create_ssheet()
         with open(path, "wt", encoding="utf-8") as fd:
             fd.write(stylesheet)
+
+    def reset(self):
+        """Reset the current theme to default."""
+        self.sheets = []
+        self.update_theme()
+
+    def apply_theme(self, name: str) -> None:
+        """Apply given theme as current theme."""
+        theme = self.get_theme(name)
+        sheets = self.convert_to_sheets(theme)
+        self.sheets = sheets
+        self.update_theme()
 
 
 class QssParser:
@@ -243,6 +274,7 @@ class QssParser:
         self.lnum = 0
         self.total = len(self.lines)
         self.parse_qss()
+        self.compile()
 
     @property
     def current(self):
@@ -346,7 +378,6 @@ class QssParser:
                 self.lnum += 1
                 continue
             widgets.append(self.current)
-            print(self.current)
             self.lnum += 1
         self.add_widgets(widgets, props)
 
@@ -388,3 +419,12 @@ def blockSignals(func):
         return result
 
     return wrapper
+
+
+class Application(QApplication):
+    """Subclass of the QApplication."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize application."""
+        super().__init__(*args, **kwargs)
+        self.manager = StyleManager()

@@ -27,7 +27,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow
 
 from QStyler import __main__, version
 from QStyler.utils import QssParser, StyleManager, get_manager
-from QStyler.window import MainWindow
+from QStyler.window import Application, MainWindow
 
 
 @pytest.fixture(scope="package")
@@ -40,7 +40,7 @@ def app() -> QApplication:
     QApplication
         The main app.
     """
-    appl = QApplication(sys.argv)
+    appl = Application(sys.argv)
     yield appl
     appl.quit()
 
@@ -122,10 +122,11 @@ def test_plus_button(wind):
     window.tabWidget.setCurrentIndex(2)
     processtime()
     tab = window.styler
+    toolbar = tab.toolbar
     tab.combo.setCurrentIndex(5)
-    tab.plusbtn.click()
+    toolbar.plus_button_action.trigger()
     assert len(tab.boxgroups) > 0
-    tab.minusbtn.click()
+    toolbar.minus_button_action.trigger()
     assert len(tab.boxgroups) == 0
 
 
@@ -276,17 +277,6 @@ def test_load_qss(path):
     assert len(out) == 7
 
 
-def test_get_theme_file(wind):
-    """Test get theme file method."""
-    wind.tabWidget.setCurrentIndex(0)
-    testdir = os.path.dirname(os.path.abspath(__file__))
-    path = os.path.join(testdir, "test.qss")
-    qty = len(wind.menubar.optionsMenu.themeMenu.actions())
-    wind.menubar.optionsMenu.getThemeFile("test", path)
-    processtime()
-    assert qty < len(wind.menubar.optionsMenu.themeMenu.actions())
-
-
 def test_validator_combo(wind):
     """Test the combo validator."""
     wind.tabWidget.setCurrentIndex(1)
@@ -350,3 +340,91 @@ def test_style_manager(app, wind):
     assert name
     assert app == manager.app
     assert get_manager()
+
+
+def test_add_new_theme(app, wind):
+    """Testing adding a new theme."""
+    _ = app
+    parser = QssParser("tests/test.qss")
+    thememenu = wind.menubar.optionsMenu
+    thememenu.add_new_theme(parser.result, "test")
+    keys = []
+    for action in thememenu.themeactions:
+        keys.append(action.key)
+    assert "test" in keys
+
+
+def test_get_theme_file(app, wind):
+    """Test getThemeFile method form the LoadAction object."""
+    _ = app
+    action = wind.menubar.loadAction
+    action.getThemeFile("test", "tests/test.qss")
+    titles = []
+    for i in range(wind.styler.toolbar.themecombo.count()):
+        text = wind.styler.toolbar.themecombo.itemText(i)
+        titles.append(text)
+    assert "test" in titles
+
+
+def test_style_manager_get_sheet(app, wind):
+    """Test the style managers get_sheet method."""
+    _, _ = app, wind
+    manager = get_manager()
+    manager.apply_theme("MintyMix")
+    widgets = [
+        "QMainWindow",
+        "QCalendar",
+        "QPushButton",
+        "QPushButton::default",
+        "QMenuBar",
+        "QMenu",
+    ]
+    text = ",".join(widgets)
+    sheet = manager.get_sheet(text)
+    assert "background-color" in sheet.keys()
+
+
+def test_style_manager_get_sheet2(app, wind):
+    """Test the style managers get_sheet2 method."""
+    _, _ = app, wind
+    manager = get_manager()
+    manager.apply_theme("MintyMix")
+    sheet = manager.get_sheet("")
+    assert not sheet
+
+
+def test_style_manager_get_sheet3(app, wind):
+    """Test the style managers get_sheet3 method."""
+    _, _ = app, wind
+    manager = get_manager()
+    manager.apply_theme("MintyMix")
+    widgets = ["QMenu", "QLineEdit", "QLabel"]
+    text = ",".join(widgets)
+    sheet = manager.get_sheet(text)
+    assert not sheet
+
+
+def test_toolbar_apply_osx(app, wind):
+    """Test applying osx theme to application."""
+    _ = app
+    toolbar = wind.styler.toolbar
+    toolbar.themecombo.setCurrentText("OSX")
+    toolbar.apply_theme_action.trigger()
+    assert "OSX" == toolbar.themecombo.currentText()
+
+
+def test_toolbar_reset_theme(app, wind):
+    """Test applying reseting theme to application."""
+    _ = app
+    toolbar = wind.styler.toolbar
+    toolbar.themecombo.setCurrentIndex(0)
+    toolbar.apply_theme_action.trigger()
+    assert not toolbar.themecombo.currentText()
+
+
+def test_get_theme_styler_empty(app, wind):
+    """Test get_theme method without proper theme title."""
+    _, _ = app, wind
+    manager = get_manager()
+    theme = manager.get_theme("poptarts")
+    assert not theme
