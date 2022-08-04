@@ -379,7 +379,8 @@ class QssParser:
                 continue
             widgets.append(self.current)
             self.lnum += 1
-        self.add_widgets(widgets, props)
+        if widgets and props:
+            self.add_widgets(widgets, props)
 
     def compile(self):
         """

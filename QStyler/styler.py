@@ -135,7 +135,7 @@ class Table(QTableWidget):
         prop = cbox.currentText()
         sheet = self.currentSheet()
         if prop in sheet:
-            self.item(row, 1).setText(sheet[prop])  # pragma: nocover
+            self.item(row, 1).setText(sheet[prop])
         else:
             self.item(row, 1).setText("")
 
@@ -329,6 +329,8 @@ class StylerTab(QWidget):
         self.vlayout3.addWidget(self.state_label)
         self.vlayout3.addWidget(self.state_combo)
         self.mainGroup = QGroupBox(parent=self)
+        self.mainGroup.setTitle("Widget Control Group")
+        self.mainGroup.setFlat(False)
         self.hlayout = QHBoxLayout()
         self.mainGroup.setLayout(self.hlayout)
         self.hlayout.addLayout(self.vlayout1)
@@ -354,13 +356,13 @@ class StylerTab(QWidget):
         """Add a widget combo box group."""
         boxlen = len(self.boxgroups)
         text = self.getWidgetState()
-        if not text:
-            return  # pragma: nocover
         if len(text.split(",")) >= boxlen + 1:
-
             groupbox = GroupBox(parent=self)
             self.layout.insertWidget(boxlen + 2, groupbox)
             self.boxgroups.append(groupbox)
+        else:
+            self.window.statusbar.showMessage("Empty Widget Group Exists.",
+                                              4000)
 
     def minus_widget_combo(self):
         """Remove a widget combo box group."""
@@ -370,6 +372,8 @@ class StylerTab(QWidget):
             box.deleteLater()
             box.destroy()
             self.layout.removeWidget(box)
+        else:
+            self.window.statusbar.showMessage("Nothing to remove.", 4000)
 
     def addTableRow(self):
         """Add a new row to the table."""

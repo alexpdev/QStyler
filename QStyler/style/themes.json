@@ -1,5 +1,5 @@
 {
-  "Oled": {
+  "NightLights": {
     "QMainWindow": { "background-color": "#000000" },
     "QDialog": { "background-color": "#000000" },
     "QColorDialog": { "background-color": "#000000" },
@@ -489,7 +489,7 @@
       "background": "none"
     }
   },
-  "Breeze": {
+  "SummerBreeze": {
     "QMainWindow": { "background-color": "#ececec" },
     "QTextEdit": {
       "border-width": "1px",
@@ -1145,7 +1145,7 @@
       "border-style": "inset"
     }
   },
-  "DarkSky": {
+  "DarkSkyline": {
     "QMainWindow": { "background-color": "rgb(82, 82, 82)" },
     "QTextEdit": {
       "background-color": "rgb(42, 42, 42)",
@@ -1688,7 +1688,7 @@
       "image": "url(/usr/share/icons/Adwaita/16x16/actions/go-next-symbolic.symbolic.png)"
     }
   },
-  "MintyMix": {
+  "MintyMixup": {
     "QMainWindow": { "background-color": "#151a1e" },
     "QCalendar": { "background-color": "#151a1e" },
     "QTextEdit": {
@@ -2158,7 +2158,7 @@
       "background": "none"
     }
   },
-  "MaterialDark": {
+  "MaterialDarkStyle": {
     "QMainWindow": { "background-color": "#1e1d23" },
     "QDialog": { "background-color": "#1e1d23" },
     "QColorDialog": { "background-color": "#1e1d23" },

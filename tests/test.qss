@@ -30,3 +30,8 @@ QPushButton:pressed {
 }
 
 QPushButton:hover {color: #080;}
+/* some comment
+*/
+QComboBox {
+    border: 12px solid pink;
+}
