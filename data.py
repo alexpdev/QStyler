@@ -1,17 +1,10 @@
 hierarchy = {
     "QWidget": {
         "QAbstractButton": [
-            "QCheckBox",
-            "QPushButton",
-            "QCommandLinkButton",
-            "QRadioButton",
+            "QCheckBox", "QPushButton", "QCommandLinkButton", "QRadioButton",
             "QToolButton"
         ],
-        "QAbstractSlider": [
-            "QDial",
-            "QScrollBar",
-            "QSlider"
-            ],
+        "QAbstractSlider": ["QDial", "QScrollBar", "QSlider"],
         "QAbstractSpinBox": [
             "QDateTimeEdit",
             "QDoubleSpinBox",
@@ -19,40 +12,17 @@ hierarchy = {
             "QDateEdit",
             "QTimeEdit",
         ],
-        "QComboBox": [
-            "QFontComboBox"
-        ],
+        "QComboBox": ["QFontComboBox"],
         "QDialog": [
-            "QColorDialog",
-            "QErrorMessage",
-            "QFileDialog",
-            "QFontDialog",
-            "QInputDialog",
-            "QMessageBox",
-            "QProgressDialog",
-            "QWizard"
+            "QColorDialog", "QErrorMessage", "QFileDialog", "QFontDialog",
+            "QInputDialog", "QMessageBox", "QProgressDialog", "QWizard"
         ],
         "QFrame": [
-            "QAbstractScrollArea",
-            "QLabel",
-            "QLCDNumber",
-            "QSplitter",
-            "QStackedWidget",
-            "QToolBox",
-            "QAbstractItemView",
-            "QGraphicsView",
-            "QPlainTextEdit",
-            "QScrollArea",
-            "QTextEdit",
-            "QColumnView",
-            "QHeaderView",
-            "QListView",
-            "QTableView",
-            "QTreeView",
-            "QListWidget",
-            "QUndoView",
-            "QTableWidget",
-            "QTreeWidget",
+            "QAbstractScrollArea", "QLabel", "QLCDNumber", "QSplitter",
+            "QStackedWidget", "QToolBox", "QAbstractItemView", "QGraphicsView",
+            "QPlainTextEdit", "QScrollArea", "QTextEdit", "QColumnView",
+            "QHeaderView", "QListView", "QTableView", "QTreeView",
+            "QListWidget", "QUndoView", "QTableWidget", "QTreeWidget",
             "QTextBrowser"
         ],
         "QDialogButtonBox": [],
