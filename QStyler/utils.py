@@ -94,10 +94,9 @@ def get_icon(filename=None):
 
 
 @Memo
-def load_records(filename):
+def load_theme(title):
     """Return data regarding QWidgets and styles."""
-    path = get_src_dir() / "style" / filename
-
+    path = get_src_dir() / "themes" / (title + ".json")
     return json.load(open(path, encoding="utf-8"))
 
 
@@ -111,16 +110,17 @@ class StyleManager:
 
     def __init__(self):
         """Initialize the Style Factory class."""
-        self.themes = load_records("themes.json")
-        self.data = load_records("data.json")
+        self.data = json.loads(
+            (get_src_dir() / "data" / "data.json").read_text(encoding="utf-8"))
+        self.titles = [i.stem for i in (get_src_dir() / "themes").iterdir()]
         self.extras = []
         self.app = QApplication.instance()
         self.sheets = []
 
     def get_theme(self, name: str) -> dict:
         """Return the theme associated with the given name."""
-        if name in self.themes:
-            return self.themes[name]
+        if name in self.titles:
+            return load_theme(name)
         return {}
 
     @staticmethod
@@ -224,6 +224,23 @@ class StyleManager:
             if not seqs:
                 return {}
         return dict(seqs)
+
+    def add_theme(self, theme, filename):
+        """
+        Save new theme to theme directory.
+
+        Parameters
+        ----------
+        theme : dict
+            The Qss theme.
+        filename : str
+            Path to save location.
+        """
+        theme_dir = get_src_dir() / "themes"
+        json.dump(
+            theme,
+            open(theme_dir / (filename + ".json"), "wt", encoding="utf-8"),
+        )
 
     def saveToFile(self, path: str) -> None:  # pragma: nocover
         """
@@ -372,15 +389,18 @@ class QssParser:
                 widgets, props = [], {}
                 continue
             if inblock:
-                prop = self.serialize_prop(self.current)
+                parts = []
+                while ";" not in self.current:
+                    parts.append(self.current.strip())
+                    self.lnum += 1
+                parts.append(self.current.strip())
+                prop = self.serialize_prop(" ".join(parts))
                 if prop:
                     props.update(prop)
                 self.lnum += 1
                 continue
             widgets.append(self.current)
             self.lnum += 1
-        if widgets and props:
-            self.add_widgets(widgets, props)
 
     def compile(self):
         """

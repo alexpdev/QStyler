@@ -24,9 +24,12 @@ QCheckBox::indicator {
 comment that spans two lines */
 
 QPushButton:pressed {
-    border-width: 3px;
-    border-style: solid;
-    border-color: #F71;
+    border-width:
+    3px;
+    border-style:
+    solid;
+    border-color:
+    #F71;
 }
 
 QPushButton:hover {color: #080;}

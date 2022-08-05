@@ -40,7 +40,7 @@ class ThemeCombo(QComboBox):
         self._parent = parent
         self.manager = get_manager()
         self.addItem("")
-        for name in self.manager.themes.keys():
+        for name in self.manager.titles:
             self.addItem(name)
 
 

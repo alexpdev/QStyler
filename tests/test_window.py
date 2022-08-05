@@ -18,6 +18,7 @@
 ##############################################################################
 """Module for testing functions and methods."""
 
+import atexit
 import os
 import sys
 import time
@@ -341,13 +342,14 @@ def test_style_manager(app, wind):
     """Test the style manager class object."""
     _, _ = app, wind
     manager = StyleManager()
-    name, theme = next(iter(manager.themes.items()))
+    title = manager.titles[3]
+    theme = manager.get_theme(title)
     for key, value in theme.items():
         manager.sheets.append({key: value})
     sheet = manager.get_sheet("QPushButton")
     processtime()
     assert sheet
-    assert name
+    assert title
     assert app == manager.app
     assert get_manager()
 
@@ -498,3 +500,16 @@ def test_update_table_props(app, wind):
     table.cellChanged.emit(0, 1)
     processtime()
     assert table.item(0, 1).text() == "transparent"
+
+
+@atexit.register
+def teardown():
+    """
+    Clean up any additional test residual artifacts.
+    """
+    fd = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    theme_dir = os.path.join(fd, "QStyler", "themes")
+    if os.path.exists(theme_dir):
+        test_json = os.path.join(theme_dir, "test.json")
+        if os.path.exists(test_json):
+            os.remove(test_json)

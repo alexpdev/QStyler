@@ -168,7 +168,7 @@ class ShowAction(QAction):
         textEdit.setPlainText(sheet)
         layout.addWidget(textEdit)
         self.dialog.show()
-        button = QPushButton("Save", parent=self)
+        button = QPushButton("Save", self.dialog)
         layout.addWidget(button)
         button.clicked.connect(saveQss)
 
@@ -176,9 +176,9 @@ class ShowAction(QAction):
 def saveQss():  # pragma: nocover
     """Save current style to file."""
     path = QFileDialog.getSaveFileName(None, "Save File", str(Path.home()),
-                                       "QSS (*.qss); Any (*)")
-    if path:
-        with open(path, "wt", encoding="utf-8") as fd:
+                                       "QSS(*.qss), Any(*)")
+    if path[0]:
+        with open(path[0], "wt", encoding="utf-8") as fd:
             sheet = QApplication.instance().styleSheet()
             fd.write(sheet)
     return True
