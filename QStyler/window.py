@@ -56,10 +56,11 @@ class MainWindow(QMainWindow):
         self.manager = get_manager()
         self.widgets = WidgetsTab(parent=self)
         self.styler = StylerTab(parent=self)
-        self.tabWidget.addTab(self.widgets, "Widgets")
         self.tabWidget.addTab(self.styler, "Style")
+        self.tabWidget.addTab(self.widgets, "Widgets")
         self.layout.addWidget(self.tabWidget)
         self.menubar = MenuBar(self)
+        self.statusbar = self.statusBar()
         self.styler.toolbar.activate_load_item()
         self.setMenuBar(self.menubar)
 
