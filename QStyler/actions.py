@@ -19,6 +19,7 @@
 """Module for initializing the actions."""
 
 import os
+import webbrowser
 from pathlib import Path
 
 from PySide6.QtCore import Qt, Signal
@@ -182,3 +183,8 @@ def saveQss():  # pragma: nocover
             sheet = QApplication.instance().styleSheet()
             fd.write(sheet)
     return True
+
+
+def opengithub():  # pragma: nocover
+    """Open webbrowser to github repo."""
+    webbrowser.open("https://github.com/alexpdev/QStyler")

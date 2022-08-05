@@ -18,13 +18,11 @@
 ##############################################################################
 """Module for toolbar for styler table."""
 
-import webbrowser
-
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QComboBox, QToolBar
 
-from QStyler.actions import EditAction, ShowAction, saveQss
+from QStyler.actions import EditAction, ShowAction, opengithub, saveQss
 from QStyler.utils import get_icon, get_manager
 
 
@@ -99,18 +97,12 @@ class ToolBar(QToolBar):
             self.widget.minus_widget_combo)
         self.view_current_action.triggered.connect(
             self.view_current_action.showStyles)
-        self.github_action.triggered.connect(self.open_github_repo)
+        self.github_action.triggered.connect(opengithub)
         self.reset_theme_action.triggered.connect(self.manager.reset)
         self.apply_theme_action.triggered.connect(self.apply_theme)
         self.edit_theme_action.triggered.connect(
             self.edit_theme_action.edit_current_sheet)
         self.save_current_action.triggered.connect(saveQss)
-
-    def open_github_repo(self):  # pragma: nocover
-        """
-        Open github repo in default web browser.
-        """
-        webbrowser.open("https://github.com/alexpdev/QStyler")
 
     def activate_load_item(self):
         """
