@@ -225,7 +225,8 @@ class StyleManager:
                 return {}
         return dict(seqs)
 
-    def add_theme(self, theme, filename):
+    @staticmethod
+    def add_theme(theme, filename):
         """
         Save new theme to theme directory.
 
