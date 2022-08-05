@@ -18,6 +18,8 @@
 ##############################################################################
 """Module for toolbar for styler table."""
 
+import webbrowser
+
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QComboBox, QToolBar
@@ -33,10 +35,11 @@ class ThemeCombo(QComboBox):
         """Cunstruct theme combo box."""
         super().__init__(parent=parent)
         self.setEditable(False)
+        self.setSizeAdjustPolicy(self.AdjustToContents)
         self._parent = parent
         self.manager = get_manager()
         self.addItem("")
-        for name in self.manager.themes.keys():
+        for name in self.manager.titles:
             self.addItem(name)
 
 
@@ -49,7 +52,16 @@ class ToolBar(QToolBar):
         self.widget = parent
         self.setMovable(True)
         self.manager = get_manager()
-        self.setIconSize(QSize(40, 40))
+        self.setIconSize(QSize(35, 35))
+        self.plus_button_action = QAction()
+        self.plus_button_action.setIcon(get_icon("plus"))
+        self.minus_button_action = QAction()
+        self.minus_button_action.setIcon(get_icon("minus"))
+        self.plus_button_action.setToolTip("Add Widget Control Group")
+        self.minus_button_action.setToolTip("Remove Widget Control Group")
+        self.addAction(self.plus_button_action)
+        self.addAction(self.minus_button_action)
+        self.addSeparator()
         self.themecombo = ThemeCombo(parent=self)
         self.addWidget(self.themecombo)
         self.apply_theme_action = QAction()
@@ -57,44 +69,48 @@ class ToolBar(QToolBar):
         self.apply_theme_action.setToolTip("Apply Theme")
         self.addAction(self.apply_theme_action)
         self.addSeparator()
-        self.save_current_action = QAction()
-        self.save_current_action.setToolTip("Save Current Theme To File")
-        self.save_current_action.setIcon(get_icon("floppy-disk"))
-        self.addAction(self.save_current_action)
         self.view_current_action = ShowAction()
-        self.view_current_action.setToolTip("View Current Theme")
         self.view_current_action.setIcon(get_icon("file"))
+        self.view_current_action.setToolTip("View Current Theme")
         self.addAction(self.view_current_action)
         self.edit_theme_action = EditAction()
         self.edit_theme_action.setIcon(get_icon("edit"))
         self.edit_theme_action.setToolTip("Edit Current Theme")
-        self.edit_theme_action.setIcon(get_icon("edit"))
         self.addAction(self.edit_theme_action)
+        self.save_current_action = QAction()
+        self.save_current_action.setIcon(get_icon("save"))
+        self.save_current_action.setToolTip("Save Current Theme To File")
+        self.addAction(self.save_current_action)
         self.load_theme_action = QAction()
-        self.load_theme_action.setToolTip("Load New Theme From File")
         self.load_theme_action.setIcon(get_icon("import"))
+        self.load_theme_action.setToolTip("Load New Theme From File")
         self.addAction(self.load_theme_action)
-        self.reset_theme_action = QAction()
-        self.reset_theme_action.setToolTip("Reset")
-        self.reset_theme_action.setIcon(get_icon("reset"))
-        self.addAction(self.reset_theme_action)
-        self.plus_button_action = QAction()
-        self.plus_button_action.setIcon(get_icon("plus"))
-        self.minus_button_action = QAction()
-        self.minus_button_action.setIcon(get_icon("minus"))
         self.addSeparator()
-        self.addAction(self.plus_button_action)
-        self.addAction(self.minus_button_action)
+        self.reset_theme_action = QAction()
+        self.reset_theme_action.setIcon(get_icon("reset"))
+        self.reset_theme_action.setToolTip("Reset Theme")
+        self.addAction(self.reset_theme_action)
+        self.github_action = QAction()
+        self.github_action.setIcon(get_icon("github"))
+        self.github_action.setToolTip("Open Github Repo")
+        self.addAction(self.github_action)
         self.plus_button_action.triggered.connect(self.widget.add_widget_combo)
         self.minus_button_action.triggered.connect(
             self.widget.minus_widget_combo)
         self.view_current_action.triggered.connect(
             self.view_current_action.showStyles)
+        self.github_action.triggered.connect(self.open_github_repo)
         self.reset_theme_action.triggered.connect(self.manager.reset)
         self.apply_theme_action.triggered.connect(self.apply_theme)
         self.edit_theme_action.triggered.connect(
             self.edit_theme_action.edit_current_sheet)
         self.save_current_action.triggered.connect(saveQss)
+
+    def open_github_repo(self):  # pragma: nocover
+        """
+        Open github repo in default web browser.
+        """
+        webbrowser.open("https://github.com/alexpdev/QStyler")
 
     def activate_load_item(self):
         """

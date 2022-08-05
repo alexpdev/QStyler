@@ -123,7 +123,7 @@ class ThemeMenu(QMenu):
         """
         super().__init__(text, parent=parent)
         self.manager = get_manager()
-        self.themes = self.manager.themes
+        self.titles = self.manager.titles
         self.resetAction = QAction("Reset Theme")
         self.saveCurrent = QAction("Save Current Theme")
         self.resetAction.triggered.connect(self.manager.reset)
@@ -137,10 +137,10 @@ class ThemeMenu(QMenu):
         self.addMenu(self.themeMenu)
         self.addAction(self.resetAction)
         self.themeactions = []
-        for key in self.themes:
-            action = QAction(key)
-            action.key = key
-            action.setObjectName(key + "action")
+        for title in self.titles:
+            action = QAction(title)
+            action.key = title
+            action.setObjectName(title + "action")
             action.triggered.connect(self.applyTheme)
             self.themeactions.append(action)
             self.themeMenu.addAction(action)
@@ -148,13 +148,14 @@ class ThemeMenu(QMenu):
 
     def add_new_theme(self, theme, title):
         """Add new theme to the theme menu in menubar."""
-        self.themes[title] = theme
+        self.titles.append(title)
         action = QAction(title)
         action.key = title
         action.setObjectName(title + "action")
         action.triggered.connect(self.applyTheme)
         self.themeactions.append(action)
         self.themeMenu.addAction(action)
+        self.manager.add_theme(theme, title)
 
     def createTheme(self):  # pragma: nocover
         """Save the current stylesheet as a theme to use in the future."""
