@@ -159,10 +159,10 @@ def test_apply_theme(wind):
         for i in range(tab.combo.count()):
             text = tab.combo.itemText(i)
             if text == "QPushButton":
+                text = tab.combo.setCurrentIndex(i)
                 break
         processtime()
-        text = tab.combo.setCurrentIndex(i)
-        assert tab.table.rowCount() > 1
+    assert tab.table.rowCount() > 0
 
 
 def test_set_property(wind):
