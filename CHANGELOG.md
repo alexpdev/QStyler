@@ -2,6 +2,15 @@
 
 ## Version 0.1.4
 
+-   Switched gifs in readme
+-   Bug Fixes
+-   Passing all unittests
+-   Fixed linting checkers
+
+* * *
+
+## Version 0.1.4
+
 -   Improved toolbar widget
 -   Added new icons for toolbar actions
 -   Improved and added to Unit testing framework
