@@ -97,7 +97,6 @@ class HelpMenu(QMenu):
 
     def open_about(self):
         """Open the about QStyler Dialog."""
-        pass  # pragma: nocover
 
 
 class ThemeMenu(QMenu):

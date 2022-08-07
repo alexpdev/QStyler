@@ -135,7 +135,7 @@ class Table(QTableWidget):
         prop = cbox.currentText()
         sheet = self.currentSheet()
         if prop in sheet:
-            self.item(row, 1).setText(sheet[prop])
+            self.item(row, 1).setText(sheet[prop])  # pragma: nocover
         else:
             self.item(row, 1).setText("")
 
@@ -368,11 +368,13 @@ class StylerTab(QWidget):
     def minus_widget_combo(self):
         """Remove a widget combo box group."""
         if len(self.boxgroups) > 0:
-            box = self.boxgroups[-1]
-            del self.boxgroups[-1]
-            box.deleteLater()
-            box.destroy()
-            self.layout.removeWidget(box)
+            groupbox = self.boxgroups[-1]
+            groupbox.delete_widgets()
+            index = self.layout.indexOf(groupbox)
+            self.layout.takeAt(index)
+            self.boxgroups = self.boxgroups[:-1]
+            groupbox.deleteLater()
+            groupbox.destroy()
         else:
             self.window.statusbar.showMessage("Nothing to remove.", 4000)
 
@@ -484,3 +486,13 @@ class GroupBox(QGroupBox):
         self.control_combo.currentIndexChanged.connect(
             parent.statusChanged.emit)
         self.combo.widgetChanged.connect(parent.statusChanged.emit)
+
+    def delete_widgets(self):
+        """Delete all widgets in the GroupBox."""
+        for combo in [self.combo, self.control_combo, self.state_combo]:
+            index = self.layout.indexOf(combo)
+            item = self.layout.takeAt(index)
+            combo.destroy()
+            combo.deleteLater()
+            item.widget().destroy()
+            item.widget().deleteLater()
