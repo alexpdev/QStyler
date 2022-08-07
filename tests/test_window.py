@@ -63,7 +63,7 @@ def wind(app) -> QMainWindow:
     """
     _ = app
     window = MainWindow()
-    window.show()
+    # window.show() # only for testing locally
     yield window
     window.close()
     window.deleteLater()
