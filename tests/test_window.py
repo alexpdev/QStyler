@@ -339,16 +339,16 @@ def test_combo_validator(wind):
     assert wind.styler.getWidgetState() == "QCheckBox:indicator::unchecked"
 
 
-def test_style_manager(app, wind):
+def test_style_manager(wind):
     """Test the style manager class object."""
-    _, _ = app, wind
+    _ = wind
     manager = StyleManager()
     title = manager.titles[3]
     theme = manager.get_theme(title)
     for key, value in theme.items():
         manager.sheets.append({key: value})
     sheet = manager.get_sheet("QPushButton")
-    processtime(app=app)
+    processtime()
     assert sheet
     assert title
     assert app == manager.app
@@ -516,6 +516,7 @@ def test_update_prop(wind):
     wind.styler.state_combo.setCurrentText("hover")
     processtime()
     assert table.cellWidget(0,0).currentText() != ""
+
 
 @atexit.register
 def teardown():
