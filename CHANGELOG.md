@@ -1,5 +1,27 @@
 # QStyler CHANGELOG
 
+## Version 0.1.4
+
+-   Switched gifs in readme
+-   Bug Fixes
+-   Passing all unittests
+-   Fixed linting checkers
+
+* * *
+
+## Version 0.1.4
+
+-   Improved toolbar widget
+-   Added new icons for toolbar actions
+-   Improved and added to Unit testing framework
+-   Updated and expanded CI integration
+-   Fixed issue with menubar actions
+-   Improved coverage data and quality
+-   Bug Fixes
+-   Added 2 new themes
+
+* * *
+
 ## Version 0.1.3
 
 -   Added toolbar to styler menu
