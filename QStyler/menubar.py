@@ -52,9 +52,9 @@ class MenuBar(QMenuBar):
         self.window = parent
         self.manager = get_manager()
         self.loadAction = LoadAction()
-        self.loadAction.setText("Load Theme File")
+        self.loadAction.setText("Import Theme")
         self.fileMenu = FileMenu("File", parent=self)
-        self.optionsMenu = ThemeMenu("Theme", parent=self)
+        self.optionsMenu = ThemeMenu("Themes", parent=self)
         self.helpMenu = HelpMenu("Help", parent=self)
         self.addMenu(self.fileMenu)
         self.addMenu(self.optionsMenu)
@@ -88,9 +88,16 @@ class HelpMenu(QMenu):
         self.aboutqt = QAction("About Qt")
         self.addAction(self.aboutqt)
         self.aboutqt.triggered.connect(QApplication.instance().aboutQt)
-        self.repolink = QAction("Github Repo")
+        self.repolink = QAction("Open Github Repo")
         self.addAction(self.repolink)
         self.repolink.triggered.connect(opengithub)
+        self.aboutQstyler = QAction("About QStyler")
+        self.addAction(self.aboutQstyler)
+        self.aboutQstyler.triggered.connect(self.open_about)
+
+    def open_about(self):
+        """Open the about QStyler Dialog."""
+        pass  # pragma: nocover
 
 
 class ThemeMenu(QMenu):
@@ -120,7 +127,7 @@ class ThemeMenu(QMenu):
         self.manager = get_manager()
         self.titles = self.manager.titles
         self.resetAction = QAction("Reset Theme")
-        self.saveCurrent = QAction("Save Current Theme")
+        self.saveCurrent = QAction("Save Theme As")
         self.resetAction.triggered.connect(self.manager.reset)
         toolbar = parent.window.styler.toolbar
         toolbar.loadAction = self.parent().loadAction
@@ -129,8 +136,8 @@ class ThemeMenu(QMenu):
         self.saveCurrent.triggered.connect(self.createTheme)
         self.addAction(self.parent().loadAction)
         self.addAction(self.saveCurrent)
-        self.addMenu(self.themeMenu)
         self.addAction(self.resetAction)
+        self.addMenu(self.themeMenu)
         self.themeactions = []
         for title in self.titles:
             action = QAction(title)

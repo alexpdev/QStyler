@@ -63,15 +63,17 @@ def wind(app) -> QMainWindow:
     """
     _ = app
     window = MainWindow()
+    window.show()
     yield window
     window.close()
     window.deleteLater()
 
 
-def processtime(app=None):
+def processtime(app=None, amount=None):
     """Process Events and sleep for a second."""
     app = app if app else QApplication.instance()
-    amount = 0.04
+    if not amount:
+        amount = 2.03
     start = time.time()
     while time.time() - start < amount:
         app.processEvents()
@@ -262,10 +264,12 @@ def test_tickers(wind):
     tab = window.widgets
     while tab.verticalSlider.value() < 99:
         tab.verticalSlider.triggerAction(
-            tab.verticalSlider.SliderSingleStepAdd)
+            tab.verticalSlider.SliderSingleStepAdd
+        )
         tab.horizontalSlider.triggerAction(
-            tab.horizontalSlider.SliderSingleStepAdd)
-        processtime()
+            tab.horizontalSlider.SliderSingleStepAdd
+        )
+        processtime(amount=0.02)
     assert tab.verticalSlider.value() > 95
     assert tab.horizontalSlider.value() > 95
 
@@ -344,7 +348,7 @@ def test_style_manager(app, wind):
     for key, value in theme.items():
         manager.sheets.append({key: value})
     sheet = manager.get_sheet("QPushButton")
-    processtime()
+    processtime(app=app)
     assert sheet
     assert title
     assert app == manager.app
@@ -354,8 +358,7 @@ def test_style_manager(app, wind):
 def test_add_new_theme(app, wind):
     """Testing adding a new theme."""
     wind.tabWidget.setCurrentIndex(1)
-    processtime()
-    _ = app
+    processtime(app=app)
     parser = QssParser("tests/test.qss")
     thememenu = wind.menubar.optionsMenu
     thememenu.add_new_theme(parser.result, "test")
@@ -365,9 +368,8 @@ def test_add_new_theme(app, wind):
     assert "test" in keys
 
 
-def test_get_theme_file(app, wind):
+def test_get_theme_file(wind):
     """Test getThemeFile method form the LoadAction object."""
-    _ = app
     action = wind.menubar.loadAction
     wind.tabWidget.setCurrentIndex(2)
     processtime()
@@ -379,9 +381,9 @@ def test_get_theme_file(app, wind):
     assert "test" in titles
 
 
-def test_style_manager_get_sheet(app, wind):
+def test_style_manager_get_sheet(wind):
     """Test the style managers get_sheet method."""
-    _, _ = app, wind
+    _ = wind
     manager = get_manager()
     manager.apply_theme("MintyMixup")
     widgets = [
@@ -397,18 +399,18 @@ def test_style_manager_get_sheet(app, wind):
     assert "background-color" in sheet.keys()
 
 
-def test_style_manager_get_sheet2(app, wind):
+def test_style_manager_get_sheet2(wind):
     """Test the style managers get_sheet2 method."""
-    _, _ = app, wind
+    _ = wind
     manager = get_manager()
     manager.apply_theme("MintyMixup")
     sheet = manager.get_sheet("")
     assert not sheet
 
 
-def test_style_manager_get_sheet3(app, wind):
+def test_style_manager_get_sheet3(wind):
     """Test the style managers get_sheet3 method."""
-    _, _ = app, wind
+    _ = wind
     manager = get_manager()
     manager.apply_theme("MintyMixup")
     widgets = ["QMenu", "QLineEdit", "QLabel"]
@@ -419,9 +421,8 @@ def test_style_manager_get_sheet3(app, wind):
 
 def test_toolbar_apply_osx(app, wind):
     """Test applying osx theme to application."""
-    _ = app
     wind.tabWidget.setCurrentIndex(1)
-    processtime()
+    processtime(app=app)
     toolbar = wind.styler.toolbar
     toolbar.themecombo.setCurrentText("OSX")
     toolbar.apply_theme_action.trigger()
@@ -431,18 +432,17 @@ def test_toolbar_apply_osx(app, wind):
 
 def test_toolbar_reset_theme(app, wind):
     """Test applying reseting theme to application."""
-    _ = app
     wind.tabWidget.setCurrentIndex(2)
-    processtime()
+    processtime(app=app)
     toolbar = wind.styler.toolbar
     toolbar.themecombo.setCurrentIndex(0)
     toolbar.apply_theme_action.trigger()
     assert not toolbar.themecombo.currentText()
 
 
-def test_get_theme_styler_empty(app, wind):
+def test_get_theme_styler_empty(wind):
     """Test get_theme method without proper theme title."""
-    _, _ = app, wind
+    _ = wind
     manager = get_manager()
     theme = manager.get_theme("poptarts")
     assert not theme
@@ -450,39 +450,38 @@ def test_get_theme_styler_empty(app, wind):
 
 def test_toolbar_plus_button(app, wind):
     """Test plus button."""
-    _ = app
     toolbar = wind.styler.toolbar
     wind.tabWidget.setCurrentIndex(2)
     toolbar.reset_theme_action.trigger()
-    processtime()
+    processtime(app=app)
     wind.styler.combo.setCurrentIndex(0)
-    processtime()
+    processtime(app=app)
     toolbar.plus_button_action.trigger()
-    processtime()
+    processtime(app=app)
     assert len(wind.styler.boxgroups) == 1
 
 
 def test_toolbar_minus_button(app, wind):
     """Test toolbar minus button."""
-    _ = app
     wind.tabWidget.setCurrentIndex(2)
-    processtime()
+    processtime(app=app)
     toolbar = wind.styler.toolbar
     toolbar.minus_button_action.trigger()
-    processtime()
+    processtime(app=app)
     toolbar.minus_button_action.trigger()
-    processtime()
+    processtime(app=app)
     toolbar.minus_button_action.trigger()
-    processtime()
+    processtime(app=app)
     toolbar.minus_button_action.trigger()
-    processtime()
+    processtime(app=app)
     toolbar.minus_button_action.trigger()
     assert len(wind.styler.boxgroups) == 0
 
 
-def test_update_table_props(app, wind):
-    """Test table prop updates."""
-    _ = app
+def test_update_table_props(wind):
+    """
+    Test table prop updates.
+    """
     wind.tabWidget.setCurrentIndex(0)
     processtime()
     table = wind.styler.table
@@ -497,6 +496,26 @@ def test_update_table_props(app, wind):
     processtime()
     assert table.item(0, 1).text() == "transparent"
 
+
+def test_update_prop(wind):
+    """Test update prop method in the Table."""
+    wind.tabWidget.setCurrentIndex(1)
+    processtime()
+    table = wind.styler.table
+    toolbar = wind.styler.toolbar
+    processtime()
+    for i in range(toolbar.themecombo.count()):
+        if toolbar.themecombo.itemText(i) == "Ubuntu":
+            toolbar.themecombo.setCurrentIndex(i)
+            processtime()
+            break
+    toolbar.apply_theme_action.trigger()
+    processtime()
+    wind.styler.combo.setCurrentText("QPushButton")
+    processtime()
+    wind.styler.state_combo.setCurrentText("hover")
+    processtime()
+    assert table.cellWidget(0,0).currentText() != ""
 
 @atexit.register
 def teardown():

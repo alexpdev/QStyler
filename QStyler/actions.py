@@ -55,11 +55,16 @@ class ThemeLoadDialog(QDialog):  # pragma: nocover
         super().__init__(parent=parent)
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
-        self.label = QLabel("Theme Title", self)
-        self.setWindowTitle("Load Theme")
+        self.resize(300, 100)
+        self.label = QLabel("Theme Name", self)
+        self.label2 = QLabel("File Location", self)
+        self.setWindowTitle("Load Qss Theme")
         self.lineEdit = QLineEdit(self)
+        self.lineEdit2 = QLineEdit(self)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.lineEdit)
+        self.layout.addWidget(self.label2)
+        self.layout.addWidget(self.lineEdit2)
         self.btn1 = QPushButton("Select File", self)
         self.btn2 = QPushButton("OK", self)
         self.hlayout = QHBoxLayout()
@@ -69,24 +74,25 @@ class ThemeLoadDialog(QDialog):  # pragma: nocover
         self.label.setAlignment(Qt.AlignLeft)
         self.btn1.clicked.connect(self.loadTheme)
         self.btn2.clicked.connect(self.closeDialog)
-        self.path = None
 
     def loadTheme(self):
         """Load new theme into database."""
         result = QFileDialog.getOpenFileName(self, "Select .qss File",
                                              str(Path().home()),
                                              "QSS(*.qss), Any(*)")
-        if result[1]:
-            self.path = result[0]
+        if result and result[1]:
+            path = result[0]
+            self.lineEdit2.setText(path)
             name, _ = os.path.splitext(os.path.basename(self.path))
             self.lineEdit.setText(name)
 
     def closeDialog(self):
         """Close dialog and return file path if selected."""
         text = self.lineEdit.text()
-        path = self.path if self.path else ""
+        path = self.lineEdit2.text()
         self.closing.emit(text, path)
         self.close()
+        self.deleteLater()
 
 
 class LoadAction(QAction):
@@ -105,7 +111,7 @@ class LoadAction(QAction):
         self.dialog.closing.connect(self.getThemeFile)
         self.dialog.open()
 
-    def getThemeFile(self, title, path):
+    def getThemeFile(self, title: str, path: str):
         """Open and save data in file path as title theme."""
         if path and title:
             parser = QssParser(path)
@@ -121,11 +127,10 @@ class EditAction(QAction):
         sheet = QApplication.instance().styleSheet()
         self.manager = get_manager()
         self.dialog = QWidget()
-        self.dialog.resize(400, 280)
-        layout = QVBoxLayout()
-        self.dialog.setLayout(layout)
+        self.dialog.resize(300, 450)
+        layout = QVBoxLayout(self.dialog)
         textEdit = QPlainTextEdit(self.dialog)
-        self.dialog.setWindowTitle("StyleSheet Editor")
+        self.dialog.setWindowTitle("Edit Current StyleSheet")
         layout.addWidget(textEdit)
         savebtn = QPushButton("Apply", parent=self.dialog)
         cancelbtn = QPushButton("Cancel", parent=self.dialog)
@@ -148,10 +153,9 @@ class EditAction(QAction):
         text = self.dialog.textEdit.toPlainText()
         converter = QssParser(text)
         self.manager.reset()
-        self.manager.sheets = converter.result
+        self.manager.sheets = converter.collection
         self.manager.set_sheet()
-        self.dialog.close()
-        self.dialog.deleteLater()
+        self.closeDialog()
 
 
 class ShowAction(QAction):
@@ -161,17 +165,13 @@ class ShowAction(QAction):
         """Show the current stylesheet in a separate widget."""
         sheet = QApplication.instance().styleSheet()
         self.dialog = QWidget()
-        self.dialog.resize(300, 200)
-        layout = QVBoxLayout()
-        self.dialog.setLayout(layout)
-        self.dialog.setWindowTitle("Current Style Sheet")
+        self.dialog.resize(300, 400)
+        layout = QVBoxLayout(self.dialog)
+        self.dialog.setWindowTitle("Current Style Sheet Theme")
         textEdit = QTextBrowser(parent=self.dialog)
         textEdit.setPlainText(sheet)
         layout.addWidget(textEdit)
         self.dialog.show()
-        button = QPushButton("Save", self.dialog)
-        layout.addWidget(button)
-        button.clicked.connect(saveQss)
 
 
 def saveQss():  # pragma: nocover
