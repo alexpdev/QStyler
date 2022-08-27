@@ -63,7 +63,7 @@ def wind(app) -> QMainWindow:
     """
     _ = app
     window = MainWindow()
-    # window.show() # only for testing locally
+    window.show()  # only for testing locally
     yield window
     window.close()
     window.deleteLater()
@@ -231,7 +231,7 @@ def test_reset_property(wind):
     text = tab.combo.setCurrentIndex(i)
     wind.menubar.optionsMenu.resetAction.trigger()
     processtime()
-    assert tab.table.rowCount() > 1
+    assert tab.table.rowCount() == 1
 
 
 def test_style_table_props(wind, app):
@@ -260,9 +260,11 @@ def test_tickers(wind):
     tab = wind.widgets
     while tab.verticalSlider.value() < 99:
         tab.verticalSlider.triggerAction(
-            tab.verticalSlider.SliderSingleStepAdd)
+            tab.verticalSlider.SliderSingleStepAdd
+        )
         tab.horizontalSlider.triggerAction(
-            tab.horizontalSlider.SliderSingleStepAdd)
+            tab.horizontalSlider.SliderSingleStepAdd
+        )
         processtime(amount=0.02)
     assert tab.verticalSlider.value() > 95
     assert tab.horizontalSlider.value() > 95
@@ -277,8 +279,9 @@ def test_load_qss(path):
     else:
         with open(os.path.join(testdir, "test.qss"), encoding="utf-8") as fd:
             text = fd.read()
-    manager = QssParser(text)
-    out = manager.result
+    manager = QssParser()
+    manager.parse(text)
+    out = manager.results
     assert len(out) == 7
 
 
@@ -353,9 +356,10 @@ def test_add_new_theme(app, wind):
     """Testing adding a new theme."""
     wind.tabWidget.setCurrentIndex(1)
     processtime(app=app)
-    parser = QssParser("tests/test.qss")
+    parser = QssParser()
+    parser.parse("tests/test.qss")
     thememenu = wind.menubar.optionsMenu
-    thememenu.add_new_theme(parser.result, "test")
+    thememenu.add_new_theme(parser.results, "test")
     keys = []
     for action in thememenu.themeactions:
         keys.append(action.key)
