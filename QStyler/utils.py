@@ -102,7 +102,7 @@ def load_theme(title):
 
 def get_manager():
     """Get the manager from any module."""
-    return Application.instance().manager
+    return QApplication.instance().manager
 
 
 class StyleManager:
@@ -116,6 +116,7 @@ class StyleManager:
         self.extras = []
         self.app = QApplication.instance()
         self.sheets = []
+        self.parser = QssParser()
 
     def get_theme(self, name: str) -> dict:
         """Return the theme associated with the given name."""
@@ -222,7 +223,7 @@ class StyleManager:
                 else:
                     seqs &= seq
             if not seqs:
-                return {}
+                return {}  # pragma: nocover
         return dict(seqs)
 
     @staticmethod
@@ -260,39 +261,54 @@ class StyleManager:
         """Reset the current theme to default."""
         self.sheets = []
         self.update_theme()
+        self.app.window.styler.statusChanged.emit("")
 
     def apply_theme(self, name: str) -> None:
         """Apply given theme as current theme."""
         theme = self.get_theme(name)
         sheets = self.convert_to_sheets(theme)
-        self.sheets = sheets
+        self.sheets += sheets
         self.update_theme()
 
 
 class QssParser:
     """Qt Style Sheet Parser."""
 
-    def __init__(self, path):
+    def __init__(self):
         """
         Initialize and construct the qss parser object.
+        """
+        self._line = 0
+        self._total = 0
+        self._lines = []
+        self.results = {}
+        self.collection = []
+
+    def parse(self, path_or_string):
+        """
+        Parse the style sheet and convert it to json, and dictionary styled.
 
         Parameters
         ----------
-        path : str
-            path to qss file
+        path_or_string : str
+            either the path to the file or a string containing stylesheets.
         """
-        if not isinstance(path, str) or os.path.exists(path):
-            with open(path, "rt", encoding="utf-8") as fd:
-                content = fd.read().split("\n")
+        self._clear()
+        if os.path.exists(path_or_string):
+            with open(path_or_string, "rt", encoding="utf-8") as fd:
+                self._lines = [i.strip() for i in fd.read().split("\n")]
         else:
-            content = path.split("\n")
-        self.lines = content
-        self.result = {}
-        self.collection = []
-        self.lnum = 0
-        self.total = len(self.lines)
-        self.parse_qss()
-        self.compile()
+            self._lines = [i.strip() for i in path_or_string.split("\n")]
+        self._total = len(self._lines)
+        self._parse_qss()
+        self._compile()
+        return self.results
+
+    def _clear(self):
+        """Clear any previous data from last parse."""
+        self._line = self._total = 0
+        self._lines, self.collection = [], []
+        self.results = {}
 
     @property
     def current(self):
@@ -304,17 +320,17 @@ class QssParser:
         str
             The current line
         """
-        return self.lines[self.lnum]
+        return self._lines[self._line]
 
-    def skipcomment(self):
+    def _skipcomment(self):
         """
         Skip all lines until parser reaches the end comment token.
         """
         while "*/" not in self.current:
-            self.lnum += 1
-        self.lnum += 1
+            self._line += 1
+        self._line += 1
 
-    def add_widgets(self, widgets, props):
+    def _add_widgets(self, widgets, props):
         """
         Add widgets to the the master collection.
 
@@ -331,7 +347,7 @@ class QssParser:
             self.collection.append({widget.strip(): deepcopy(props)})
 
     @staticmethod
-    def serialize_prop(line):
+    def _serialize_prop(line):
         """
         Normalize property string into name and value.
 
@@ -348,24 +364,26 @@ class QssParser:
         try:
             group = line.split(":")
             key, val = group[0].strip(), ":".join(group[1:]).strip()
+            if "url" in val:
+                return {}
             if val.endswith(";"):
                 val = val[:-1]
             return {key: val}
         except IndexError:  # pragma: nocover
-            return None
+            return {}
 
-    def parse_qss(self):
+    def _parse_qss(self):
         """
         Parse the content of the qss file one line at a time.
         """
         inblock = False
         widgets, props = [], {}
-        while self.lnum < self.total:
+        while self._line < self._total:
             if self.current == "":
-                self.lnum += 1
+                self._line += 1
                 continue
             if "/*" in self.current:
-                self.skipcomment()
+                self._skipcomment()
                 continue
             if "{" in self.current:
                 sblock = self.current.index("{")
@@ -373,42 +391,42 @@ class QssParser:
                 if "}" in self.current:
                     eblock = self.current.index("}")
                     prop = self.current[sblock:eblock]
-                    prop = self.serialize_prop(prop)
+                    prop = self._serialize_prop(prop)
                     if prop:
                         props.update(prop)
-                    self.add_widgets(widgets, props)
+                    self._add_widgets(widgets, props)
                     widgets, props = [], {}
-                    self.lnum += 1
+                    self._line += 1
                     continue
-                self.lnum += 1
+                self._line += 1
                 inblock = True
                 continue
             if "}" in self.current:
                 inblock = False
-                self.add_widgets(widgets, props)
-                self.lnum += 1
+                self._add_widgets(widgets, props)
+                self._line += 1
                 widgets, props = [], {}
                 continue
             if inblock:
                 parts = []
                 while ";" not in self.current:
                     parts.append(self.current.strip())
-                    self.lnum += 1
+                    self._line += 1
                 parts.append(self.current.strip())
-                prop = self.serialize_prop(" ".join(parts))
+                prop = self._serialize_prop(" ".join(parts))
                 if prop:
                     props.update(prop)
-                self.lnum += 1
+                self._line += 1
                 continue
             widgets.append(self.current)
-            self.lnum += 1
+            self._line += 1
 
-    def compile(self):
+    def _compile(self):
         """
         Gather and group all results into one dictionary.
         """
         for row in self.collection:
-            self.result.update(row)
+            self.results.update(row)
 
 
 def blockSignals(func):
@@ -441,12 +459,3 @@ def blockSignals(func):
         return result
 
     return wrapper
-
-
-class Application(QApplication):
-    """Subclass of the QApplication."""
-
-    def __init__(self, *args, **kwargs):
-        """Initialize application."""
-        super().__init__(*args, **kwargs)
-        self.manager = StyleManager()

@@ -3,11 +3,9 @@ include Makefile
 include tox.ini
 include CHANGELOG.md
 
-recursive-include assets *
-recursive-include .github *
+recursive-include assets *.png
+recursive-include .github *.yml
 
-recursive-include QStyler/icons *
-recursive-include QStyler/themes *
-recursive-include QStyler/data *
-
-recursive-exclude .tox *
+recursive-include QStyler/icons *.png
+recursive-include QStyler/themes *.json
+recursive-include QStyler/data  *.json

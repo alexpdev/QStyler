@@ -38,3 +38,8 @@ QPushButton:hover {color: #080;}
 QComboBox {
     border: 12px solid pink;
 }
+
+
+QSpinBox::down-arrow {
+    image: url(some/non/existing/path.png);
+}
