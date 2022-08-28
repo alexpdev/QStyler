@@ -257,9 +257,11 @@ def test_tickers(wind):
     tab = wind.widgets
     while tab.verticalSlider.value() < 99:
         tab.verticalSlider.triggerAction(
-            tab.verticalSlider.SliderSingleStepAdd)
+            tab.verticalSlider.SliderSingleStepAdd
+        )
         tab.horizontalSlider.triggerAction(
-            tab.horizontalSlider.SliderSingleStepAdd)
+            tab.horizontalSlider.SliderSingleStepAdd
+        )
         processtime(amount=0.02)
     assert tab.verticalSlider.value() > 95
     assert tab.horizontalSlider.value() > 95
@@ -510,6 +512,7 @@ def test_update_prop(wind):
     assert table.cellWidget(0, 0).currentText() != ""
     wind.styler.state_combo.setCurrentText("hover")
     processtime()
+    toolbar.reset_theme_action.trigger()
     assert table.cellWidget(0, 0).currentText() == ""
 
 
