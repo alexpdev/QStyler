@@ -124,6 +124,7 @@ def test_plus_button(wind):
     wind.tabWidget.setCurrentIndex(0)
     tab = wind.styler
     toolbar = tab.toolbar
+    toolbar.reset_theme_action.trigger()
     toolbar.plus_button_action.trigger()
     assert len(tab.boxgroups) > 0
     processtime()
@@ -257,9 +258,11 @@ def test_tickers(wind):
     tab = wind.widgets
     while tab.verticalSlider.value() < 99:
         tab.verticalSlider.triggerAction(
-            tab.verticalSlider.SliderSingleStepAdd)
+            tab.verticalSlider.SliderSingleStepAdd
+        )
         tab.horizontalSlider.triggerAction(
-            tab.horizontalSlider.SliderSingleStepAdd)
+            tab.horizontalSlider.SliderSingleStepAdd
+        )
         processtime(amount=0.02)
     assert tab.verticalSlider.value() > 95
     assert tab.horizontalSlider.value() > 95
@@ -374,22 +377,17 @@ def test_get_theme_file(wind):
     assert "test" in titles
 
 
-def test_style_manager_get_sheet(wind):
+@pytest.mark.parametrize(
+    "theme", ["Ubuntu", "MaterialDarkStyle", "MintyMixup", "DarkSkyline"]
+)
+@pytest.mark.parametrize("widget", ["QMainWindow", "QPushButton:hover"])
+def test_style_manager_get_sheet(wind, theme, widget):
     """Test the style managers get_sheet method."""
     wind.tabWidget.setCurrentIndex(1)
     manager = get_manager()
     manager.reset()
-    manager.apply_theme("MintyMixup")
-    widgets = [
-        "QMainWindow",
-        "QCalendar",
-        "QPushButton",
-        "QPushButton::default",
-        "QMenuBar",
-        "QMenu",
-    ]
-    text = ",".join(widgets)
-    sheet = manager.get_sheet(text)
+    manager.apply_theme(theme)
+    sheet = manager.get_sheet(widget)
     assert "background-color" in sheet.keys()
 
 
@@ -402,21 +400,24 @@ def test_style_manager_get_sheet2(wind):
     assert not sheet
 
 
-def test_style_manager_get_sheet3(wind):
+@pytest.mark.parametrize(
+    "theme", ["Ubuntu", "Terminal", "MintyMixup", "Overcast", "Coastal"]
+)
+def test_style_manager_get_sheet3(wind, theme):
     """Test the style managers get_sheet3 method."""
     wind.tabWidget.setCurrentIndex(1)
     manager = get_manager()
-    manager.apply_theme("MintyMixup")
-    widgets = ["QMenu", "QLineEdit", "QLabel"]
+    manager.apply_theme(theme)
+    widgets = ["QMenu", "QLineEdit", "QLabel", "QTextEdit"]
     text = ",".join(widgets)
     sheet = manager.get_sheet(text)
     assert not sheet
 
 
-def test_toolbar_apply_osx(app, wind):
+def test_toolbar_apply_osx(wind):
     """Test applying osx theme to application."""
     wind.tabWidget.setCurrentIndex(1)
-    processtime(app=app)
+    processtime()
     toolbar = wind.styler.toolbar
     toolbar.themecombo.setCurrentText("OSX")
     toolbar.apply_theme_action.trigger()
@@ -424,10 +425,10 @@ def test_toolbar_apply_osx(app, wind):
     assert "OSX" == toolbar.themecombo.currentText()
 
 
-def test_toolbar_reset_theme(app, wind):
+def test_toolbar_reset_theme(wind):
     """Test applying reseting theme to application."""
     wind.tabWidget.setCurrentIndex(1)
-    processtime(app=app)
+    processtime()
     toolbar = wind.styler.toolbar
     toolbar.themecombo.setCurrentIndex(0)
     toolbar.apply_theme_action.trigger()
@@ -442,32 +443,32 @@ def test_get_theme_styler_empty(wind):
     assert not theme
 
 
-def test_toolbar_plus_button(app, wind):
+def test_toolbar_plus_button(wind):
     """Test plus button."""
     toolbar = wind.styler.toolbar
     wind.tabWidget.setCurrentIndex(0)
     toolbar.reset_theme_action.trigger()
-    processtime(app=app)
+    processtime()
     wind.styler.combo.setCurrentIndex(0)
-    processtime(app=app)
+    processtime()
     toolbar.plus_button_action.trigger()
-    processtime(app=app)
+    processtime()
     assert len(wind.styler.boxgroups) == 1
 
 
-def test_toolbar_minus_button(app, wind):
+def test_toolbar_minus_button(wind):
     """Test toolbar minus button."""
     wind.tabWidget.setCurrentIndex(0)
-    processtime(app=app)
+    processtime()
     toolbar = wind.styler.toolbar
     toolbar.minus_button_action.trigger()
-    processtime(app=app)
+    processtime()
     toolbar.minus_button_action.trigger()
-    processtime(app=app)
+    processtime()
     toolbar.minus_button_action.trigger()
-    processtime(app=app)
+    processtime()
     toolbar.minus_button_action.trigger()
-    processtime(app=app)
+    processtime()
     toolbar.minus_button_action.trigger()
     assert len(wind.styler.boxgroups) == 0
 
@@ -497,7 +498,6 @@ def test_update_prop(wind):
     processtime()
     table = wind.styler.table
     toolbar = wind.styler.toolbar
-    processtime()
     for i in range(toolbar.themecombo.count()):
         if toolbar.themecombo.itemText(i) == "Ubuntu":
             toolbar.themecombo.setCurrentIndex(i)

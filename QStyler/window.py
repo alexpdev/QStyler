@@ -78,8 +78,25 @@ class Application(QApplication):
         self.window = windowclass()
 
 
+def except_hook(cls, exception, traceback):
+    """
+    Catch the system except hook to grab the traceback upon app crash.
+
+    Parameters
+    ----------
+    cls : type
+        Some kind of type object
+    exception : Exception
+        The exception that lead to the crash.
+    traceback : str
+        the stack trace leading from the exception.
+    """
+    sys.__excepthook__(cls, exception, traceback)
+
+
 def execute():  # pragma: nocover
     """Entry point for cli and execution."""
+    sys.excepthook = except_hook
     app = Application(sys.argv, MainWindow)
     app.window.show()
     sys.exit(app.exec())

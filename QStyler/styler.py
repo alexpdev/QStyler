@@ -21,7 +21,7 @@
 import re
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QValidator
+from PySide6.QtGui import QFontMetrics, QValidator
 from PySide6.QtWidgets import (QApplication, QComboBox, QGroupBox, QHBoxLayout,
                                QLabel, QTableWidget, QTableWidgetItem,
                                QVBoxLayout, QWidget)
@@ -64,6 +64,8 @@ class Table(QTableWidget):
                 self._setRowData(i, key, common[key])
             else:
                 self.addRow(key=key, value=common[key])
+        if self.rowCount() == 1 and not self.item(0, 1).text():
+            return
         while self.rowCount() > len(common):
             self.removeRow(self.rowCount() - 1)
         self.addRow()
@@ -156,7 +158,6 @@ class PropsCombo(QComboBox):
         self.setEditable(True)
         self.setValidator(validator)
         self.currentIndexChanged.connect(self.notifyTable)
-        self.setSizeAdjustPolicy(self.sizeAdjustPolicy().AdjustToContents)
 
     def notifyTable(self, _):
         """Update table cell with accurate information."""
@@ -165,8 +166,15 @@ class PropsCombo(QComboBox):
 
     def loadItems(self):
         """Populate the combo box with values from json file."""
+        font = self.font()
+        metrics = QFontMetrics(font)
+        longprop = ""
         for prop in self.info["properties"]:
+            if len(prop) > len(longprop):
+                longprop = prop
             self.addItem(prop)
+        size = metrics.size(Qt.TextSingleLine, longprop)
+        self.resize(size)
 
     @blockSignals
     def selectKey(self, key):
@@ -426,14 +434,25 @@ class WidgetValidator(QValidator):
         super().__init__(parent=parent)
         self.widget = parent
         self.widget_list = []
+        self.pat1 = re.compile(r"^\w+?\s$")
+        self.pat2 = re.compile(r"^\w+?\s\w+$")
         for i in range(self.widget.count()):
             text = self.widget.itemText(i)
             self.widget_list.append(text)
 
+    @blockSignals
     def fixup(self, text):
         """Fix the text when it is invalid."""
-        while self.validate(text) == self.Invalid:
+        if self.pat2.match(text):
+            widget = self.text.split(" ")[1]
+        else:
+            widget = text
+        while True:
+            for widget in self.widget_list:
+                if widget.startswith(text):
+                    return
             text = text[:-1]
+            widget = widget[:-1]
 
     def validate(self, text, _=None):
         """Authenticate whether text is valid."""
@@ -444,26 +463,34 @@ class WidgetValidator(QValidator):
             """Test text to see if it is valid."""
             for widget in self.widget_list:
                 if len(widget) == len(text) and text == widget:
-                    self.inputAccepted.emit(text)
-                    return self.Acceptable
+                    return True
                 if len(widget) > len(text) and text in widget:
-                    return self.Intermediate
-            return self.Invalid
+                    return None
+            return False
 
-        pat1 = re.compile(r"^\w+?\s$")
-        pat2 = re.compile(r"^\w+?\s\w+$")
-        if pat2.match(text):
+        if self.pat2.match(text):
             widgets = text.split(" ")
             if widgets[0] in self.widget_list:
                 result = test_match(widgets[1])
-                return self.Invalid if result is None else result
-            return self.Invalid
-        if pat1.match(text):
+                if result is True:
+                    self.inputAccepted.emit(text)
+                    out = self.Acceptable
+                else:
+                    out = (self.Invalid
+                           if result is False else self.Intermediate)
+                return out
+        if self.pat1.match(text):
             widgets = text.split(" ")
             if widgets[0] in self.widget_list:
                 return self.Intermediate
             return self.Invalid
-        return test_match(text)
+        result = test_match(text)
+        if result is True:
+            self.inputAccepted.emit(text)
+            out = self.Acceptable
+        else:
+            out = self.Intermediate if result is None else self.Invalid
+        return out
 
 
 class GroupBox(QGroupBox):
@@ -492,7 +519,5 @@ class GroupBox(QGroupBox):
         for combo in [self.combo, self.control_combo, self.state_combo]:
             index = self.layout.indexOf(combo)
             item = self.layout.takeAt(index)
-            combo.destroy()
             combo.deleteLater()
-            item.widget().destroy()
             item.widget().deleteLater()

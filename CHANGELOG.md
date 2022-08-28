@@ -1,5 +1,14 @@
 # QStyler CHANGELOG
 
+## Version 0.1.6
+
+-   Switched gifs in readme
+-   Bug Fixes
+-   Passing all unittests
+-   Fixed linting checkers
+
+* * *
+
 ## Version 0.1.5
 
 -   Switched gifs in readme
