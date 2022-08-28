@@ -21,11 +21,12 @@
 import sys
 from typing import Optional
 
-from PySide6.QtWidgets import QMainWindow, QTabWidget, QVBoxLayout, QWidget
+from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget,
+                               QVBoxLayout, QWidget)
 
 from QStyler.menubar import MenuBar
 from QStyler.styler import StylerTab
-from QStyler.utils import Application, get_icon, get_manager
+from QStyler.utils import StyleManager, get_icon, get_manager
 from QStyler.widgets import WidgetsTab
 
 
@@ -65,9 +66,20 @@ class MainWindow(QMainWindow):
         self.setMenuBar(self.menubar)
 
 
+class Application(QApplication):
+    """Subclass of the QApplication."""
+
+    def __init__(self, args=None, windowclass=MainWindow):
+        """Initialize application."""
+        if not args:
+            args = sys.argv
+        super().__init__(args)
+        self.manager = StyleManager()
+        self.window = windowclass()
+
+
 def execute():  # pragma: nocover
     """Entry point for cli and execution."""
-    app = Application(sys.argv)
-    window = MainWindow()
-    window.show()
+    app = Application(sys.argv, MainWindow)
+    app.window.show()
     sys.exit(app.exec())

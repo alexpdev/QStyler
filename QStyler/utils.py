@@ -102,7 +102,7 @@ def load_theme(title):
 
 def get_manager():
     """Get the manager from any module."""
-    return Application.instance().manager
+    return QApplication.instance().manager
 
 
 class StyleManager:
@@ -261,12 +261,13 @@ class StyleManager:
         """Reset the current theme to default."""
         self.sheets = []
         self.update_theme()
+        self.app.window.styler.statusChanged.emit("")
 
     def apply_theme(self, name: str) -> None:
         """Apply given theme as current theme."""
         theme = self.get_theme(name)
         sheets = self.convert_to_sheets(theme)
-        self.sheets = sheets
+        self.sheets += sheets
         self.update_theme()
 
 
@@ -458,12 +459,3 @@ def blockSignals(func):
         return result
 
     return wrapper
-
-
-class Application(QApplication):
-    """Subclass of the QApplication."""
-
-    def __init__(self, *args, **kwargs):
-        """Initialize application."""
-        super().__init__(*args, **kwargs)
-        self.manager = StyleManager()

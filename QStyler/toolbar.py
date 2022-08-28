@@ -33,10 +33,9 @@ class ThemeCombo(QComboBox):
         """Cunstruct theme combo box."""
         super().__init__(parent=parent)
         self.setEditable(False)
-        self.setSizeAdjustPolicy(self.AdjustToContents)
+        self.setMinimumWidth(200)
         self._parent = parent
         self.manager = get_manager()
-        self.addItem("")
         for name in self.manager.titles:
             self.addItem(name)
 

@@ -28,7 +28,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow
 
 from QStyler import __main__, version
 from QStyler.utils import QssParser, StyleManager, get_manager
-from QStyler.window import Application, MainWindow
+from QStyler.window import Application
 
 
 @pytest.fixture(scope="package")
@@ -61,12 +61,10 @@ def wind(app) -> QMainWindow:
     Iterator[QMainWindow]
         The main window instance.
     """
-    _ = app
-    window = MainWindow()
-    window.show()  # only for testing locally
-    yield window
-    window.close()
-    window.deleteLater()
+    # app.window.show()  # only for testing locally
+    yield app.window
+    app.window.close()
+    app.window.deleteLater()
 
 
 def processtime(app=None, amount=None):
@@ -124,7 +122,6 @@ def test_plus_button(wind):
         _description_
     """
     wind.tabWidget.setCurrentIndex(0)
-    processtime()
     tab = wind.styler
     toolbar = tab.toolbar
     toolbar.plus_button_action.trigger()
@@ -383,6 +380,7 @@ def test_style_manager_get_sheet(wind):
     """Test the style managers get_sheet method."""
     wind.tabWidget.setCurrentIndex(1)
     manager = get_manager()
+    manager.reset()
     manager.apply_theme("MintyMixup")
     widgets = [
         "QMainWindow",
@@ -435,7 +433,7 @@ def test_toolbar_reset_theme(app, wind):
     toolbar = wind.styler.toolbar
     toolbar.themecombo.setCurrentIndex(0)
     toolbar.apply_theme_action.trigger()
-    assert not toolbar.themecombo.currentText()
+    assert toolbar.themecombo.currentText()
 
 
 def test_get_theme_styler_empty(wind):
