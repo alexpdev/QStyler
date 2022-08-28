@@ -223,7 +223,7 @@ class StyleManager:
                 else:
                     seqs &= seq
             if not seqs:
-                return {}
+                return {}  # pragma: nocover
         return dict(seqs)
 
     @staticmethod

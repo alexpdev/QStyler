@@ -72,7 +72,7 @@ class Application(QApplication):
     def __init__(self, args=None, windowclass=MainWindow):
         """Initialize application."""
         if not args:
-            args = sys.argv
+            args = sys.argv  # pragma: nocover
         super().__init__(args)
         self.manager = StyleManager()
         self.window = windowclass()
