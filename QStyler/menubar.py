@@ -218,8 +218,9 @@ class FileMenu(QMenu):
     def applyStyleSheet(self):  # pragma: nocover
         """Apply theme to current app instance."""
         text = self.dialog.textEdit.toPlainText()
-        parser = QssParser(text)
-        self.parent().manager.sheets = parser.result
+        parser = QssParser()
+        parser.parse(text)
+        self.parent().manager.sheets = parser.results
         self.parent.manager.set_sheet()
         self.dialog.close()
         self.dialog.deleteLater()

@@ -83,7 +83,7 @@ class ThemeLoadDialog(QDialog):  # pragma: nocover
         if result and result[1]:
             path = result[0]
             self.lineEdit2.setText(path)
-            name, _ = os.path.splitext(os.path.basename(self.path))
+            name, _ = os.path.splitext(os.path.basename(path))
             self.lineEdit.setText(name)
 
     def closeDialog(self):
@@ -114,8 +114,9 @@ class LoadAction(QAction):
     def getThemeFile(self, title: str, path: str):
         """Open and save data in file path as title theme."""
         if path and title:
-            parser = QssParser(path)
-            theme = parser.result
+            parser = QssParser()
+            parser.parse(path)
+            theme = parser.results
             self.loaded.emit(theme, title)
 
 
@@ -129,9 +130,9 @@ class EditAction(QAction):
         self.dialog = QWidget()
         self.dialog.resize(300, 450)
         layout = QVBoxLayout(self.dialog)
-        textEdit = QPlainTextEdit(self.dialog)
+        self.textEdit = QPlainTextEdit(self.dialog)
         self.dialog.setWindowTitle("Edit Current StyleSheet")
-        layout.addWidget(textEdit)
+        layout.addWidget(self.textEdit)
         savebtn = QPushButton("Apply", parent=self.dialog)
         cancelbtn = QPushButton("Cancel", parent=self.dialog)
         savebtn.pressed.connect(self.applyStyleSheet)
@@ -140,7 +141,7 @@ class EditAction(QAction):
         hlayout.addWidget(savebtn)
         hlayout.addWidget(cancelbtn)
         layout.addLayout(hlayout)
-        textEdit.setPlainText(sheet)
+        self.textEdit.setPlainText(sheet)
         self.dialog.show()
 
     def closeDialog(self):  # pragma: nocover
@@ -150,11 +151,12 @@ class EditAction(QAction):
 
     def applyStyleSheet(self):  # pragma: nocover
         """Apply theme to current app instance."""
-        text = self.dialog.textEdit.toPlainText()
-        converter = QssParser(text)
+        text = self.textEdit.toPlainText()
+        converter = QssParser()
+        converter.parse(text)
         self.manager.reset()
         self.manager.sheets = converter.collection
-        self.manager.set_sheet()
+        self.manager.update_theme()
         self.closeDialog()
 
 
