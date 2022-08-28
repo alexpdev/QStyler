@@ -129,7 +129,4 @@ class ToolBar(QToolBar):
         Apply current value of the manager sheets as the current theme.
         """
         theme = self.themecombo.currentText()
-        if not theme:
-            self.manager.reset()
-        else:
-            self.manager.apply_theme(theme)
+        self.manager.apply_theme(theme)

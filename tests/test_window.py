@@ -279,7 +279,7 @@ def test_load_qss(path):
     manager = QssParser()
     manager.parse(text)
     out = manager.results
-    assert len(out) == 7
+    assert len(out) >= 7
 
 
 def test_validator_combo(wind):
