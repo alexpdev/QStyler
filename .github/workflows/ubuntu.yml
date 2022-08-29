@@ -1,0 +1,27 @@
+name: LinuxCI
+
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.6', '3.7', '3.8', '3.9', '3.10']
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4.1.0
+        with:
+          python-version: ${{ matrix.python-version  }}
+      - name: Display Python Version
+        run: python3 --version
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip tox torrentfile
+          pip3 install -r requirements.txt
+          sudo apt-get update
+          sudo apt-get install ffmpeg libsm6 libxext6  -y
+      - name: Run Tests
+        run: |
+          tox
