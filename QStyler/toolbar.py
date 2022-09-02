@@ -33,7 +33,7 @@ class ThemeCombo(QComboBox):
         """Cunstruct theme combo box."""
         super().__init__(parent=parent)
         self.setEditable(False)
-        self.setMinimumWidth(200)
+        self.setMinimumWidth(280)
         self._parent = parent
         self.manager = get_manager()
         for name in self.manager.titles:
@@ -91,9 +91,9 @@ class ToolBar(QToolBar):
         self.github_action.setIcon(get_icon("github"))
         self.github_action.setToolTip("Open Github Repo")
         self.addAction(self.github_action)
-        self.plus_button_action.triggered.connect(self.widget.add_widget_combo)
+        self.plus_button_action.triggered.connect(self.widget.styler.add_widget_combo)
         self.minus_button_action.triggered.connect(
-            self.widget.minus_widget_combo)
+            self.widget.styler.minus_widget_combo)
         self.view_current_action.triggered.connect(
             self.view_current_action.showStyles)
         self.github_action.triggered.connect(opengithub)
@@ -107,7 +107,7 @@ class ToolBar(QToolBar):
         """
         Activate the load item actions for the toolbar located in menubar.
         """
-        loadAction = self.widget.window.menubar.loadAction
+        loadAction = self.widget.menubar.loadAction
         loadAction.loaded.connect(self.load_new_theme)
         self.load_theme_action.triggered.connect(loadAction.trigger)
 

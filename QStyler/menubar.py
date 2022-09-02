@@ -128,7 +128,7 @@ class ThemeMenu(QMenu):
         self.resetAction = QAction("Reset Theme")
         self.saveCurrent = QAction("Save Theme As")
         self.resetAction.triggered.connect(self.manager.reset)
-        toolbar = parent.window.styler.toolbar
+        toolbar = parent.window.toolbar
         toolbar.loadAction = self.parent().loadAction
         self.parent().loadAction.loaded.connect(self.add_new_theme)
         self.themeMenu = QMenu("Themes", parent=self)

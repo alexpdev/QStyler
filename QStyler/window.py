@@ -22,13 +22,13 @@ import sys
 from typing import Optional
 
 from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget,
-                               QVBoxLayout, QWidget)
+                               QVBoxLayout, QWidget, QHBoxLayout)
 
 from QStyler.menubar import MenuBar
 from QStyler.styler import StylerTab
 from QStyler.utils import StyleManager, get_icon, get_manager
 from QStyler.widgets import WidgetsTab
-
+from QStyler.toolbar import ToolBar
 
 class MainWindow(QMainWindow):
     """
@@ -59,10 +59,16 @@ class MainWindow(QMainWindow):
         self.styler = StylerTab(parent=self)
         self.tabWidget.addTab(self.styler, "Style")
         self.tabWidget.addTab(self.widgets, "Widgets")
+        self.toolbar = ToolBar(parent=self)
+        self.hlayout = QHBoxLayout()
+        self.hlayout.addStretch()
+        self.hlayout.addWidget(self.toolbar)
+        self.hlayout.addStretch()
+        self.layout.addLayout(self.hlayout)
         self.layout.addWidget(self.tabWidget)
         self.menubar = MenuBar(self)
         self.statusbar = self.statusBar()
-        self.styler.toolbar.activate_load_item()
+        self.toolbar.activate_load_item()
         self.setMenuBar(self.menubar)
 
 
