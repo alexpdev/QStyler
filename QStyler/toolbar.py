@@ -91,7 +91,8 @@ class ToolBar(QToolBar):
         self.github_action.setIcon(get_icon("github"))
         self.github_action.setToolTip("Open Github Repo")
         self.addAction(self.github_action)
-        self.plus_button_action.triggered.connect(self.widget.styler.add_widget_combo)
+        self.plus_button_action.triggered.connect(
+            self.widget.styler.add_widget_combo)
         self.minus_button_action.triggered.connect(
             self.widget.styler.minus_widget_combo)
         self.view_current_action.triggered.connect(

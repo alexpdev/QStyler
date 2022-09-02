@@ -30,6 +30,7 @@ from QStyler.utils import StyleManager, get_icon, get_manager
 from QStyler.widgets import WidgetsTab
 from QStyler.toolbar import ToolBar
 
+
 class MainWindow(QMainWindow):
     """
     Create the main window widget for the application.
