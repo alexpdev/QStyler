@@ -33,7 +33,7 @@ from QStyler.utils import blockSignals
 class Table(QTableWidget):
     """Table containing all of the styles available for editing."""
 
-    widgetChanged = Signal([str])
+    widgetChanged = Signal(str)
     setNewRow = Signal()
 
     def __init__(self, manager, parent=None) -> None:
@@ -209,7 +209,7 @@ class PropsValidator(QValidator):
 class WidgetCombo(QComboBox):
     """Combo box containing all of the available widgets."""
 
-    widgetChanged = Signal([str])
+    widgetChanged = Signal(str)
 
     def __init__(self, data, parent=None):
         """Initialize widget combo box."""
@@ -296,7 +296,7 @@ class StateCombo(QComboBox):
 class StylerTab(QWidget):
     """Tab containing the table that changes the styling for the widgets."""
 
-    statusChanged = Signal([str])
+    statusChanged = Signal(str)
 
     def __init__(self, parent=None):
         """Initialize the styler tab."""
@@ -419,7 +419,7 @@ class WidgetValidator(QValidator):
     Text validator for Widget Combo Box.
     """
 
-    inputAccepted = Signal([str])
+    inputAccepted = Signal(str)
 
     def __init__(self, parent=None):
         """Construct the validator."""

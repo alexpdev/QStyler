@@ -97,7 +97,6 @@ def test_main_window(wind):
         the window instance.
     """
     assert hasattr(wind, "layout")
-    assert hasattr(wind, "central")
 
 
 def test_menu_bar(wind):

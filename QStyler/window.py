@@ -21,11 +21,12 @@
 import sys
 from typing import Optional
 
-from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget,
-                               QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget, QWidget)
 
 from QStyler.menubar import MenuBar
 from QStyler.styler import StylerTab
+from QStyler.editorTab import EditorsTab
+from QStyler.collectionsTab import CollectionsTab
 from QStyler.utils import StyleManager, get_icon, get_manager
 from QStyler.widgets import WidgetsTab
 
@@ -46,25 +47,27 @@ class MainWindow(QMainWindow):
         """Initialize main window."""
         super().__init__(parent=parent)
         self.setWindowTitle("QStyler")
-        self.central = QWidget(parent=self)
-        self.layout = QVBoxLayout()
-        self.central.setLayout(self.layout)
-        self.setCentralWidget(self.central)
+        self.tabWidget = QTabWidget()
+        self.setCentralWidget(self.tabWidget)
         self.setObjectName("MainWindow")
         self.resize(900, 700)
-        self.tabWidget = QTabWidget()
         self.setWindowIcon(get_icon("QStylerIcon.png"))
         self.manager = get_manager()
-        self.widgets = WidgetsTab(parent=self)
-        self.styler = StylerTab(parent=self)
-        self.tabWidget.addTab(self.styler, "Style")
-        self.tabWidget.addTab(self.widgets, "Widgets")
-        self.layout.addWidget(self.tabWidget)
         self.menubar = MenuBar(self)
         self.statusbar = self.statusBar()
-        self.styler.toolbar.activate_load_item()
         self.setMenuBar(self.menubar)
+        self.add_widgets()
 
+    def add_widgets(self):
+        self.styler = StylerTab(parent=self)
+        self.widgets = WidgetsTab(parent=self)
+        self.editors = EditorsTab(parent=self)
+        self.collections = CollectionsTab(parent=self)
+        self.tabWidget.addTab(self.styler, "Style")
+        self.tabWidget.addTab(self.widgets, "Widgets")
+        self.tabWidget.addTab(self.editors, "Editors")
+        self.tabWidget.addTab(self.collections, "Collections")
+        self.styler.toolbar.activate_load_item()
 
 class Application(QApplication):
     """Subclass of the QApplication."""
