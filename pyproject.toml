@@ -5,12 +5,11 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "QStyler"
 authors = [{name = "alexpdev", email = "alexpdev@pm.me"}]
-version = "0.1.5"
 dependencies = ["PySide6", "wheel"]
 description = "QStyleSheet testing application."
 keywords = ["Qt", "GUI", "QStyleSheet", "qss"]
+requires-python = ">=3.6"
 license = {text = "Apache Software License"}
-readme = "./README.md"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -24,9 +23,14 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
+dynamic = ["version", "readme"]
 
 [project.scripts]
-qstyler = "QStyler.__main__:main"
+qstyler = "QStyler.window:execute"
+
+[tool.setuptools.dynamic]
+version = {attr = "QStyler.version.__version__"}
+readme = {file = ["README.md"]}
 
 [tool.bandit]
 skips = ["B101"]

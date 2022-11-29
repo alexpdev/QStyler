@@ -1,5 +1,10 @@
 # QStyler CHANGELOG
 
+## Version 0.1.6
+
+-   Seperating widgets into different tabs
+
+
 ## Version 0.1.5
 
 -   Switched gifs in readme

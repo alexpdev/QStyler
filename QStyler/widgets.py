@@ -21,14 +21,13 @@
 import os
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (
-    QCheckBox, QComboBox, QCommandLinkButton, QDial, QDockWidget,
-    QDoubleSpinBox, QFontComboBox, QFrame, QGridLayout, QGroupBox, QHBoxLayout,
-    QKeySequenceEdit, QLabel, QLCDNumber, QLineEdit, QListWidget,
-    QListWidgetItem, QPlainTextEdit, QProgressBar, QPushButton, QRadioButton,
-    QScrollBar, QSlider, QSpinBox, QTableWidget, QTableWidgetItem,
-    QTextBrowser, QTextEdit, QTimeEdit, QToolButton, QTreeWidget,
-    QTreeWidgetItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QCheckBox, QComboBox, QCommandLinkButton, QDial,
+                               QDockWidget, QDoubleSpinBox, QFontComboBox,
+                               QFrame, QGroupBox, QHBoxLayout,
+                               QKeySequenceEdit, QLabel, QLCDNumber, QLineEdit,
+                               QProgressBar, QPushButton, QRadioButton,
+                               QScrollBar, QSlider, QSpinBox, QTimeEdit,
+                               QToolButton, QVBoxLayout, QWidget)
 
 from QStyler.utils import Lorem
 

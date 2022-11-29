@@ -255,8 +255,6 @@ def test_tickers(wind):
     processtime()
     tab = wind.widgets
     while tab.verticalSlider.value() < 99:
-        vertval = tab.verticalSlider.value()
-        horval = tab.horizontalSlider.value()
         tab.verticalSlider.triggerAction(
             tab.verticalSlider.SliderAction.SliderSingleStepAdd
         )
