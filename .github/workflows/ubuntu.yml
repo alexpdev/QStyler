@@ -23,5 +23,5 @@ jobs:
           python3 -m pip install --upgrade pip tox torrentfile PySide6
           pip3 install -r requirements.txt
           sudo apt-get update
-          sudo apt-get install ffmpeg libsm6 tox libxext6  -y
+          sudo apt-get install ffmpeg libsm6 tox libxext6 libopengl libglx0 libglx-mesa0 libegl-mesa0 libegl1 libgl -y
           tox
