@@ -71,7 +71,7 @@ def processtime(app=None, amount=None):
     """Process Events and sleep for a second."""
     app = app if app else QApplication.instance()
     if not amount:
-        amount = 0.03
+        amount = 0.01
     start = time.time()
     while time.time() - start < amount:
         app.processEvents()
