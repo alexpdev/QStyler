@@ -28,9 +28,6 @@ classifiers = [
 [project.scripts]
 qstyler = "QStyler.__main__:main"
 
-[tool.setuptools]
-packages = ["QStyler"]
-
 [tool.bandit]
 skips = ["B101"]
 

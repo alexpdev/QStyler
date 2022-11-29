@@ -21,12 +21,12 @@
 import sys
 from typing import Optional
 
-from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget, QWidget)
+from PySide6.QtWidgets import QApplication, QMainWindow, QTabWidget, QWidget
 
+from QStyler.collectionsTab import CollectionsTab
+from QStyler.editorTab import EditorsTab
 from QStyler.menubar import MenuBar
 from QStyler.styler import StylerTab
-from QStyler.editorTab import EditorsTab
-from QStyler.collectionsTab import CollectionsTab
 from QStyler.utils import StyleManager, get_icon, get_manager
 from QStyler.widgets import WidgetsTab
 
@@ -59,6 +59,7 @@ class MainWindow(QMainWindow):
         self.add_widgets()
 
     def add_widgets(self):
+        """Add widgets to the main window."""
         self.styler = StylerTab(parent=self)
         self.widgets = WidgetsTab(parent=self)
         self.editors = EditorsTab(parent=self)
@@ -68,6 +69,7 @@ class MainWindow(QMainWindow):
         self.tabWidget.addTab(self.editors, "Editors")
         self.tabWidget.addTab(self.collections, "Collections")
         self.styler.toolbar.activate_load_item()
+
 
 class Application(QApplication):
     """Subclass of the QApplication."""

@@ -67,6 +67,7 @@ class WidgetsTab(QWidget):
         self.hlayout.addWidget(self.dockWidget)
 
     def button_box(self):
+        """Build ui elements for button box."""
         buttonbox = QGroupBox("Buttons", self)
         self.vlay1 = QVBoxLayout(buttonbox)
         self.pushButton = QPushButton("Push Button", self)
@@ -85,6 +86,7 @@ class WidgetsTab(QWidget):
         return buttonbox
 
     def line_box(self):
+        """Build ui elements for line box."""
         linebox = QGroupBox("Spin Boxes", self)
         self.vlay2 = QVBoxLayout(linebox)
         self.lineEdit = QLineEdit(self)
@@ -102,6 +104,7 @@ class WidgetsTab(QWidget):
         return linebox
 
     def hv_box(self):
+        """Build ui elements for hv_box."""
         self.dial = QDial(self)
         self.line = QFrame(self)
         self.line.setFrameShape(QFrame.VLine)

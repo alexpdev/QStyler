@@ -18,7 +18,8 @@
 ##############################################################################
 """Widget tab module."""
 
-from PySide6.QtWidgets import (QLabel, QPlainTextEdit, QTextBrowser, QTextEdit, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QLabel, QPlainTextEdit, QTextBrowser, QTextEdit,
+                               QVBoxLayout, QWidget)
 
 from QStyler.utils import Lorem
 

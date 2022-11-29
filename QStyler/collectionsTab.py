@@ -18,9 +18,9 @@
 ##############################################################################
 """Widget tab module."""
 
-
-from PySide6.QtWidgets import (
-QLabel, QListWidget, QListWidgetItem, QTableWidget, QTableWidgetItem, QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QLabel, QListWidget, QListWidgetItem,
+                               QTableWidget, QTableWidgetItem, QTreeWidget,
+                               QTreeWidgetItem, QVBoxLayout, QWidget)
 
 from QStyler.utils import Lorem
 
