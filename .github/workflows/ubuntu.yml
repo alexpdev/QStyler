@@ -18,7 +18,7 @@ jobs:
         run: python3 --version
       - name: Install dependencies
         run: |
-          python3 -m pip install --upgrade pip tox torrentfile
+          python3 -m pip install --upgrade pip tox torrentfile PySide6
           pip3 install -r requirements.txt
           sudo apt-get update
           sudo apt-get install ffmpeg libsm6 libxext6  -y
