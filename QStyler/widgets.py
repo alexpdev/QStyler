@@ -21,14 +21,13 @@
 import os
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (
-    QCheckBox, QComboBox, QCommandLinkButton, QDial, QDockWidget,
-    QDoubleSpinBox, QFontComboBox, QFrame, QGridLayout, QGroupBox, QHBoxLayout,
-    QKeySequenceEdit, QLabel, QLCDNumber, QLineEdit, QListWidget,
-    QListWidgetItem, QPlainTextEdit, QProgressBar, QPushButton, QRadioButton,
-    QScrollBar, QSlider, QSpinBox, QTableWidget, QTableWidgetItem,
-    QTextBrowser, QTextEdit, QTimeEdit, QToolButton, QTreeWidget,
-    QTreeWidgetItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QCheckBox, QComboBox, QCommandLinkButton, QDial,
+                               QDockWidget, QDoubleSpinBox, QFontComboBox,
+                               QFrame, QGroupBox, QHBoxLayout,
+                               QKeySequenceEdit, QLabel, QLCDNumber, QLineEdit,
+                               QProgressBar, QPushButton, QRadioButton,
+                               QScrollBar, QSlider, QSpinBox, QTimeEdit,
+                               QToolButton, QVBoxLayout, QWidget)
 
 from QStyler.utils import Lorem
 
@@ -40,11 +39,36 @@ class WidgetsTab(QWidget):
         """Initialize the widgets tab."""
         super().__init__(parent=parent)
         lorem = Lorem()
-        self.grid = QGridLayout()
-        self.setLayout(self.grid)
-        self.buttonbox = QGroupBox("Buttons", self)
-        self.vlay1 = QVBoxLayout()
-        self.buttonbox.setLayout(self.vlay1)
+        self.hlayout = QHBoxLayout()
+        self.setLayout(self.hlayout)
+        self.buttonbox = self.button_box()
+        self.linebox = self.line_box()
+        self.horizontalbox, self.verticalbox = self.hv_box()
+        self.dockLay = QVBoxLayout()
+        self.docked = QWidget()
+        self.docked.setLayout(self.dockLay)
+        self.dockWidget.setWidget(self.docked)
+        self.labels = []
+        for _ in range(10):
+            label = QLabel(lorem.genword(), parent=self)
+            self.dockLay.addWidget(label)
+            self.labels.append(label)
+        self.pushButton.clicked.connect(
+            lambda: print(os.path.abspath(__file__)))
+        self.vertlay1 = QVBoxLayout()
+        self.vertlay2 = QVBoxLayout()
+        self.vertlay1.addWidget(self.buttonbox)
+        self.vertlay1.addWidget(self.horizontalbox)
+        self.vertlay2.addWidget(self.linebox)
+        self.vertlay2.addWidget(self.verticalbox)
+        self.hlayout.addLayout(self.vertlay1)
+        self.hlayout.addLayout(self.vertlay2)
+        self.hlayout.addWidget(self.dockWidget)
+
+    def button_box(self):
+        """Build ui elements for button box."""
+        buttonbox = QGroupBox("Buttons", self)
+        self.vlay1 = QVBoxLayout(buttonbox)
         self.pushButton = QPushButton("Push Button", self)
         self.radioButton = QRadioButton("Radio Button", self)
         self.checkBox = QCheckBox("Check Box", self)
@@ -58,31 +82,34 @@ class WidgetsTab(QWidget):
         self.vlay1.addWidget(self.commandLinkButton)
         self.vlay1.addWidget(self.checkBox)
         self.vlay1.addWidget(self.keySequenceEdit)
-        self.linebox = QGroupBox("Spin Boxes", self)
-        self.vlay2 = QVBoxLayout()
-        self.linebox.setLayout(self.vlay2)
+        return buttonbox
+
+    def line_box(self):
+        """Build ui elements for line box."""
+        linebox = QGroupBox("Spin Boxes", self)
+        self.vlay2 = QVBoxLayout(linebox)
         self.lineEdit = QLineEdit(self)
         self.timeEdit = QTimeEdit(self)
         self.fontComboBox = QFontComboBox(self)
         self.comboBox = QComboBox(self)
         self.spinBox = QSpinBox(self)
         self.doubleSpinBox = QDoubleSpinBox(self)
-        self.textEdit = QTextEdit(self)
-        self.textBrowser = QTextBrowser(self)
-        self.dial = QDial(self)
-        self.plainTextEdit = QPlainTextEdit(self)
-        self.line = QFrame(self)
-        self.line.setFrameShape(QFrame.VLine)
-        self.line.setFrameShadow(QFrame.Sunken)
         self.vlay2.addWidget(self.lineEdit)
         self.vlay2.addWidget(self.comboBox)
         self.vlay2.addWidget(self.spinBox)
         self.vlay2.addWidget(self.doubleSpinBox)
         self.vlay2.addWidget(self.fontComboBox)
         self.vlay2.addWidget(self.timeEdit)
-        self.horizontalbox = QGroupBox("Horizontal")
-        self.vlay3 = QVBoxLayout()
-        self.horizontalbox.setLayout(self.vlay3)
+        return linebox
+
+    def hv_box(self):
+        """Build ui elements for hv_box."""
+        self.dial = QDial(self)
+        self.line = QFrame(self)
+        self.line.setFrameShape(QFrame.VLine)
+        self.line.setFrameShadow(QFrame.Sunken)
+        horizontalbox = QGroupBox("Horizontal")
+        self.vlay3 = QVBoxLayout(horizontalbox)
         self.lcdNumber = QLCDNumber(self)
         self.verticalSlider = QSlider(self)
         self.verticalSlider.setOrientation(Qt.Vertical)
@@ -101,98 +128,24 @@ class WidgetsTab(QWidget):
         self.horizontalSlider.setOrientation(Qt.Horizontal)
         self.progressBar = QProgressBar(self)
         self.dockWidget = QDockWidget(self)
-        self.listWidget = QListWidget(self)
         self.vlay3.addWidget(self.progressBar)
         self.vlay3.addWidget(self.horizontalSlider)
         self.vlay3.addWidget(self.horizontalScrollBar)
         self.vlay3.addWidget(self.lcdNumber)
         self.vlay3.addWidget(self.line2)
-        self.verticalbox = QGroupBox("Vertical", self)
-        self.hlay1 = QHBoxLayout()
+        verticalbox = QGroupBox("Vertical", self)
+        self.hlay1 = QHBoxLayout(verticalbox)
         self.progressBar.setRange(0, 100)
         self.horizontalSlider.setMinimum(0)
         self.horizontalSlider.setMaximum(100)
         self.horizontalSlider.setTickInterval(1)
         self.horizontalSlider.valueChanged.connect(self.updateProgress)
-        self.teditlabel = QLabel("QTextEdit")
-        self.tbrowserlabel = QLabel("QTextBrowser")
-        self.pteditlabel = QLabel("QPlainTextEdit")
-        self.treelabel = QLabel("QTreeWidget")
-        self.tablelabel = QLabel("QTableWidget")
-        self.listlabel = QLabel("QListWidget")
-        self.verticalbox.setLayout(self.hlay1)
+        verticalbox.setLayout(self.hlay1)
         self.hlay1.addWidget(self.verticalScrollBar)
         self.hlay1.addWidget(self.verticalSlider)
         self.hlay1.addWidget(self.line)
         self.hlay1.addWidget(self.dial)
-        self.grid.addWidget(self.buttonbox, 0, 0)
-        self.grid.addWidget(self.linebox, 0, 1)
-        self.grid.addWidget(self.horizontalbox, 0, 3)
-        self.grid.addWidget(self.verticalbox, 0, 2)
-        for _ in range(15):
-            item = QListWidgetItem(type=0)
-            item.setText(lorem.genword())
-            self.listWidget.addItem(item)
-        self.treeWidget = QTreeWidget(self)
-        for _ in range(5):
-            root = QTreeWidgetItem(type=0)
-            root.setText(0, lorem.genword())
-            self.treeWidget.addTopLevelItem(root)
-            for _ in range(15):
-                item = QTreeWidgetItem(type=0)
-                item.setText(0, lorem.genword())
-                root.addChild(item)
-        self.tableWidget = QTableWidget(self)
-        self.tableWidget.setColumnCount(2)
-        self.tableWidget.setRowCount(0)
-        for _ in range(15):
-            rownum = self.tableWidget.rowCount()
-            self.tableWidget.insertRow(rownum)
-            item1 = QTableWidgetItem(type=0)
-            item2 = QTableWidgetItem(type=0)
-            item1.setText(lorem.genword())
-            item2.setText(lorem.genword())
-            self.tableWidget.setItem(rownum, 0, item1)
-            self.tableWidget.setItem(rownum, 1, item2)
-        self.vpteditlay = QVBoxLayout()
-        self.vtbrowslay = QVBoxLayout()
-        self.vteditlay = QVBoxLayout()
-        self.vlistlay = QVBoxLayout()
-        self.vtreelay = QVBoxLayout()
-        self.vtablelay = QVBoxLayout()
-        self.vpteditlay.addWidget(self.pteditlabel)
-        self.vpteditlay.addWidget(self.plainTextEdit)
-        self.vteditlay.addWidget(self.teditlabel)
-        self.vteditlay.addWidget(self.textEdit)
-        self.vtbrowslay.addWidget(self.tbrowserlabel)
-        self.vtbrowslay.addWidget(self.textBrowser)
-        self.vlistlay.addWidget(self.listlabel)
-        self.vlistlay.addWidget(self.listWidget)
-        self.vtreelay.addWidget(self.treelabel)
-        self.vtreelay.addWidget(self.treeWidget)
-        self.vtablelay.addWidget(self.tablelabel)
-        self.vtablelay.addWidget(self.tableWidget)
-        self.grid.addLayout(self.vteditlay, 1, 0)
-        self.grid.addLayout(self.vtbrowslay, 1, 1)
-        self.grid.addLayout(self.vpteditlay, 1, 2)
-        self.grid.addWidget(self.dockWidget, 1, 3, -1, -1)
-        self.grid.addLayout(self.vlistlay, 2, 0)
-        self.grid.addLayout(self.vtablelay, 2, 1)
-        self.grid.addLayout(self.vtreelay, 2, 2)
-        self.dockLay = QVBoxLayout()
-        self.docked = QWidget()
-        self.docked.setLayout(self.dockLay)
-        self.dockWidget.setWidget(self.docked)
-        self.labels = []
-        for _ in range(10):
-            label = QLabel(lorem.genword(), parent=self)
-            self.dockLay.addWidget(label)
-            self.labels.append(label)
-        self.plainTextEdit.setPlainText(lorem.gentext()[:200])
-        self.textEdit.setText(lorem.gentext()[200:])
-        self.textBrowser.setText(lorem.gentext())
-        self.pushButton.clicked.connect(
-            lambda: print(os.path.abspath(__file__)))
+        return verticalbox, horizontalbox
 
     def changeLCD(self):
         """Change the value displayed in LCD number widget."""

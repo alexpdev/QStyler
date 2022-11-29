@@ -41,7 +41,7 @@ class ThemeLoadDialog(QDialog):  # pragma: nocover
         This widgets parent widget.
     """
 
-    closing = Signal([str, str])
+    closing = Signal(str, str)
 
     def __init__(self, parent=None):
         """
@@ -98,7 +98,7 @@ class ThemeLoadDialog(QDialog):  # pragma: nocover
 class LoadAction(QAction):
     """Action for loading new themes from Qss file."""
 
-    loaded = Signal([dict, str])
+    loaded = Signal(dict, str)
 
     def __init__(self, *args, **kwargs):
         """Construct action."""

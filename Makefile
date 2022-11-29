@@ -54,3 +54,6 @@ push: clean test ## push to repo
 release: test clean ## package and upload a release
 	py -m build .
 	twine upload dist/*
+
+executable: test clean
+	pyinstaller runner.spec

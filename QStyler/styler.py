@@ -33,7 +33,7 @@ from QStyler.utils import blockSignals
 class Table(QTableWidget):
     """Table containing all of the styles available for editing."""
 
-    widgetChanged = Signal([str])
+    widgetChanged = Signal(str)
     setNewRow = Signal()
 
     def __init__(self, manager, parent=None) -> None:
@@ -194,22 +194,22 @@ class PropsValidator(QValidator):
     def validate(self, text, _):
         """Validate text contents."""
         if text == "":
-            return self.Acceptable  # pragma: nocover
+            return self.State.Acceptable  # pragma: nocover
         inter = False
         for prop in self.data:
             if len(text) == len(prop) and text == prop:
-                return self.Acceptable
+                return self.State.Acceptable
             if len(text) < len(prop) and text in prop:
                 inter = True
         if inter:
-            return self.Intermediate  # pragma: nocover
-        return self.Invalid
+            return self.State.Intermediate  # pragma: nocover
+        return self.State.Invalid
 
 
 class WidgetCombo(QComboBox):
     """Combo box containing all of the available widgets."""
 
-    widgetChanged = Signal([str])
+    widgetChanged = Signal(str)
 
     def __init__(self, data, parent=None):
         """Initialize widget combo box."""
@@ -221,7 +221,7 @@ class WidgetCombo(QComboBox):
         self.loadItems()
         self.setEditable(True)
         self.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        self.setInsertPolicy(self.NoInsert)
+        self.setInsertPolicy(self.InsertPolicy.NoInsert)
         validator = WidgetValidator(parent=self)
         self.setValidator(validator)
         validator.inputAccepted.connect(self.widgetChanged.emit)
@@ -296,7 +296,7 @@ class StateCombo(QComboBox):
 class StylerTab(QWidget):
     """Tab containing the table that changes the styling for the widgets."""
 
-    statusChanged = Signal([str])
+    statusChanged = Signal(str)
 
     def __init__(self, parent=None):
         """Initialize the styler tab."""
@@ -419,7 +419,7 @@ class WidgetValidator(QValidator):
     Text validator for Widget Combo Box.
     """
 
-    inputAccepted = Signal([str])
+    inputAccepted = Signal(str)
 
     def __init__(self, parent=None):
         """Construct the validator."""
@@ -432,23 +432,23 @@ class WidgetValidator(QValidator):
 
     def fixup(self, text):
         """Fix the text when it is invalid."""
-        while self.validate(text) == self.Invalid:
+        while self.validate(text) == self.State.Invalid:
             text = text[:-1]
 
     def validate(self, text, _=None):
         """Authenticate whether text is valid."""
         if text == "":
-            return self.Intermediate
+            return self.State.Intermediate
 
         def test_match(text):
             """Test text to see if it is valid."""
             for widget in self.widget_list:
                 if len(widget) == len(text) and text == widget:
                     self.inputAccepted.emit(text)
-                    return self.Acceptable
+                    return self.State.Acceptable
                 if len(widget) > len(text) and text in widget:
-                    return self.Intermediate
-            return self.Invalid
+                    return self.State.Intermediate
+            return self.State.Invalid
 
         pat1 = re.compile(r"^\w+?\s$")
         pat2 = re.compile(r"^\w+?\s\w+$")
@@ -456,13 +456,13 @@ class WidgetValidator(QValidator):
             widgets = text.split(" ")
             if widgets[0] in self.widget_list:
                 result = test_match(widgets[1])
-                return self.Invalid if result is None else result
-            return self.Invalid
+                return self.State.Invalid if result is None else result
+            return self.State.Invalid
         if pat1.match(text):
             widgets = text.split(" ")
             if widgets[0] in self.widget_list:
-                return self.Intermediate
-            return self.Invalid
+                return self.State.Intermediate
+            return self.State.Invalid
         return test_match(text)
 
 

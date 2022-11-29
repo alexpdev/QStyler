@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.6', '3.7', '3.8', '3.9', '3.10']
+        python-version: ['3.7', '3.8', '3.9', '3.10']
 
     steps:
       - uses: actions/checkout@v3
@@ -21,7 +21,7 @@ jobs:
           python3 -m pip install --upgrade pip tox torrentfile
           pip3 install -r requirements.txt
           sudo apt-get update
-          sudo apt-get install ffmpeg libsm6 libxext6  -y
+          sudo apt-get install libglx0 libglx-mesa0 libegl-mesa0 libegl1 -y
       - name: Run Tests
         run: |
           tox

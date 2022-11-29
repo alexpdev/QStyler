@@ -71,7 +71,7 @@ def processtime(app=None, amount=None):
     """Process Events and sleep for a second."""
     app = app if app else QApplication.instance()
     if not amount:
-        amount = 0.03
+        amount = 0.01
     start = time.time()
     while time.time() - start < amount:
         app.processEvents()
@@ -97,7 +97,6 @@ def test_main_window(wind):
         the window instance.
     """
     assert hasattr(wind, "layout")
-    assert hasattr(wind, "central")
 
 
 def test_menu_bar(wind):
@@ -257,9 +256,11 @@ def test_tickers(wind):
     tab = wind.widgets
     while tab.verticalSlider.value() < 99:
         tab.verticalSlider.triggerAction(
-            tab.verticalSlider.SliderSingleStepAdd)
+            tab.verticalSlider.SliderAction.SliderSingleStepAdd
+        )
         tab.horizontalSlider.triggerAction(
-            tab.horizontalSlider.SliderSingleStepAdd)
+            tab.horizontalSlider.SliderAction.SliderSingleStepAdd
+        )
         processtime(amount=0.02)
     assert tab.verticalSlider.value() > 95
     assert tab.horizontalSlider.value() > 95

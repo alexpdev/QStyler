@@ -1,5 +1,13 @@
 # QStyler CHANGELOG
 
+## Version 0.1.6
+
+-   Seperating widgets into different tabs
+-   Fixing issues with unittests
+-   Improved GUI
+-   Fixed bugs with signals and validators
+-   Updated build data
+
 ## Version 0.1.5
 
 -   Switched gifs in readme
