@@ -20,6 +20,7 @@
 
 import json
 
+from PySide6.QtCore import Signal
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (QApplication, QInputDialog, QLineEdit, QMenu,
                                QMenuBar)
@@ -39,6 +40,8 @@ class MenuBar(QMenuBar):
         This widgets parent.
     """
 
+    displayStyles = Signal()
+
     def __init__(self, parent) -> None:
         """
         Initialize menubar.
@@ -54,6 +57,7 @@ class MenuBar(QMenuBar):
         self.loadAction = LoadAction()
         self.loadAction.setText("Import Theme")
         self.fileMenu = FileMenu("File", parent=self)
+        self.fileMenu.displayStyles.connect(self.displayStyles)
         self.optionsMenu = ThemeMenu("Themes", parent=self)
         self.helpMenu = HelpMenu("Help", parent=self)
         self.addMenu(self.fileMenu)
@@ -188,6 +192,7 @@ class FileMenu(QMenu):
     parent : QWidget
         This widgets parent widget
     """
+    displayStyles = Signal()
 
     def __init__(self, text: str, parent=None) -> None:
         """
@@ -207,7 +212,7 @@ class FileMenu(QMenu):
         self.showAction = ShowAction("Show StyleSheet")
         self.saveAction.triggered.connect(saveQss)
         self.exitAction.triggered.connect(exitApp)
-        self.showAction.triggered.connect(self.showAction.showStyles)
+        self.showAction.triggered.connect(self.displayStyles.emit)
         self.editAction.triggered.connect(self.editAction.edit_current_sheet)
         self.addAction(self.showAction)
         self.addAction(self.editAction)

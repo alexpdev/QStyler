@@ -20,14 +20,14 @@
 
 import re
 
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QValidator
+from PySide6.QtCore import Qt, Signal, QSize
+from PySide6.QtGui import QValidator, QAction
 from PySide6.QtWidgets import (QApplication, QComboBox, QGroupBox, QHBoxLayout,
                                QLabel, QTableWidget, QTableWidgetItem,
-                               QVBoxLayout, QWidget)
+                               QVBoxLayout, QWidget, QStackedWidget, QTextEdit, QToolBar, QTextBrowser)
 
-from QStyler.toolbar import ToolBar
-from QStyler.utils import blockSignals
+from QStyler.actions import EditAction, ShowAction, opengithub, saveQss
+from QStyler.utils import blockSignals, get_icon, get_manager
 
 
 class Table(QTableWidget):
@@ -296,16 +296,51 @@ class StateCombo(QComboBox):
 class StylerTab(QWidget):
     """Tab containing the table that changes the styling for the widgets."""
 
-    statusChanged = Signal(str)
+    showStyles = Signal()
 
     def __init__(self, parent=None):
         """Initialize the styler tab."""
         super().__init__(parent=parent)
+        self.manager = parent.manager
+        self.toolbar = ToolBar(parent=self)
         self.window = parent
+        self.layout = QVBoxLayout(self)
+        self.stacked = QStackedWidget()
+        self.hlayout2 = QHBoxLayout()
+        self.hlayout2.addStretch(0)
+        self.hlayout2.addWidget(self.toolbar)
+        self.hlayout2.addStretch(0)
+        self.layout.addLayout(self.hlayout2)
+        self.layout.addWidget(self.stacked)
+        self.styleedit = StyleEditWidget(self)
+        self.styletable = StyleTableWidget(self)
+        self.stacked.addWidget(self.styleedit)
+        self.stacked.addWidget(self.styletable)
+        self.toolbar.nextPage.connect(self.changePage)
+        self.toolbar.plusWidget.connect(self.styletable.add_widget_combo)
+        self.toolbar.minusWidget.connect(self.styletable.minus_widget_combo)
+        self.toolbar.showStyles.connect(self.showStyles.emit)
+
+    def changePage(self):
+        pass
+
+
+class StyleEditWidget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.layout = QVBoxLayout(self)
+        self.editor = QTextEdit()
+        self.layout.addWidget(self.editor)
+
+
+class StyleTableWidget(QWidget):
+    statusChanged = Signal(str)
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
         self.manager = parent.manager
         self.data = self.manager.data
-        self.layout = QVBoxLayout()
-        self.setLayout(self.layout)
+        self.layout = QVBoxLayout(self)
         self.widget_label = QLabel("Widget(s)")
         self.control_label = QLabel("Control")
         self.state_label = QLabel("State")
@@ -313,12 +348,6 @@ class StylerTab(QWidget):
         self.control_combo = ControlCombo(self.data, parent=self)
         self.state_combo = StateCombo(self.data, parent=self)
         self.table = Table(self.manager, parent=self)
-        self.toolbar = ToolBar(parent=self)
-        self.hlayout2 = QHBoxLayout()
-        self.hlayout2.addStretch(0)
-        self.hlayout2.addWidget(self.toolbar)
-        self.hlayout2.addStretch(0)
-        self.layout.addLayout(self.hlayout2)
         self.vlayout1 = QVBoxLayout()
         self.vlayout2 = QVBoxLayout()
         self.vlayout3 = QVBoxLayout()
@@ -496,3 +525,116 @@ class GroupBox(QGroupBox):
             combo.deleteLater()
             item.widget().destroy()
             item.widget().deleteLater()
+
+
+class ThemeCombo(QComboBox):
+    """Combo Box for themes."""
+
+    def __init__(self, parent=None):
+        """Cunstruct theme combo box."""
+        super().__init__(parent=parent)
+        self.setEditable(False)
+        self.setMinimumWidth(200)
+        self._parent = parent
+        self.manager = get_manager()
+        for name in self.manager.titles:
+            self.addItem(name)
+
+
+class ToolBar(QToolBar):
+    """Tool Bar class object."""
+    nextPage = Signal()
+    plusWidget = Signal()
+    minusWidget = Signal()
+    showStyles = Signal()
+
+    def __init__(self, parent=None):
+        """Build the tool bar and it's buttons and widgets."""
+        super().__init__(parent=parent)
+        self.widget = parent
+        self.setMovable(True)
+        self.manager = get_manager()
+        self.setIconSize(QSize(35, 35))
+        self.next_stack_action = QAction()
+        self.next_stack_action.setIcon(get_icon("next-page"))
+        self.next_stack_action.setToolTip("Flip page")
+        self.plus_button_action = QAction()
+        self.plus_button_action.setIcon(get_icon("plus"))
+        self.minus_button_action = QAction()
+        self.minus_button_action.setIcon(get_icon("minus"))
+        self.plus_button_action.setToolTip("Add Widget Control Group")
+        self.minus_button_action.setToolTip("Remove Widget Control Group")
+        self.addAction(self.next_stack_action)
+        self.addAction(self.plus_button_action)
+        self.addAction(self.minus_button_action)
+        self.addSeparator()
+        self.themecombo = ThemeCombo(parent=self)
+        self.addWidget(self.themecombo)
+        self.apply_theme_action = QAction()
+        self.apply_theme_action.setIcon(get_icon("confirm"))
+        self.apply_theme_action.setToolTip("Apply Theme")
+        self.addAction(self.apply_theme_action)
+        self.reset_theme_action = QAction()
+        self.reset_theme_action.setIcon(get_icon("reset"))
+        self.reset_theme_action.setToolTip("Reset Theme")
+        self.addAction(self.reset_theme_action)
+        self.addSeparator()
+        self.view_current_action = ShowAction()
+        self.view_current_action.setIcon(get_icon("file"))
+        self.view_current_action.setToolTip("View Current Theme")
+        self.addAction(self.view_current_action)
+        self.edit_theme_action = EditAction()
+        self.edit_theme_action.setIcon(get_icon("edit"))
+        self.edit_theme_action.setToolTip("Edit Current Theme")
+        self.addAction(self.edit_theme_action)
+        self.save_current_action = QAction()
+        self.save_current_action.setIcon(get_icon("save"))
+        self.save_current_action.setToolTip("Save Current Theme To File")
+        self.addAction(self.save_current_action)
+        self.load_theme_action = QAction()
+        self.load_theme_action.setIcon(get_icon("import"))
+        self.load_theme_action.setToolTip("Load New Theme From File")
+        self.addAction(self.load_theme_action)
+        self.addSeparator()
+        self.github_action = QAction()
+        self.github_action.setIcon(get_icon("github"))
+        self.github_action.setToolTip("Open Github Repo")
+        self.addAction(self.github_action)
+        self.next_stack_action.triggered.connect(self.nextPage.emit)
+        self.plus_button_action.triggered.connect(self.plusWidget.emit)
+        self.minus_button_action.triggered.connect(
+            self.minusWidget.emit)
+        self.view_current_action.triggered.connect(
+            self.showStyles.emit)
+        self.github_action.triggered.connect(opengithub)
+        self.reset_theme_action.triggered.connect(self.manager.reset)
+        self.apply_theme_action.triggered.connect(self.apply_theme)
+        self.save_current_action.triggered.connect(saveQss)
+
+    def activate_load_item(self):
+        """
+        Activate the load item actions for the toolbar located in menubar.
+        """
+        loadAction = self.widget.window.menubar.loadAction
+        loadAction.loaded.connect(self.load_new_theme)
+        self.load_theme_action.triggered.connect(loadAction.trigger)
+
+    def load_new_theme(self, _, title):
+        """
+        Load and apply the given theme with the title as current theme.
+
+        Parameters
+        ----------
+        _ : dict
+            the theme dictionary
+        title : str
+            the title of the theme
+        """
+        self.themecombo.addItem(title)
+
+    def apply_theme(self):
+        """
+        Apply current value of the manager sheets as the current theme.
+        """
+        theme = self.themecombo.currentText()
+        self.manager.apply_theme(theme)

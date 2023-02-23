@@ -123,6 +123,10 @@ class LoadAction(QAction):
 class EditAction(QAction):
     """Edit action object."""
 
+    def __init__(self, text=''):
+        super().__init__(text)
+        self.triggered.connect(self.edit_current_sheet)
+
     def edit_current_sheet(self):  # pragma: nocover
         """Edit the current sheet."""
         sheet = QApplication.instance().styleSheet()
@@ -163,17 +167,7 @@ class EditAction(QAction):
 class ShowAction(QAction):
     """Show Action object."""
 
-    def showStyles(self):  # pragma: nocover
-        """Show the current stylesheet in a separate widget."""
-        sheet = QApplication.instance().styleSheet()
-        self.dialog = QWidget()
-        self.dialog.resize(300, 400)
-        layout = QVBoxLayout(self.dialog)
-        self.dialog.setWindowTitle("Current Style Sheet Theme")
-        textEdit = QTextBrowser(parent=self.dialog)
-        textEdit.setPlainText(sheet)
-        layout.addWidget(textEdit)
-        self.dialog.show()
+
 
 
 def saveQss():  # pragma: nocover

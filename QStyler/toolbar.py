@@ -18,7 +18,7 @@
 ##############################################################################
 """Module for toolbar for styler table."""
 
-from PySide6.QtCore import QSize
+from PySide6.QtCore import QSize, Signal
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QComboBox, QToolBar
 
@@ -42,6 +42,7 @@ class ThemeCombo(QComboBox):
 
 class ToolBar(QToolBar):
     """Tool Bar class object."""
+    nextPage = Signal()
 
     def __init__(self, parent=None):
         """Build the tool bar and it's buttons and widgets."""
@@ -50,12 +51,16 @@ class ToolBar(QToolBar):
         self.setMovable(True)
         self.manager = get_manager()
         self.setIconSize(QSize(35, 35))
+        self.next_stack_action = QAction()
+        self.next_stack_action.setIcon(get_icon("next-page"))
+        self.next_stack_action.setToolTip("Flip page")
         self.plus_button_action = QAction()
         self.plus_button_action.setIcon(get_icon("plus"))
         self.minus_button_action = QAction()
         self.minus_button_action.setIcon(get_icon("minus"))
         self.plus_button_action.setToolTip("Add Widget Control Group")
         self.minus_button_action.setToolTip("Remove Widget Control Group")
+        self.addAction(self.next_stack_action)
         self.addAction(self.plus_button_action)
         self.addAction(self.minus_button_action)
         self.addSeparator()
@@ -91,6 +96,7 @@ class ToolBar(QToolBar):
         self.github_action.setIcon(get_icon("github"))
         self.github_action.setToolTip("Open Github Repo")
         self.addAction(self.github_action)
+        self.next_stack_action.triggered.connect(self.nextPage.emit)
         self.plus_button_action.triggered.connect(self.widget.add_widget_combo)
         self.minus_button_action.triggered.connect(
             self.widget.minus_widget_combo)
