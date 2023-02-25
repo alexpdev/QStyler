@@ -28,7 +28,7 @@ from PySide6.QtWidgets import (QApplication, QDialog, QFileDialog, QHBoxLayout,
                                QLabel, QLineEdit, QPlainTextEdit, QPushButton,
                                QTextBrowser, QVBoxLayout, QWidget)
 
-from QStyler.utils import QssParser, get_manager
+from QStyler.utils import QssParser
 
 
 class ThemeLoadDialog(QDialog):  # pragma: nocover
@@ -130,7 +130,6 @@ class EditAction(QAction):
     def edit_current_sheet(self):  # pragma: nocover
         """Edit the current sheet."""
         sheet = QApplication.instance().styleSheet()
-        self.manager = get_manager()
         self.dialog = QWidget()
         self.dialog.resize(300, 450)
         layout = QVBoxLayout(self.dialog)

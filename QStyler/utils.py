@@ -99,182 +99,26 @@ def load_theme(title):
     path = get_src_dir() / "themes" / (title + ".json")
     return json.load(open(path, encoding="utf-8"))
 
-
 def get_manager():
     """Get the manager from any module."""
     return QApplication.instance().manager
 
 
-class StyleManager:
-    """Style Sheet Manager."""
-
-    def __init__(self):
-        """Initialize the Style Factory class."""
-        self.data = json.loads(
-            (get_src_dir() / "data" / "data.json").read_text(encoding="utf-8"))
-        self.titles = [i.stem for i in (get_src_dir() / "themes").iterdir()]
-        self.extras = []
-        self.app = QApplication.instance()
-        self.sheets = []
-        self.parser = QssParser()
-
-    def get_theme(self, name: str) -> dict:
-        """Return the theme associated with the given name."""
-        if name in self.titles:
-            return load_theme(name)
-        return {}
-
-    @staticmethod
-    def convert_to_sheets(theme: dict) -> list:
-        """Convert dictionary theme to sheets."""
-        sheets = []
-        for key, value in theme.items():
-            sheet = {key: value}
-            sheets.append(sheet)
-        return sheets
-
-    def append_sheet(self, widget: str, prop: str, value: str):
-        """
-        Add sheet data for widget to list of stylesheets.
-
-        Parameters
-        ----------
-        widget : QWidget
-            _description_
-        prop : str
-            _description_
-        value : str
-            _description_
-        """
-        widgets = widget.split(",")
-        for sheet in self.sheets:
-            widg = next(iter(sheet.keys()))
-            if widg in widgets:
-                sheet[widg].update({prop: value})
-                widgets.remove(widg)
-        self.sheets += [{widget: {prop: value}} for widget in widgets]
-        self.update_theme()
-
-    def _create_ssheet(self, sheets=None) -> dict:
-        """
-        Update the sheet with data from table.
-
-        Returns
-        -------
-        dict
-            the changed sheet
-        """
-        ssheet = ""
-        if not sheets:
-            sheets = self.sheets
-        for row in sheets:
-            for k, v in row.items():
-                if not k or not v:
-                    continue  # pragma: nocover
-                ssheet += k + " {\n"
-                for key, val in v.items():
-                    ssheet += "    " + key + ": " + val + ";\n"
-                ssheet += "}\n"
-        return ssheet
-
-    def update_theme(self):
-        """Apply current sheet to widget."""
-        ssheet = self._create_ssheet()
-        self.app.setStyleSheet(ssheet)
-
-    def get_sheet(self, widget: str) -> dict:
-        """
-        Get the sheet associated with the widget or empty dict.
-
-        Parameters
-        ----------
-        widget : str
-            The name of the widget to get the sheet for.
-
-        Returns
-        -------
-        dict
-            Empty dict or current style sheet.
-        """
-        if not widget:
-            return {}
-        widgets = widget.split(",")
-        sheets = []
-        if len(widgets) == 1:
-            for sheet in self.sheets:
-                if widget in sheet:
-                    return sheet[widget]
-        else:
-            for sheet in self.sheets:
-                widg = next(iter(sheet))
-                if widg in widgets:
-                    sheets.append(sheet)
-        if len(sheets) != len(widgets):
-            return {}
-        seqs = None
-        for sheet in sheets:
-            for key in sheet:
-                seq = set()
-                props = sheet[key]
-                for k, v in props.items():
-                    seq.add((k, v))
-                if seqs is None:
-                    seqs = seq
-                else:
-                    seqs &= seq
-            if not seqs:
-                return {}  # pragma: nocover
-        return dict(seqs)
-
-    @staticmethod
-    def add_theme(theme, filename):
-        """
-        Save new theme to theme directory.
-
-        Parameters
-        ----------
-        theme : dict
-            The Qss theme.
-        filename : str
-            Path to save location.
-        """
-        theme_dir = get_src_dir() / "themes"
-        json.dump(
-            theme,
-            open(theme_dir / (filename + ".json"), "wt", encoding="utf-8"),
-        )
-
-    def saveToFile(self, path: str) -> None:  # pragma: nocover
-        """
-        Save current style sheet.
-
-        Parameters
-        ----------
-        path : str
-            path to save file.
-        """
-        stylesheet = self._create_ssheet()
-        with open(path, "wt", encoding="utf-8") as fd:
-            fd.write(stylesheet)
-
-    def reset(self):
-        """Reset the current theme to default."""
-        self.sheets = []
-        self.update_theme()
-        self.app.window.styler.statusChanged.emit("")
-
-    def apply_theme(self, name: str) -> None:
-        """Apply given theme as current theme."""
-        theme = self.get_theme(name)
-        sheets = self.convert_to_sheets(theme)
-        self.sheets += sheets
-        self.update_theme()
-
+def json_to_stylesheet(theme: dict) -> str:
+    ssheet = ""
+    for k, v in theme.items():
+        if not k or not v:
+            continue  # pragma: nocover
+        ssheet += k + " {\n"
+        for key, val in v.items():
+            ssheet += "    " + key + ": " + val + ";\n"
+        ssheet += "}\n"
+    return ssheet
 
 class QssParser:
     """Qt Style Sheet Parser."""
 
-    def __init__(self):
+    def __init__(self, path_or_string=None):
         """
         Initialize and construct the qss parser object.
         """
@@ -283,6 +127,8 @@ class QssParser:
         self._lines = []
         self.results = {}
         self.collection = []
+        if path_or_string is not None:
+            self.parse(path_or_string)
 
     def parse(self, path_or_string):
         """
@@ -344,7 +190,10 @@ class QssParser:
         widget_str = "".join(widgets)
         widgets = widget_str.split(",")
         for widget in widgets:
-            self.collection.append({widget.strip(): deepcopy(props)})
+            try:
+                self.collection.append({widget.strip(): deepcopy(props)})
+            except IndexError:
+                return
 
     @staticmethod
     def _serialize_prop(line):

@@ -27,7 +27,7 @@ from PySide6.QtWidgets import (QApplication, QInputDialog, QLineEdit, QMenu,
 
 from QStyler.actions import (EditAction, LoadAction, ShowAction, opengithub,
                              saveQss)
-from QStyler.utils import QssParser, exitApp, get_manager
+from QStyler.utils import QssParser, exitApp
 
 
 class MenuBar(QMenuBar):
@@ -53,7 +53,6 @@ class MenuBar(QMenuBar):
         """
         super().__init__(parent)
         self.window = parent
-        self.manager = get_manager()
         self.loadAction = LoadAction()
         self.loadAction.setText("Import Theme")
         self.fileMenu = FileMenu("File", parent=self)
@@ -127,11 +126,8 @@ class ThemeMenu(QMenu):
             the parent of the widget, by default None
         """
         super().__init__(text, parent=parent)
-        self.manager = get_manager()
-        self.titles = self.manager.titles
         self.resetAction = QAction("Reset Theme")
         self.saveCurrent = QAction("Save Theme As")
-        self.resetAction.triggered.connect(self.manager.reset)
         # toolbar = parent.window.styler.toolbar
         # toolbar.loadAction = self.parent().loadAction
         self.parent().loadAction.loaded.connect(self.add_new_theme)
@@ -142,13 +138,13 @@ class ThemeMenu(QMenu):
         self.addAction(self.resetAction)
         self.addMenu(self.themeMenu)
         self.themeactions = []
-        for title in self.titles:
-            action = QAction(title)
-            action.key = title
-            action.setObjectName(title + "action")
-            action.triggered.connect(self.applyTheme)
-            self.themeactions.append(action)
-            self.themeMenu.addAction(action)
+        # for title in self.titles:
+        #     action = QAction(title)
+        #     action.key = title
+        #     action.setObjectName(title + "action")
+        #     action.triggered.connect(self.applyTheme)
+        #     self.themeactions.append(action)
+        #     self.themeMenu.addAction(action)
         self.themeMenu.addSeparator()
 
     def add_new_theme(self, theme, title):

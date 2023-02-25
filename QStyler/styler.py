@@ -19,622 +19,236 @@
 """Module for styler tab and styler table."""
 
 import re
-
+import json
+import os
+from pathlib import Path
 from PySide6.QtCore import Qt, Signal, QSize
 from PySide6.QtGui import QValidator, QAction
 from PySide6.QtWidgets import (QApplication, QComboBox, QGroupBox, QHBoxLayout,
                                QLabel, QTableWidget, QTableWidgetItem,
-                               QVBoxLayout, QWidget, QStackedWidget, QTextEdit, QToolBar, QTextBrowser)
+                               QVBoxLayout, QWidget, QStackedWidget, QTextEdit, QToolBar, QTextBrowser, QListWidget, QSlider, QListWidgetItem, QCheckBox, QSpacerItem, QSizePolicy)
 
-from QStyler.actions import EditAction, ShowAction, opengithub, saveQss
-from QStyler.utils import blockSignals, get_icon, get_manager
-
-
-class Table(QTableWidget):
-    """Table containing all of the styles available for editing."""
-
-    widgetChanged = Signal(str)
-    setNewRow = Signal()
-
-    def __init__(self, manager, parent=None) -> None:
-        """Initialize the styler table."""
-        super().__init__(parent=parent)
-        self.manager = manager
-        self.widget = parent
-        self.setColumnCount(2)
-        self.setRowCount(0)
-        self.loadProps()
-        header = self.horizontalHeader()
-        header.setStretchLastSection(True)
-        self.setHorizontalHeader(header)
-        self.verticalHeader().setHidden(True)
-        self.resizeColumnsToContents()
-        self.resizeRowsToContents()
-        self.cellChanged.connect(self.saveProp)
-        self.widgetChanged.connect(self.loadProps)
-
-    @blockSignals
-    def loadProps(self, common=None):
-        """Load items into table."""
-        if common is None:
-            common = {}
-        rowcount = self.rowCount()
-        for i, key in enumerate(common):
-            if i < rowcount:
-                self._setRowData(i, key, common[key])
-            else:
-                self.addRow(key=key, value=common[key])
-        while self.rowCount() > len(common):
-            self.removeRow(self.rowCount() - 1)
-        self.addRow()
-
-    @blockSignals
-    def _setRowData(self, rownum, key, value):
-        """Do something."""
-        self.item(rownum, 1).setText(value)
-        self.cellWidget(rownum, 0).selectKey(key)
-
-    def indexFromWidget(self, widget):
-        """
-        Find the row index for the given combobox.
-
-        Parameters
-        ----------
-        widget : PropCombo
-            properties combo box.
-
-        Returns
-        -------
-        int | None
-            row index
-        """
-        for i in range(self.rowCount()):
-            current = self.cellWidget(i, 0)
-            if widget is current:
-                return i
-        return None  # pragma: nocover
-
-    @blockSignals
-    def addRow(self, key=None, value=""):
-        """Add a new row to the table."""
-        cbox = PropsCombo(self.manager.data, parent=self)
-        rownum = self.rowCount()
-        self.insertRow(rownum)
-        self.setCellWidget(rownum, 0, cbox)
-        item = QTableWidgetItem(type=0)
-        flag1 = Qt.ItemFlag.ItemIsEditable
-        flag2 = Qt.ItemFlag.ItemIsEnabled
-        flag3 = Qt.ItemFlag.ItemIsSelectable
-        item.setFlags(flag1 | flag2 | flag3)
-        self.setItem(rownum, 1, item)
-        self._setRowData(rownum, key, value)
-
-    def saveProp(self, row, column):
-        """Save the newly changed value into the current stylesheet."""
-        if column == 0:
-            self.updateProp(row, column)
-        else:
-            prop = self.cellWidget(row, 0).currentText()
-            value = self.item(row, 1).text()
-            title = self.widget.getWidgetState()
-            if not prop or prop == "":
-                return  # pragma: nocover
-            self.manager.append_sheet(title, prop, value)
-        self.setNewRow.emit()
-
-    def currentSheet(self):
-        """Retreive the current stylesheet from the factory."""
-        title = self.widget.getWidgetState()
-        sheet = self.manager.get_sheet(title)
-        return sheet
-
-    @blockSignals
-    def updateProp(self, row, column):
-        """Update property when combobox value changes."""
-        cbox = self.cellWidget(row, column)
-        prop = cbox.currentText()
-        sheet = self.currentSheet()
-        if prop in sheet:
-            self.item(row, 1).setText(sheet[prop])  # pragma: nocover
-        else:
-            self.item(row, 1).setText("")
+from QStyler.utils import QssParser, json_to_stylesheet
 
 
-class PropsCombo(QComboBox):
-    """Combobox storing all available properties that can be edited."""
+class ColorPicker(QWidget):
 
-    def __init__(self, data, parent=None):
-        """Initialize the properties combo box."""
-        super().__init__(parent=parent)
-        self.widget = parent
-        self.app = QApplication.instance()
-        self.info = data
-        self.tableItem = None
-        self.addItem("")
-        self.loadItems()
-        validator = PropsValidator(parent=self)
-        self.setEditable(True)
-        self.setValidator(validator)
-        self.currentIndexChanged.connect(self.notifyTable)
-        self.setSizeAdjustPolicy(self.sizeAdjustPolicy().AdjustToContents)
+    colorChanged = Signal(str)
 
-    def notifyTable(self, _):
-        """Update table cell with accurate information."""
-        rownum = self.widget.indexFromWidget(self)
-        self.widget.saveProp(rownum, 0)
-
-    def loadItems(self):
-        """Populate the combo box with values from json file."""
-        for prop in self.info["properties"]:
-            self.addItem(prop)
-
-    @blockSignals
-    def selectKey(self, key):
-        """Select the appropriate item as current index."""
-        for i in range(self.count()):
-            if self.itemText(i) == key:
-                self.setCurrentIndex(i)
-                break
-
-
-class PropsValidator(QValidator):
-    """Validator for Props Combo."""
-
-    def __init__(self, parent=None):
-        """Construct the validator class."""
-        super().__init__(parent=parent)
-        self.widget = parent
-        self.data = parent.info["properties"]
-
-    def fixup(self, text):
-        """Fix invalid text."""
-        while text not in self.data:  # pragma: nocover
-            text = text[:-1]
-
-    def validate(self, text, _):
-        """Validate text contents."""
-        if text == "":
-            return self.State.Acceptable  # pragma: nocover
-        inter = False
-        for prop in self.data:
-            if len(text) == len(prop) and text == prop:
-                return self.State.Acceptable
-            if len(text) < len(prop) and text in prop:
-                inter = True
-        if inter:
-            return self.State.Intermediate  # pragma: nocover
-        return self.State.Invalid
-
-
-class WidgetCombo(QComboBox):
-    """Combo box containing all of the available widgets."""
-
-    widgetChanged = Signal(str)
-
-    def __init__(self, data, parent=None):
-        """Initialize widget combo box."""
-        super().__init__(parent=parent)
-        self.widget = parent
-        self.info = data
-        self.addItem("")
-        self.addItem("*")
-        self.loadItems()
-        self.setEditable(True)
-        self.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        self.setInsertPolicy(self.InsertPolicy.NoInsert)
-        validator = WidgetValidator(parent=self)
-        self.setValidator(validator)
-        validator.inputAccepted.connect(self.widgetChanged.emit)
-
-    @blockSignals
-    def loadItems(self):
-        """Populate combobox with data."""
-        widgets = self.info["controls"]
-        for widget in widgets:
-            self.addItem(widget)
-
-
-class ControlCombo(QComboBox):
-    """ComboBox containing all of the widget controls."""
-
-    def __init__(self, data, parent=None):
-        """Initialize the control combo box."""
-        super().__init__(parent=parent)
-        self.widget = parent
-        self.info = data
-        self.addItem("")
-        self.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        self.widget.combo.widgetChanged.connect(self.loadControls)
-
-    @blockSignals
-    def loadControls(self, widget):
-        """Populate the the combobox with data from jsonfile."""
-        for _ in range(self.count()):
-            self.removeItem(0)
-        self.addItem("")
-        widgets = widget.split(" ")
-        if len(widgets) > 1:
-            widget = widgets[-1]
-        else:
-            widget = widgets[0]
-        if widget in self.info["controls"]:
-            for control in self.info["controls"][widget]:
-                self.addItem(control)
-
-
-class StateCombo(QComboBox):
-    """Combobox with all the widget states available."""
-
-    def __init__(self, data, parent=None):
-        """Initialize the states combo box."""
-        super().__init__(parent=parent)
-        self.widget = parent
-        self.info = data
-        self.addItem("")
-        self.loadStates("")
-        self.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        self.widget.combo.widgetChanged.connect(self.loadStates)
-
-    @blockSignals
-    def loadStates(self, widget=""):
-        """Populate with data from jsonfile."""
-        for _ in range(self.count()):
-            self.removeItem(0)
-        self.addItem("")
-        widgets = widget.split(" ")
-        if len(widgets) > 1:
-            widget = widgets[-1]
-        else:
-            widget = widgets[0]
-        for state in self.info["states"]["*"]:
-            self.addItem(state)
-        if widget in self.info["states"]:
-            for state in self.info["states"][widget]:
-                self.addItem(state)
-
-
-class StylerTab(QWidget):
-    """Tab containing the table that changes the styling for the widgets."""
-
-    showStyles = Signal()
-
-    def __init__(self, parent=None):
-        """Initialize the styler tab."""
-        super().__init__(parent=parent)
-        self.manager = parent.manager
-        self.toolbar = ToolBar(parent=self)
-        self.window = parent
-        self.layout = QVBoxLayout(self)
-        self.stacked = QStackedWidget()
-        self.hlayout2 = QHBoxLayout()
-        self.hlayout2.addStretch(0)
-        self.hlayout2.addWidget(self.toolbar)
-        self.hlayout2.addStretch(0)
-        self.layout.addLayout(self.hlayout2)
-        self.layout.addWidget(self.stacked)
-        self.styleedit = StyleEditWidget(self)
-        self.styletable = StyleTableWidget(self)
-        self.stacked.addWidget(self.styleedit)
-        self.stacked.addWidget(self.styletable)
-        self.toolbar.nextPage.connect(self.changePage)
-        self.toolbar.plusWidget.connect(self.styletable.add_widget_combo)
-        self.toolbar.minusWidget.connect(self.styletable.minus_widget_combo)
-        self.toolbar.showStyles.connect(self.showStyles.emit)
-
-    def changePage(self):
-        pass
-
-
-class StyleEditWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.layout = QVBoxLayout(self)
-        self.editor = QTextEdit()
-        self.layout.addWidget(self.editor)
+        self.label = QLabel("")
+        self.label.setObjectName("ColorPicker")
+        self.label.setMinimumHeight(150)
+        self.label.setMinimumWidth(100)
+        self.red_layout = QHBoxLayout()
+        self.green_layout = QHBoxLayout()
+        self.blue_layout = QHBoxLayout()
+        self.red_label = QLabel("R")
+        self.green_label = QLabel("G")
+        self.blue_label = QLabel("B")
+        self.red_slider = QSlider(Qt.Horizontal)
+        self.blue_slider = QSlider(Qt.Horizontal)
+        self.green_slider = QSlider(Qt.Horizontal)
+        self.red_layout.addWidget(self.red_label)
+        self.red_layout.addWidget(self.red_slider)
+        self.green_layout.addWidget(self.green_label)
+        self.green_layout.addWidget(self.green_slider)
+        self.blue_layout.addWidget(self.blue_label)
+        self.blue_layout.addWidget(self.blue_slider)
+        self.layout.addWidget(self.label)
+        self.layout.addLayout(self.red_layout)
+        self.layout.addLayout(self.green_layout)
+        self.layout.addLayout(self.blue_layout)
+        self.blue_slider.setRange(0, 255)
+        self.green_slider.setRange(0, 255)
+        self.red_slider.setRange(0, 255)
+        self.blue_slider.valueChanged.connect(self.change_color)
+        self.red_slider.valueChanged.connect(self.change_color)
+        self.green_slider.valueChanged.connect(self.change_color)
+        self.label.setStyleSheet("background-color: #000;")
 
+    def change_color(self, _):
+        blue_value = self.blue_slider.value()
+        green_value = self.green_slider.value()
+        red_value = self.red_slider.value()
+        color_val = [f"{i:02x}" for i in [red_value, green_value, blue_value]]
+        color_string = "#" + ''.join(color_val)
+        self.label.setStyleSheet(f"background-color: {color_string};")
+        self.colorChanged.emit(color_string)
 
-class StyleTableWidget(QWidget):
-    statusChanged = Signal(str)
+class Editor(QTextEdit):
 
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-        self.manager = parent.manager
-        self.data = self.manager.data
-        self.layout = QVBoxLayout(self)
-        self.widget_label = QLabel("Widget(s)")
-        self.control_label = QLabel("Control")
-        self.state_label = QLabel("State")
-        self.combo = WidgetCombo(self.data, parent=self)
-        self.control_combo = ControlCombo(self.data, parent=self)
-        self.state_combo = StateCombo(self.data, parent=self)
-        self.table = Table(self.manager, parent=self)
-        self.vlayout1 = QVBoxLayout()
-        self.vlayout2 = QVBoxLayout()
-        self.vlayout3 = QVBoxLayout()
-        self.vlayout1.addWidget(self.widget_label)
-        self.vlayout1.addWidget(self.combo)
-        self.vlayout2.addWidget(self.control_label)
-        self.vlayout2.addWidget(self.control_combo)
-        self.vlayout3.addWidget(self.state_label)
-        self.vlayout3.addWidget(self.state_combo)
-        self.mainGroup = QGroupBox(parent=self)
-        self.mainGroup.setTitle("Widget Control Group")
-        self.mainGroup.setFlat(False)
-        self.hlayout = QHBoxLayout()
-        self.mainGroup.setLayout(self.hlayout)
-        self.hlayout.addLayout(self.vlayout1)
-        self.hlayout.addLayout(self.vlayout2)
-        self.hlayout.addLayout(self.vlayout3)
-        self.layout.addWidget(self.mainGroup)
-        self.layout.addWidget(self.table)
+    def __init__(self):
+        super().__init__()
+        self.textChanged.connect
 
-        self.table.setNewRow.connect(self.addTableRow)
-        self.combo.widgetChanged.connect(self.statusChanged.emit)
-        self.state_combo.currentIndexChanged.connect(self.statusChanged.emit)
-        self.control_combo.currentIndexChanged.connect(self.statusChanged.emit)
-        self.statusChanged.connect(self.updateTable)
-        self.boxgroups = []
+class ControlsList(QListWidget):
 
-    def updateTable(self, _):
-        """Update table to new status."""
-        state = self.getWidgetState()
-        common = self.manager.get_sheet(state)
-        self.table.loadProps(common=common)
+    def __init__(self, data):
+        super().__init__()
+        self.data = data
+        self.controls = set()
+        for k,v in self.data["controls"].items():
+            for control in v:
+                self.controls.add(control)
+        for control in sorted(list(self.controls)):
+            item = QListWidgetItem()
+            item.setText(control)
+            self.addItem(item)
+        self.setResizeMode(self.ResizeMode.Adjust)
 
-    def add_widget_combo(self):
-        """Add a widget combo box group."""
-        boxlen = len(self.boxgroups)
-        text = self.getWidgetState()
-        if len(text.split(",")) >= boxlen + 1:
+class StateList(QListWidget):
 
-            groupbox = GroupBox(parent=self)
-            self.layout.insertWidget(boxlen + 2, groupbox)
-            self.boxgroups.append(groupbox)
-        else:
-            self.window.statusbar.showMessage("Empty Widget Group Exists.",
-                                              4000)
+    def __init__(self, data):
+        super().__init__()
+        self.data = data
+        self.states = set()
+        for k,v in self.data["states"].items():
+            for state in v:
+                self.states.add(state)
+        for state in sorted(list(self.states)):
+            item = QListWidgetItem()
+            item.setText(state)
+            self.addItem(item)
 
-    def minus_widget_combo(self):
-        """Remove a widget combo box group."""
-        if len(self.boxgroups) > 0:
-            groupbox = self.boxgroups[-1]
-            groupbox.delete_widgets()
-            index = self.layout.indexOf(groupbox)
-            self.layout.takeAt(index)
-            self.boxgroups = self.boxgroups[:-1]
-            groupbox.deleteLater()
-            groupbox.destroy()
-        else:
-            self.window.statusbar.showMessage("Nothing to remove.", 4000)
+class WidgetList(QListWidget):
 
-    def addTableRow(self):
-        """Add a new row to the table."""
-        for row in range(self.table.rowCount()):
-            text = self.table.cellWidget(row, 0).currentText()
-            if text in ["", "-"]:
-                return
-        self.table.addRow()
-
-    def getWidgetState(self) -> str:
-        """
-        Get the current state of the combo boxes.
-
-        Returns
-        -------
-        str
-            the current state as a string
-        """
-        widgets = []
-        for box in self.boxgroups + [self]:
-            widget = box.combo.currentText()
-            control = box.control_combo.currentText()
-            state = box.state_combo.currentText()
-            parts = []
-            if widget:
-                parts.append(widget)
-            if control:
-                parts += [":", control]
-            if state:
-                parts += ["::", state]
-            full = "".join(parts)
-            if full:
-                widgets.append(full)
-        text = ",".join(widgets)
-        return text
-
-
-class WidgetValidator(QValidator):
-    """
-    Text validator for Widget Combo Box.
-    """
-
-    inputAccepted = Signal(str)
-
-    def __init__(self, parent=None):
-        """Construct the validator."""
-        super().__init__(parent=parent)
-        self.widget = parent
-        self.widget_list = []
-        for i in range(self.widget.count()):
-            text = self.widget.itemText(i)
-            self.widget_list.append(text)
-
-    def fixup(self, text):
-        """Fix the text when it is invalid."""
-        while self.validate(text) == self.State.Invalid:
-            text = text[:-1]
-
-    def validate(self, text, _=None):
-        """Authenticate whether text is valid."""
-        if text == "":
-            return self.State.Intermediate
-
-        def test_match(text):
-            """Test text to see if it is valid."""
-            for widget in self.widget_list:
-                if len(widget) == len(text) and text == widget:
-                    self.inputAccepted.emit(text)
-                    return self.State.Acceptable
-                if len(widget) > len(text) and text in widget:
-                    return self.State.Intermediate
-            return self.State.Invalid
-
-        pat1 = re.compile(r"^\w+?\s$")
-        pat2 = re.compile(r"^\w+?\s\w+$")
-        if pat2.match(text):
-            widgets = text.split(" ")
-            if widgets[0] in self.widget_list:
-                result = test_match(widgets[1])
-                return self.State.Invalid if result is None else result
-            return self.State.Invalid
-        if pat1.match(text):
-            widgets = text.split(" ")
-            if widgets[0] in self.widget_list:
-                return self.State.Intermediate
-            return self.State.Invalid
-        return test_match(text)
-
-
-class GroupBox(QGroupBox):
-    """Custom Group Box."""
-
-    def __init__(self, parent=None):
-        """Initialize Group Box Constructor."""
-        super().__init__(parent=parent)
-        self.widget = parent
-        self.data = parent.data
-        self.layout = QHBoxLayout()
-        self.setLayout(self.layout)
-        self.combo = WidgetCombo(self.data, parent=self)
-        self.control_combo = ControlCombo(self.data, parent=self)
-        self.state_combo = StateCombo(self.data, parent=self)
-        self.layout.addWidget(self.combo)
-        self.layout.addWidget(self.control_combo)
-        self.layout.addWidget(self.state_combo)
-        self.state_combo.currentIndexChanged.connect(parent.statusChanged.emit)
-        self.control_combo.currentIndexChanged.connect(
-            parent.statusChanged.emit)
-        self.combo.widgetChanged.connect(parent.statusChanged.emit)
-
-    def delete_widgets(self):
-        """Delete all widgets in the GroupBox."""
-        for combo in [self.combo, self.control_combo, self.state_combo]:
-            index = self.layout.indexOf(combo)
-            item = self.layout.takeAt(index)
-            combo.destroy()
-            combo.deleteLater()
-            item.widget().destroy()
-            item.widget().deleteLater()
-
-
-class ThemeCombo(QComboBox):
-    """Combo Box for themes."""
-
-    def __init__(self, parent=None):
-        """Cunstruct theme combo box."""
-        super().__init__(parent=parent)
-        self.setEditable(False)
-        self.setMinimumWidth(200)
-        self._parent = parent
-        self.manager = get_manager()
-        for name in self.manager.titles:
-            self.addItem(name)
-
+    def __init__(self, data):
+        super().__init__()
+        self.data = data
+        self.widgets = set()
+        for k in self.data["controls"]:
+            self.widgets.add(k)
+        for k in self.data["states"]:
+            self.widgets.add(k)
+        for widget in sorted(list(self.widgets)):
+            item = QListWidgetItem()
+            item.setText(widget)
+            self.addItem(item)
 
 class ToolBar(QToolBar):
-    """Tool Bar class object."""
-    nextPage = Signal()
-    plusWidget = Signal()
-    minusWidget = Signal()
-    showStyles = Signal()
+    themes_dir = Path(__file__).parent / "themes"
+    def __init__(self):
+        super().__init__()
+
+        self.live_action = QAction("Live View", self)
+        self.live_action.setCheckable(True)
+        self.live_action.setChecked(True)
+        self.preview_action = QAction("preview", self)
+        self.preview_action.setCheckable(True)
+        self.preview_action.setChecked(False)
+        self.load_action = QAction("load", self)
+        self.reset_action = QAction("reset", self)
+        self.addActions([self.live_action, self.load_action,
+                         self.preview_action, self.reset_action])
+        self.addSeparator()
+        self.themes_combo = QComboBox()
+        for file in os.listdir(self.themes_dir):
+            theme_name = os.path.splitext(file)[0]
+            self.themes_combo.addItem(theme_name, theme_name)
+        self.addWidget(self.themes_combo)
+        self.new_action = QAction("new", self)
+        self.save_action = QAction("save", self)
+        self.rename_action = QAction("rename", self)
+        self.export_action = QAction("export", self)
+        self.import_action = QAction("import", self)
+        self.delete_action = QAction("delete", self)
+        self.addActions([self.new_action, self.save_action, self.rename_action, self.export_action, self.import_action, self.delete_action])
+        self.addSeparator()
+        self.github_action = QAction("github", self)
+        self.addAction(self.github_action)
+
+class StylerTab(QWidget):
 
     def __init__(self, parent=None):
-        """Build the tool bar and it's buttons and widgets."""
-        super().__init__(parent=parent)
-        self.widget = parent
-        self.setMovable(True)
-        self.manager = get_manager()
-        self.setIconSize(QSize(35, 35))
-        self.next_stack_action = QAction()
-        self.next_stack_action.setIcon(get_icon("next-page"))
-        self.next_stack_action.setToolTip("Flip page")
-        self.plus_button_action = QAction()
-        self.plus_button_action.setIcon(get_icon("plus"))
-        self.minus_button_action = QAction()
-        self.minus_button_action.setIcon(get_icon("minus"))
-        self.plus_button_action.setToolTip("Add Widget Control Group")
-        self.minus_button_action.setToolTip("Remove Widget Control Group")
-        self.addAction(self.next_stack_action)
-        self.addAction(self.plus_button_action)
-        self.addAction(self.minus_button_action)
-        self.addSeparator()
-        self.themecombo = ThemeCombo(parent=self)
-        self.addWidget(self.themecombo)
-        self.apply_theme_action = QAction()
-        self.apply_theme_action.setIcon(get_icon("confirm"))
-        self.apply_theme_action.setToolTip("Apply Theme")
-        self.addAction(self.apply_theme_action)
-        self.reset_theme_action = QAction()
-        self.reset_theme_action.setIcon(get_icon("reset"))
-        self.reset_theme_action.setToolTip("Reset Theme")
-        self.addAction(self.reset_theme_action)
-        self.addSeparator()
-        self.view_current_action = ShowAction()
-        self.view_current_action.setIcon(get_icon("file"))
-        self.view_current_action.setToolTip("View Current Theme")
-        self.addAction(self.view_current_action)
-        self.edit_theme_action = EditAction()
-        self.edit_theme_action.setIcon(get_icon("edit"))
-        self.edit_theme_action.setToolTip("Edit Current Theme")
-        self.addAction(self.edit_theme_action)
-        self.save_current_action = QAction()
-        self.save_current_action.setIcon(get_icon("save"))
-        self.save_current_action.setToolTip("Save Current Theme To File")
-        self.addAction(self.save_current_action)
-        self.load_theme_action = QAction()
-        self.load_theme_action.setIcon(get_icon("import"))
-        self.load_theme_action.setToolTip("Load New Theme From File")
-        self.addAction(self.load_theme_action)
-        self.addSeparator()
-        self.github_action = QAction()
-        self.github_action.setIcon(get_icon("github"))
-        self.github_action.setToolTip("Open Github Repo")
-        self.addAction(self.github_action)
-        self.next_stack_action.triggered.connect(self.nextPage.emit)
-        self.plus_button_action.triggered.connect(self.plusWidget.emit)
-        self.minus_button_action.triggered.connect(
-            self.minusWidget.emit)
-        self.view_current_action.triggered.connect(
-            self.showStyles.emit)
-        self.github_action.triggered.connect(opengithub)
-        self.reset_theme_action.triggered.connect(self.manager.reset)
-        self.apply_theme_action.triggered.connect(self.apply_theme)
-        self.save_current_action.triggered.connect(saveQss)
+        super().__init__(parent)
+        self.data = json.load(open(Path(__file__).parent / "data" / "data.json"))
+        self.layout = QVBoxLayout(self)
+        self.toolbar_layout = QHBoxLayout()
+        self.toolbar_layout.addStretch(1)
+        self.toolbar = ToolBar()
+        self.toolbar_layout.addWidget(self.toolbar)
+        self.toolbar_layout.addStretch(1)
+        self.hlayout = QHBoxLayout()
+        self.layout.addLayout(self.toolbar_layout)
+        self.layout.addLayout(self.hlayout)
+        self.state_list = StateList(self.data)
+        self.widget_list = WidgetList(self.data)
+        self.control_list = ControlsList(self.data)
+        self.editor = Editor()
+        self.vlayout = QVBoxLayout()
+        self.vlayout.addWidget(self.widget_list)
+        self.vlayout.addWidget(self.control_list)
+        self.hlayout.addLayout(self.vlayout)
+        self.hlayout.addWidget(self.editor)
+        self.vlayout2 = QVBoxLayout()
+        self.colorPicker = ColorPicker()
+        self.vlayout2.addWidget(self.colorPicker)
+        self.vlayout2.addWidget(self.state_list)
+        self.hlayout.addLayout(self.vlayout2)
+        self.hlayout.setStretch(0,1)
+        self.hlayout.setStretch(2,1)
+        self.hlayout.setStretch(1,2)
+        self.editor.textChanged.connect(self.live_update)
+        self.colorPicker.colorChanged.connect(self.insert_color)
+        self.toolbar.load_action.triggered.connect(self.parse_changes)
+        self.toolbar.preview_action.toggled.connect(self.preview_style)
+        self.toolbar.reset_action.triggered.connect(self.reset_editor)
+        self.toolbar.themes_combo.currentTextChanged.connect(self.set_current_theme)
+        self.current_style = None
 
-    def activate_load_item(self):
-        """
-        Activate the load item actions for the toolbar located in menubar.
-        """
-        loadAction = self.widget.window.menubar.loadAction
-        loadAction.loaded.connect(self.load_new_theme)
-        self.load_theme_action.triggered.connect(loadAction.trigger)
+    def reset_editor(self):
+        self.editor.clear()
+        self.parse_changes()
 
-    def load_new_theme(self, _, title):
-        """
-        Load and apply the given theme with the title as current theme.
+    def set_current_theme(self, title):
+        style = ""
+        for path in self.toolbar.themes_dir.iterdir():
+            if path.stem == title:
+                data = json.load(open(path))
+                print(data)
+                style = json_to_stylesheet(data)
+        self.editor.setPlainText(style)
+        self.apply_stylesheet(style)
 
-        Parameters
-        ----------
-        _ : dict
-            the theme dictionary
-        title : str
-            the title of the theme
-        """
-        self.themecombo.addItem(title)
+    def preview_style(self, checked):
+        ss = QApplication.instance().styleSheet()
+        if checked:
+            self.current_style = ss
+            self.parse_changes()
+        else:
+            QApplication.instance().setStyleSheet(self.current_style)
+            self.current_style = None
 
-    def apply_theme(self):
-        """
-        Apply current value of the manager sheets as the current theme.
-        """
-        theme = self.themecombo.currentText()
-        self.manager.apply_theme(theme)
+
+
+    def insert_color(self, color):
+        pattern = re.compile(r'#[a-zA-Z0-9]{3,6}\s?;?')
+        cursor = self.editor.textCursor()
+        pos = cursor.position()
+        text = self.editor.toPlainText()
+        first = max(pos-8, 0)
+        if result := pattern.search(text[first:pos]):
+            s = first + result.start()
+            e = pos
+            cursor.movePosition(cursor.MoveOperation.Left, cursor.MoveMode.KeepAnchor, e - s)
+            cursor.deleteChar()
+        self.editor.insertPlainText(color)
+
+    def live_update(self):
+        if self.toolbar.live_checkbox.isChecked():
+            self.parse_changes()
+
+    def parse_changes(self):
+        text = self.editor.toPlainText()
+        self.apply_stylesheet(text)
+
+    def apply_stylesheet(self, text):
+        if not text:
+            QApplication.instance().setStyleSheet("")
+            return
+        parser = QssParser(text)
+        if parser.results:
+            QApplication.instance().setStyleSheet(text)
