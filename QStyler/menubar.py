@@ -25,8 +25,6 @@ from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (QApplication, QInputDialog, QLineEdit, QMenu,
                                QMenuBar)
 
-from QStyler.actions import (EditAction, LoadAction, ShowAction, opengithub,
-                             saveQss)
 from QStyler.utils import QssParser, exitApp
 
 
@@ -53,8 +51,7 @@ class MenuBar(QMenuBar):
         """
         super().__init__(parent)
         self.window = parent
-        self.loadAction = LoadAction()
-        self.loadAction.setText("Import Theme")
+
         self.fileMenu = FileMenu("File", parent=self)
         self.fileMenu.displayStyles.connect(self.displayStyles)
         self.optionsMenu = ThemeMenu("Themes", parent=self)
@@ -93,7 +90,6 @@ class HelpMenu(QMenu):
         self.aboutqt.triggered.connect(QApplication.instance().aboutQt)
         self.repolink = QAction("Open Github Repo")
         self.addAction(self.repolink)
-        self.repolink.triggered.connect(opengithub)
         self.aboutQstyler = QAction("About QStyler")
         self.addAction(self.aboutQstyler)
         self.aboutQstyler.triggered.connect(self.open_about)
@@ -128,23 +124,12 @@ class ThemeMenu(QMenu):
         super().__init__(text, parent=parent)
         self.resetAction = QAction("Reset Theme")
         self.saveCurrent = QAction("Save Theme As")
-        # toolbar = parent.window.styler.toolbar
-        # toolbar.loadAction = self.parent().loadAction
-        self.parent().loadAction.loaded.connect(self.add_new_theme)
         self.themeMenu = QMenu("Themes", parent=self)
         self.saveCurrent.triggered.connect(self.createTheme)
-        self.addAction(self.parent().loadAction)
         self.addAction(self.saveCurrent)
         self.addAction(self.resetAction)
         self.addMenu(self.themeMenu)
         self.themeactions = []
-        # for title in self.titles:
-        #     action = QAction(title)
-        #     action.key = title
-        #     action.setObjectName(title + "action")
-        #     action.triggered.connect(self.applyTheme)
-        #     self.themeactions.append(action)
-        #     self.themeMenu.addAction(action)
         self.themeMenu.addSeparator()
 
     def add_new_theme(self, theme, title):
@@ -203,15 +188,8 @@ class FileMenu(QMenu):
         """
         super().__init__(text, parent=parent)
         self.exitAction = QAction("Exit")
-        self.editAction = EditAction("Edit")
         self.saveAction = QAction("Save")
-        self.showAction = ShowAction("Show StyleSheet")
-        self.saveAction.triggered.connect(saveQss)
         self.exitAction.triggered.connect(exitApp)
-        self.showAction.triggered.connect(self.displayStyles.emit)
-        self.editAction.triggered.connect(self.editAction.edit_current_sheet)
-        self.addAction(self.showAction)
-        self.addAction(self.editAction)
         self.addAction(self.saveAction)
         self.addSeparator()
         self.addAction(self.exitAction)

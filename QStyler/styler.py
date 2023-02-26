@@ -22,12 +22,10 @@ import re
 import json
 import os
 from pathlib import Path
-from PySide6.QtCore import Qt, Signal, QSize
-from PySide6.QtGui import QValidator, QAction
-from PySide6.QtWidgets import (QApplication, QComboBox, QGroupBox, QHBoxLayout,
-                               QLabel, QTableWidget, QTableWidgetItem,
-                               QVBoxLayout, QWidget, QStackedWidget, QTextEdit, QToolBar, QTextBrowser, QListWidget, QSlider, QListWidgetItem, QCheckBox, QSpacerItem, QSizePolicy)
-
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import (QApplication, QComboBox, QHBoxLayout,
+                               QLabel, QVBoxLayout, QWidget, QTextEdit, QToolBar, QListWidget, QSlider, QListWidgetItem)
 from QStyler.utils import QssParser, json_to_stylesheet
 
 
@@ -128,6 +126,19 @@ class WidgetList(QListWidget):
             item.setText(widget)
             self.addItem(item)
 
+class PropertyList(QListWidget):
+
+    def __init__(self, data):
+        super().__init__()
+        self.data = data
+        self.properties = set()
+        for k in self.data["properties"]:
+            self.properties.add(k)
+        for prop in sorted(list(self.properties)):
+            item = QListWidgetItem()
+            item.setText(prop)
+            self.addItem(item)
+
 class ToolBar(QToolBar):
     themes_dir = Path(__file__).parent / "themes"
     def __init__(self):
@@ -165,32 +176,46 @@ class StylerTab(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.data = json.load(open(Path(__file__).parent / "data" / "data.json"))
-        self.layout = QVBoxLayout(self)
-        self.toolbar_layout = QHBoxLayout()
+        self.layout              = QVBoxLayout(self)
+        self.toolbar_layout      = QHBoxLayout()
+        self.toolbar             = ToolBar()
+        self.hlayout             = QHBoxLayout()
+        self.state_list          = StateList(self.data)
+        self.widget_list         = WidgetList(self.data)
+        self.control_list        = ControlsList(self.data)
+        self.property_list       = PropertyList(self.data)
+        self.widget_list_label   = QLabel("Widgets")
+        self.control_list_label  = QLabel("Widget Controls")
+        self.states_list_label   = QLabel("Widget Pseudo-States")
+        self.property_list_label = QLabel("Widget Properties")
+        self.editor              = Editor()
+        self.vlayout             = QVBoxLayout()
+        self.vlayout2            = QVBoxLayout()
+        self.colorPicker         = ColorPicker()
         self.toolbar_layout.addStretch(1)
-        self.toolbar = ToolBar()
         self.toolbar_layout.addWidget(self.toolbar)
         self.toolbar_layout.addStretch(1)
-        self.hlayout = QHBoxLayout()
         self.layout.addLayout(self.toolbar_layout)
         self.layout.addLayout(self.hlayout)
-        self.state_list = StateList(self.data)
-        self.widget_list = WidgetList(self.data)
-        self.control_list = ControlsList(self.data)
-        self.editor = Editor()
-        self.vlayout = QVBoxLayout()
+
+        self.vlayout.addWidget(self.widget_list_label)
         self.vlayout.addWidget(self.widget_list)
+        self.vlayout.addWidget(self.control_list_label)
         self.vlayout.addWidget(self.control_list)
+        self.vlayout.addWidget(self.states_list_label)
+        self.vlayout.addWidget(self.state_list)
+
+
+        self.vlayout2.addWidget(self.colorPicker)
+        self.vlayout2.addWidget(self.property_list_label)
+        self.vlayout2.addWidget(self.property_list)
+
         self.hlayout.addLayout(self.vlayout)
         self.hlayout.addWidget(self.editor)
-        self.vlayout2 = QVBoxLayout()
-        self.colorPicker = ColorPicker()
-        self.vlayout2.addWidget(self.colorPicker)
-        self.vlayout2.addWidget(self.state_list)
         self.hlayout.addLayout(self.vlayout2)
         self.hlayout.setStretch(0,1)
-        self.hlayout.setStretch(2,1)
         self.hlayout.setStretch(1,2)
+        self.hlayout.setStretch(2,1)
         self.editor.textChanged.connect(self.live_update)
         self.colorPicker.colorChanged.connect(self.insert_color)
         self.toolbar.load_action.triggered.connect(self.parse_changes)
@@ -198,6 +223,52 @@ class StylerTab(QWidget):
         self.toolbar.reset_action.triggered.connect(self.reset_editor)
         self.toolbar.themes_combo.currentTextChanged.connect(self.set_current_theme)
         self.current_style = None
+        self.widget_list.itemClicked.connect(self.on_widget_clicked)
+        self.widget_list.itemDoubleClicked.connect(self.on_widget_double_clicked)
+
+    def on_widget_clicked(self, item):
+        widget = item.text()
+        content = self.editor.toPlainText()
+        pos = self.editor.textCursor().position()
+        last, moved = None, False
+        if content and widget != "*":
+            for match in re.finditer(widget, content):
+                if match.end() > pos:
+                    self.editor.textCursor().setPosition(match.end())
+                    moved = True
+                    break
+                last = match
+            if not moved and last is not None:
+                self.editor.textCursor().setPosition(last.end())
+        for row in range(self.control_list.count()):
+            item = self.control_list.item(row)
+            if (widget not in self.data["controls"]
+            or item.text() in self.data["controls"][widget]):
+                item.setHidden(False)
+            else:
+                item.setHidden(True)
+        states = self.data["states"]["*"]
+        if widget in self.data["states"]:
+            states += self.data["states"][widget]
+        for row in range(self.state_list.count()):
+            item = self.state_list.item(row)
+            if item.text() not in states:
+                item.setHidden(True)
+            else:
+                item.setHidden(False)
+
+
+    def on_widget_double_clicked(self, item):
+        widget = item.text()
+        content = self.editor.toPlainText()
+        pos = self.editor.textCursor().position()
+        for match in re.finditer(r"\}", content[pos:]):
+            self.editor.textCursor().setPosition(match.end() + 1)
+            self.editor.insertPlainText(f"\n{widget} {{\n\n}}")
+            break
+        else:
+            self.editor.insertPlainText(f"\n{widget} {{\n\n}}")
+
 
     def reset_editor(self):
         self.editor.clear()
@@ -208,10 +279,9 @@ class StylerTab(QWidget):
         for path in self.toolbar.themes_dir.iterdir():
             if path.stem == title:
                 data = json.load(open(path))
-                print(data)
                 style = json_to_stylesheet(data)
         self.editor.setPlainText(style)
-        self.apply_stylesheet(style)
+        self.parse_changes()
 
     def preview_style(self, checked):
         ss = QApplication.instance().styleSheet()
@@ -222,23 +292,30 @@ class StylerTab(QWidget):
             QApplication.instance().setStyleSheet(self.current_style)
             self.current_style = None
 
-
-
     def insert_color(self, color):
         pattern = re.compile(r'#[a-zA-Z0-9]{3,6}\s?;?')
+        pattern2 = re.compile(r'\s?rgb\(\d+,\s?\d+,\s?\d+\);?')
         cursor = self.editor.textCursor()
         pos = cursor.position()
         text = self.editor.toPlainText()
         first = max(pos-8, 0)
+        second = max(pos-20,0)
         if result := pattern.search(text[first:pos]):
-            s = first + result.start()
-            e = pos
-            cursor.movePosition(cursor.MoveOperation.Left, cursor.MoveMode.KeepAnchor, e - s)
+            s, e = first + result.start(), pos
+            cursor.movePosition(
+                cursor.MoveOperation.Left, cursor.MoveMode.KeepAnchor, e - s
+            )
             cursor.deleteChar()
-        self.editor.insertPlainText(color)
+        elif result := pattern2.search(text[second:pos]):
+            s, e = second + result.start(), pos
+            cursor.movePosition(
+                cursor.MoveOperation.Left, cursor.MoveMode.KeepAnchor, e - s
+            )
+            cursor.deleteChar()
+        self.editor.insertPlainText(color + ";")
 
     def live_update(self):
-        if self.toolbar.live_checkbox.isChecked():
+        if self.toolbar.live_action.isChecked():
             self.parse_changes()
 
     def parse_changes(self):

@@ -72,7 +72,11 @@
       "selection-color",
       "gridline-color"
     ],
-    "QTableWidget": [],
+    "QTableWidget": [
+      "alternate-background-color",
+      "selection-color",
+      "gridline-color"
+    ],
     "QTextEdit": [],
     "QTimeEdit": ["up-button", "up-arrow", "down-button", "down-arrow"],
     "QToolBar": ["positionWithinLine", "separator", "handle"],
