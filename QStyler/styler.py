@@ -23,10 +23,13 @@ import json
 import os
 from pathlib import Path
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QAction
+from PySide6.QtGui import QAction, QFontMetricsF
 from PySide6.QtWidgets import (QApplication, QComboBox, QHBoxLayout,
                                QLabel, QVBoxLayout, QWidget, QTextEdit, QToolBar, QListWidget, QSlider, QListWidgetItem)
 from QStyler.utils import QssParser, json_to_stylesheet
+
+
+THEMES = Path(__file__).parent / "themes"
 
 
 class ColorPicker(QWidget):
@@ -216,15 +219,30 @@ class StylerTab(QWidget):
         self.hlayout.setStretch(0,1)
         self.hlayout.setStretch(1,2)
         self.hlayout.setStretch(2,1)
+        self.editor.setTabStopDistance(
+            QFontMetricsF(self.editor.font()).horizontalAdvance(' ') * 4
+        )
+        self.editor.setUndoRedoEnabled(True)
         self.editor.textChanged.connect(self.live_update)
         self.colorPicker.colorChanged.connect(self.insert_color)
         self.toolbar.load_action.triggered.connect(self.parse_changes)
         self.toolbar.preview_action.toggled.connect(self.preview_style)
         self.toolbar.reset_action.triggered.connect(self.reset_editor)
-        self.toolbar.themes_combo.currentTextChanged.connect(self.set_current_theme)
+        self.toolbar.themes_combo.currentTextChanged.connect(
+            self.set_current_theme
+        )
         self.current_style = None
         self.widget_list.itemClicked.connect(self.on_widget_clicked)
         self.widget_list.itemDoubleClicked.connect(self.on_widget_double_clicked)
+        self.toolbar.save_action.triggered.connect(self.save_sheet)
+
+    def save_sheet(self):
+        content = self.editor.toPlainText()
+        parser = QssParser(content)
+        results = parser.results
+        name = self.toolbar.themes_combo.currentText()
+        json.dump(results, open(str(THEMES / name) + ".json", "wt"), indent=4)
+
 
     def on_widget_clicked(self, item):
         widget = item.text()
@@ -233,13 +251,19 @@ class StylerTab(QWidget):
         last, moved = None, False
         if content and widget != "*":
             for match in re.finditer(widget, content):
+                last = match
                 if match.end() > pos:
-                    self.editor.textCursor().setPosition(match.end())
+                    cursor = self.editor.textCursor()
+                    cursor.setPosition(match.end())
+                    self.editor.setTextCursor(cursor)
+                    self.editor.ensureCursorVisible()
                     moved = True
                     break
-                last = match
             if not moved and last is not None:
-                self.editor.textCursor().setPosition(last.end())
+                cursor = self.editor.textCursor()
+                cursor.setPosition(last.end())
+                self.editor.setTextCursor(cursor)
+                moved = True
         for row in range(self.control_list.count()):
             item = self.control_list.item(row)
             if (widget not in self.data["controls"]
