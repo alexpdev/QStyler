@@ -257,6 +257,35 @@ def test_save_theme(wind, app):
     assert styler.editor.toPlainText() == ""
 
 
+def test_new_delete_theme(app, wind):
+    """Test new theme and delete theme actions."""
+    wind.tabWidget.setCurrentIndex(0)
+    toolbar = wind.styler.toolbar
+    processtime(app=app)
+    toolbar.new_action.trigger()
+    processtime(app=app)
+    toolbar.dialog.line.setText("new_test_theme")
+    processtime(app=app)
+    toolbar.dialog.save_btn.click()
+    processtime(app=app)
+    combo = toolbar.themes_combo
+    processtime(app=app)
+    for i in range(combo.count()):
+        if combo.itemText(i) == "new_test_theme":
+            combo.setCurrentIndex(i)
+            break
+    toolbar.rename_action.trigger()
+    processtime(app=app)
+    toolbar.dialog.line.setText("new_new_test_theme")
+    processtime(app=app)
+    toolbar.dialog.save_btn.click()
+    processtime(app=app)
+    assert toolbar.themes_combo.currentText() == "new_new_test_theme"
+    toolbar.delete_action.trigger()
+    processtime(app=app)
+    assert toolbar.themes_combo.currentText() != "new_new_test_theme"
+
+
 @atexit.register
 def teardown():
     """

@@ -36,7 +36,7 @@ clean-build: ## remove build artifacts
 	rm -vf **.pyc
 	rm -vf **.pyo
 	rm -fvr **/__pycache__
-	rm -fvr .tox/
+	rm -frv .tox/
 	rm -fv .coverage
 	rm -frv htmlcov/
 	rm -frv .pytest_cache

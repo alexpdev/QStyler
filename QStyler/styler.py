@@ -489,4 +489,4 @@ class StylerTab(QWidget):
             apply_stylesheet(text)
         except ParsingError as err:
             a = str(err)
-            self.window().statusBar().setMessage(10000, f"Error in line {a}")
+            self.window().statusBar().showMessage(f"Error near line {a}", 2000)
