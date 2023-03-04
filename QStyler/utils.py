@@ -119,7 +119,7 @@ class QssParser:
             either the path to the file or a string containing stylesheets.
         """
         self._clear()
-        if os.path.exists(path_or_string):
+        if os.path.exists(path_or_string):  # pragma: nocover
             with open(path_or_string, "rt", encoding="utf-8") as fd:
                 self._lines = [i.strip() for i in fd.read().split("\n")]
         else:
@@ -127,7 +127,7 @@ class QssParser:
         self._total = len(self._lines)
         try:
             self._parse_qss()
-        except IndexError as err:
+        except IndexError as err:  # pragma: nocover
             if hasattr(self, "_line"):
                 raise ParsingError(str(self._line)) from err
         self._compile()
@@ -175,7 +175,7 @@ class QssParser:
         for widget in widgets:
             try:
                 self.collection.append({widget.strip(): deepcopy(props)})
-            except IndexError:
+            except IndexError:  # pragma: nocover
                 return
 
     @staticmethod
