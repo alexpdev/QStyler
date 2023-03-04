@@ -36,15 +36,17 @@ clean-build: ## remove build artifacts
 	rm -vf **.pyc
 	rm -vf **.pyo
 	rm -fvr **/__pycache__
-	rm -fvr .tox/
+	rm -frv .tox/
 	rm -fv .coverage
 	rm -frv htmlcov/
 	rm -frv .pytest_cache
 	rm -fv corbertura.xml
 	rm -fv coverage.xml
 
-test: clean ## run tests quickly with the default Python
+install: ## install packages
 	pip install --upgrade --no-cache --force-reinstall torrentfileQt QStyler
+
+test: clean ## run tests quickly with the default Python
 	tox
 
 push: clean test ## push to repo

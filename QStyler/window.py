@@ -21,13 +21,14 @@
 import sys
 from typing import Optional
 
-from PySide6.QtWidgets import QApplication, QMainWindow, QTabWidget, QWidget
+from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget,
+                               QTextBrowser, QVBoxLayout, QWidget)
 
 from QStyler.collectionsTab import CollectionsTab
 from QStyler.editorTab import EditorsTab
 from QStyler.menubar import MenuBar
 from QStyler.styler import StylerTab
-from QStyler.utils import StyleManager, get_icon, get_manager
+from QStyler.utils import get_icon
 from QStyler.widgets import WidgetsTab
 
 
@@ -52,8 +53,8 @@ class MainWindow(QMainWindow):
         self.setObjectName("MainWindow")
         self.resize(900, 700)
         self.setWindowIcon(get_icon("QStylerIcon.png"))
-        self.manager = get_manager()
         self.menubar = MenuBar(self)
+        self.menubar.displayStyles.connect(self.showStyles)
         self.statusbar = self.statusBar()
         self.setMenuBar(self.menubar)
         self.add_widgets()
@@ -68,7 +69,18 @@ class MainWindow(QMainWindow):
         self.tabWidget.addTab(self.widgets, "Widgets")
         self.tabWidget.addTab(self.editors, "Editors")
         self.tabWidget.addTab(self.collections, "Collections")
-        self.styler.toolbar.activate_load_item()
+
+    def showStyles(self):  # pragma: nocover
+        """Show the current stylesheet in a separate widget."""
+        sheet = QApplication.instance().styleSheet()
+        self.dialog = QWidget()
+        self.dialog.resize(300, 400)
+        layout = QVBoxLayout(self.dialog)
+        self.dialog.setWindowTitle("Current Style Sheet Theme")
+        textEdit = QTextBrowser(parent=self.dialog)
+        textEdit.setPlainText(sheet)
+        layout.addWidget(textEdit)
+        self.dialog.show()
 
 
 class Application(QApplication):
@@ -79,7 +91,6 @@ class Application(QApplication):
         if not args:
             args = sys.argv  # pragma: nocover
         super().__init__(args)
-        self.manager = StyleManager()
         self.window = windowclass()
 
 
