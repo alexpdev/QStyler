@@ -43,8 +43,10 @@ clean-build: ## remove build artifacts
 	rm -fv corbertura.xml
 	rm -fv coverage.xml
 
-test: clean ## run tests quickly with the default Python
+install: ## install packages
 	pip install --upgrade --no-cache --force-reinstall torrentfileQt QStyler
+
+test: clean ## run tests quickly with the default Python
 	tox
 
 push: clean test ## push to repo

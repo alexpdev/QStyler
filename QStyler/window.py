@@ -21,7 +21,8 @@
 import sys
 from typing import Optional
 
-from PySide6.QtWidgets import QApplication, QMainWindow, QTabWidget, QWidget, QVBoxLayout, QTextBrowser
+from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget,
+                               QTextBrowser, QVBoxLayout, QWidget)
 
 from QStyler.collectionsTab import CollectionsTab
 from QStyler.editorTab import EditorsTab

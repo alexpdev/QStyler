@@ -18,38 +18,50 @@
 ##############################################################################
 """Module for styler tab and styler table."""
 
-import re
 import json
 import os
+import re
 from pathlib import Path
+
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QAction, QFontMetricsF
-from PySide6.QtWidgets import (QApplication, QComboBox, QHBoxLayout,
-                               QLabel, QVBoxLayout, QWidget, QTextEdit, QToolBar, QListWidget, QSlider, QListWidgetItem, QFileDialog)
+from PySide6.QtWidgets import (QApplication, QComboBox, QFileDialog,
+                               QHBoxLayout, QLabel, QListWidget,
+                               QListWidgetItem, QSlider, QTextEdit, QToolBar,
+                               QVBoxLayout, QWidget)
 
-from QStyler.utils import QssParser, json_to_stylesheet, open_github_browser, apply_stylesheet, get_icon, ParsingError
-from QStyler.dialog import RenameDialog, NewDialog
-
+from QStyler.dialog import NewDialog, RenameDialog
+from QStyler.utils import (ParsingError, QssParser, apply_stylesheet, get_icon,
+                           json_to_stylesheet, open_github_browser)
 
 THEMES = Path(__file__).parent / "themes"
 
 
 class ColorPicker(QWidget):
+    """Color picker widget."""
 
     colorChanged = Signal(str)
 
     def __init__(self, parent=None):
+        """
+        Construct widget for choosing colors.
+
+        Parameters
+        ----------
+        parent : QWidget, optional
+            parent widget, by default None
+        """
         super().__init__(parent=parent)
-        self.layout       = QVBoxLayout(self)
-        self.label        = QLabel("")
-        self.red_layout   = QHBoxLayout()
+        self.layout = QVBoxLayout(self)
+        self.label = QLabel("")
+        self.red_layout = QHBoxLayout()
         self.green_layout = QHBoxLayout()
-        self.blue_layout  = QHBoxLayout()
-        self.red_label    = QLabel("R")
-        self.green_label  = QLabel("G")
-        self.blue_label   = QLabel("B")
-        self.red_slider   = QSlider(Qt.Horizontal)
-        self.blue_slider  = QSlider(Qt.Horizontal)
+        self.blue_layout = QHBoxLayout()
+        self.red_label = QLabel("R")
+        self.green_label = QLabel("G")
+        self.blue_label = QLabel("B")
+        self.red_slider = QSlider(Qt.Horizontal)
+        self.blue_slider = QSlider(Qt.Horizontal)
         self.green_slider = QSlider(Qt.Horizontal)
         self.label.setMinimumWidth(100)
         self.label.setStyleSheet("background-color: #000;")
@@ -73,27 +85,36 @@ class ColorPicker(QWidget):
         self.green_slider.valueChanged.connect(self.change_color)
 
     def change_color(self, _):
-        blue_value   = self.blue_slider.value()
-        green_value  = self.green_slider.value()
-        red_value    = self.red_slider.value()
-        color_val    = [f"{i:02x}" for i in [red_value, green_value, blue_value]]
-        color_string = "#" + ''.join(color_val)
+        """
+        Change color in editor.
+
+        Parameters
+        ----------
+        _ : None
+            unknown
+        """
+        blue_value = self.blue_slider.value()
+        green_value = self.green_slider.value()
+        red_value = self.red_slider.value()
+        color_val = [f"{i:02x}" for i in [red_value, green_value, blue_value]]
+        color_string = "#" + "".join(color_val)
         self.label.setStyleSheet(f"background-color: {color_string};")
         self.colorChanged.emit(color_string)
 
-class Editor(QTextEdit):
 
-    def __init__(self):
-        super().__init__()
-        self.textChanged.connect
+class Editor(QTextEdit):
+    """Text editor widget."""
+
 
 class ControlsList(QListWidget):
+    """List widget for controls."""
 
     def __init__(self, data):
+        """Construct list widget for controls."""
         super().__init__()
         self.data = data
         self.controls = set()
-        for k,v in self.data["controls"].items():
+        for _, v in self.data["controls"].items():
             for control in v:
                 self.controls.add(control)
         for control in sorted(list(self.controls)):
@@ -102,13 +123,16 @@ class ControlsList(QListWidget):
             self.addItem(item)
         self.setResizeMode(self.ResizeMode.Adjust)
 
+
 class StateList(QListWidget):
+    """List widget for states."""
 
     def __init__(self, data):
+        """Construct list widget for state."""
         super().__init__()
         self.data = data
         self.states = set()
-        for k,v in self.data["states"].items():
+        for _, v in self.data["states"].items():
             for state in v:
                 self.states.add(state)
         for state in sorted(list(self.states)):
@@ -116,9 +140,12 @@ class StateList(QListWidget):
             item.setText(state)
             self.addItem(item)
 
+
 class WidgetList(QListWidget):
+    """List widget for widgets."""
 
     def __init__(self, data):
+        """Construct list widget for widgets."""
         super().__init__()
         self.data = data
         self.widgets = set()
@@ -131,11 +158,14 @@ class WidgetList(QListWidget):
             item.setText(widget)
             self.addItem(item)
 
+
 class PropertyList(QListWidget):
+    """List widget for properties."""
 
     def __init__(self, data):
+        """Construct list widget for properties."""
         super().__init__()
-        self.data       = data
+        self.data = data
         self.properties = set()
         for k in self.data["properties"]:
             self.properties.add(k)
@@ -144,25 +174,34 @@ class PropertyList(QListWidget):
             item.setText(prop)
             self.addItem(item)
 
-class ToolBar(QToolBar):
-    imported = Signal(str)
 
+class ToolBar(QToolBar):
+    """Tool bar widget for themes."""
+
+    imported = Signal(str)
     themes_dir = Path(__file__).parent / "themes"
 
     def __init__(self):
+        """Construct tool bar."""
         super().__init__()
         self.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
-        self.live_action    = QAction(get_icon("live"), "live view", self)
+        self.live_action = QAction(get_icon("live"), "live view", self)
         self.preview_action = QAction(get_icon("preview"), "preview", self)
-        self.load_action    = QAction(get_icon("confirm"), "load", self)
-        self.reset_action   = QAction(get_icon("reset"), "reset", self)
+        self.load_action = QAction(get_icon("confirm"), "load", self)
+        self.reset_action = QAction(get_icon("reset"), "reset", self)
         self.load_action.setDisabled(True)
         self.live_action.setCheckable(True)
         self.live_action.setChecked(True)
         self.preview_action.setCheckable(True)
         self.preview_action.setChecked(False)
-        self.addActions([self.live_action, self.load_action,
-                         self.preview_action, self.reset_action])
+        self.addActions(
+            [
+                self.live_action,
+                self.load_action,
+                self.preview_action,
+                self.reset_action,
+            ]
+        )
         self.addSeparator()
         self.themes_combo = QComboBox()
         font = self.themes_combo.font()
@@ -172,17 +211,22 @@ class ToolBar(QToolBar):
             theme_name = os.path.splitext(file)[0]
             self.themes_combo.addItem(theme_name, theme_name)
         self.addWidget(self.themes_combo)
-        self.new_action    = QAction(get_icon("add"), "new", self)
-        self.save_action   = QAction(get_icon("save"), "save", self)
+        self.new_action = QAction(get_icon("add"), "new", self)
+        self.save_action = QAction(get_icon("save"), "save", self)
         self.rename_action = QAction(get_icon("rename"), "rename", self)
         self.export_action = QAction(get_icon("export"), "export", self)
         self.import_action = QAction(get_icon("import"), "import", self)
         self.delete_action = QAction(get_icon("trash"), "delete", self)
         self.github_action = QAction(get_icon("github"), "github", self)
         self.addActions(
-            [self.new_action, self.save_action,
-             self.rename_action, self.export_action,
-             self.import_action, self.delete_action]
+            [
+                self.new_action,
+                self.save_action,
+                self.rename_action,
+                self.export_action,
+                self.import_action,
+                self.delete_action,
+            ]
         )
         self.addSeparator()
         self.addAction(self.github_action)
@@ -194,18 +238,21 @@ class ToolBar(QToolBar):
         self.import_action.triggered.connect(self.import_theme)
 
     def delete_theme(self):
+        """Delete the current theme in combo box."""
         theme = self.themes_combo.currentText()
         os.remove(self.themes_dir / (theme + ".json"))
         index = self.themes_combo.currentIndex()
         self.themes_combo.removeItem(index)
 
     def activate_load(self, state):
+        """Activate or deactivate load button."""
         if state:
             self.load_action.setDisabled(True)
         else:
             self.load_action.setDisabled(False)
 
     def set_theme_name(self, new, old):
+        """Set the new name for current theme."""
         for i in range(self.themes_combo.count()):
             if self.themes_combo.itemText(i) == old:
                 self.themes_combo.setItemText(i, new)
@@ -215,21 +262,27 @@ class ToolBar(QToolBar):
                 break
 
     def rename_theme(self):
+        """Rename the current theme."""
         name = self.themes_combo.currentText()
         self.dialog = RenameDialog(name, self)
         self.dialog.renamed.connect(self.set_theme_name)
         self.dialog.open()
 
     def set_new_name(self, name):
+        """Set new theme and give it a name."""
         self.themes_combo.addItem(name)
-        json.dump({}, open(self.themes_dir / (name + ".json"), "wt"))
+        json.dump(
+            {}, open(self.themes_dir / (name + ".json"), "wt", encoding="utf8")
+        )
 
     def new_dialog(self):
+        """Open dialog to set new theme and name."""
         self.dialog = NewDialog(None, self)
         self.dialog.named.connect(self.set_new_name)
         self.dialog.open()
 
     def import_theme(self):
+        """Import external qss theme into list of themes."""
         path = QFileDialog.getOpenFileName(
             parent=self, caption="Import Qss File"
         )
@@ -238,32 +291,40 @@ class ToolBar(QToolBar):
             name = os.path.split(path)[1]
             root = os.path.splitext(name)[0]
             self.themes_combo.addItem(root)
-            parser = QssParser(open(path).read())
+            parser = QssParser(open(path, encoding="utf8").read())
             file_path = self.themes_dir / (root + ".json")
-            json.dump(parser.results, open(file_path, "wt"), indent=4)
+            json.dump(
+                parser.results,
+                open(file_path, "wt", encoding="utf8"),
+                indent=4,
+            )
 
 
 class StylerTab(QWidget):
+    """Styler Widget."""
 
     def __init__(self, parent=None):
+        """Construct styler widget."""
         super().__init__(parent)
-        self.data = json.load(open(Path(__file__).parent / "data" / "data.json"))
-        self.layout              = QVBoxLayout(self)
-        self.toolbar_layout      = QHBoxLayout()
-        self.toolbar             = ToolBar()
-        self.hlayout             = QHBoxLayout()
-        self.state_list          = StateList(self.data)
-        self.widget_list         = WidgetList(self.data)
-        self.control_list        = ControlsList(self.data)
-        self.property_list       = PropertyList(self.data)
-        self.widget_list_label   = QLabel("Widgets")
-        self.control_list_label  = QLabel("Widget Controls")
-        self.states_list_label   = QLabel("Widget Pseudo-States")
+        self.data = json.load(
+            open(Path(__file__).parent / "data" / "data.json", encoding="utf8")
+        )
+        self.layout = QVBoxLayout(self)
+        self.toolbar_layout = QHBoxLayout()
+        self.toolbar = ToolBar()
+        self.hlayout = QHBoxLayout()
+        self.state_list = StateList(self.data)
+        self.widget_list = WidgetList(self.data)
+        self.control_list = ControlsList(self.data)
+        self.property_list = PropertyList(self.data)
+        self.widget_list_label = QLabel("Widgets")
+        self.control_list_label = QLabel("Widget Controls")
+        self.states_list_label = QLabel("Widget Pseudo-States")
         self.property_list_label = QLabel("Widget Properties")
-        self.editor              = Editor()
-        self.vlayout             = QVBoxLayout()
-        self.vlayout2            = QVBoxLayout()
-        self.colorPicker         = ColorPicker()
+        self.editor = Editor()
+        self.vlayout = QVBoxLayout()
+        self.vlayout2 = QVBoxLayout()
+        self.colorPicker = ColorPicker()
 
         self.toolbar_layout.addStretch(1)
         self.toolbar_layout.addWidget(self.toolbar)
@@ -285,11 +346,11 @@ class StylerTab(QWidget):
         self.hlayout.addLayout(self.vlayout)
         self.hlayout.addWidget(self.editor)
         self.hlayout.addLayout(self.vlayout2)
-        self.hlayout.setStretch(0,1)
-        self.hlayout.setStretch(1,2)
-        self.hlayout.setStretch(2,1)
+        self.hlayout.setStretch(0, 1)
+        self.hlayout.setStretch(1, 2)
+        self.hlayout.setStretch(2, 1)
         self.editor.setTabStopDistance(
-            QFontMetricsF(self.editor.font()).horizontalAdvance(' ') * 4
+            QFontMetricsF(self.editor.font()).horizontalAdvance(" ") * 4
         )
         self.editor.setUndoRedoEnabled(True)
         self.editor.textChanged.connect(self.live_update)
@@ -299,20 +360,28 @@ class StylerTab(QWidget):
         self.toolbar.reset_action.triggered.connect(self.reset_editor)
         self.current_style = None
         self.widget_list.itemClicked.connect(self.on_widget_clicked)
-        self.widget_list.itemDoubleClicked.connect(self.on_widget_double_clicked)
+        self.widget_list.itemDoubleClicked.connect(
+            self.on_widget_double_clicked
+        )
         self.toolbar.save_action.triggered.connect(self.save_sheet)
         self.toolbar.themes_combo.currentTextChanged.connect(
             self.set_current_theme
         )
 
     def save_sheet(self):
+        """Save the current content of the editor to theme doc."""
         content = self.editor.toPlainText()
         parser = QssParser(content)
         results = parser.results
         name = self.toolbar.themes_combo.currentText()
-        json.dump(results, open(str(THEMES / name) + ".json", "wt"), indent=4)
+        json.dump(
+            results,
+            open(str(THEMES / name) + ".json", "wt", encoding="utf8"),
+            indent=4,
+        )
 
     def on_widget_clicked(self, item):
+        """Trigger action when button is clicked."""
         widget = item.text()
         content = self.editor.toPlainText()
         pos = self.editor.textCursor().position()
@@ -333,9 +402,9 @@ class StylerTab(QWidget):
                 self.editor.setTextCursor(cursor)
                 moved = True
         for row in range(self.control_list.count()):
+            controls = self.data["controls"]
             item = self.control_list.item(row)
-            if (widget not in self.data["controls"]
-            or item.text() in self.data["controls"][widget]):
+            if widget not in controls or item.text() in controls[widget]:
                 item.setHidden(False)
             else:
                 item.setHidden(True)
@@ -350,6 +419,7 @@ class StylerTab(QWidget):
                 item.setHidden(False)
 
     def on_widget_double_clicked(self, item):
+        """Trigger action when button is double clicked."""
         widget = item.text()
         content = self.editor.toPlainText()
         pos = self.editor.textCursor().position()
@@ -361,19 +431,22 @@ class StylerTab(QWidget):
             self.editor.insertPlainText(f"\n{widget} {{\n\n}}")
 
     def reset_editor(self):
+        """Clear the editor and current theme."""
         self.editor.clear()
         self.parse_changes()
 
     def set_current_theme(self, title):
+        """Set the current theme to editor contents."""
         style = ""
         for path in self.toolbar.themes_dir.iterdir():
             if path.stem == title:
-                data  = json.load(open(path))
+                data = json.load(open(path, encoding="utf8"))
                 style = json_to_stylesheet(data)
         self.editor.setPlainText(style)
         self.parse_changes()
 
     def preview_style(self, checked):
+        """Save current theme then preview contents of editor."""
         if checked:
             self.current_style = QApplication.instance().styleSheet()
             self.parse_changes()
@@ -382,13 +455,14 @@ class StylerTab(QWidget):
             self.current_style = None
 
     def insert_color(self, color):
-        pattern  = re.compile(r'#[a-zA-Z0-9]{3,6}\s?;?')
-        pattern2 = re.compile(r'\s?rgb\(\d+,\s?\d+,\s?\d+\);?')
-        cursor   = self.editor.textCursor()
-        pos      = cursor.position()
-        text     = self.editor.toPlainText()
-        first    = max(pos-8, 0)
-        second   = max(pos-20,0)
+        """Insert color string into editor at current cursor position."""
+        pattern = re.compile(r"#[a-zA-Z0-9]{3,6}\s?;?")
+        pattern2 = re.compile(r"\s?rgb\(\d+,\s?\d+,\s?\d+\);?")
+        cursor = self.editor.textCursor()
+        pos = cursor.position()
+        text = self.editor.toPlainText()
+        first = max(pos - 8, 0)
+        second = max(pos - 20, 0)
         if result := pattern.search(text[first:pos]):
             s, e = first + result.start(), pos
             cursor.movePosition(
@@ -404,10 +478,12 @@ class StylerTab(QWidget):
         self.editor.insertPlainText(color + ";")
 
     def live_update(self):
+        """Update theme in real time."""
         if self.toolbar.live_action.isChecked():
             self.parse_changes()
 
     def parse_changes(self):
+        """Parse changes in current editor contents."""
         text = self.editor.toPlainText()
         try:
             apply_stylesheet(text)

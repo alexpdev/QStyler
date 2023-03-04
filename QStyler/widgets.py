@@ -54,7 +54,8 @@ class WidgetsTab(QWidget):
             self.dockLay.addWidget(label)
             self.labels.append(label)
         self.pushButton.clicked.connect(
-            lambda: print(os.path.abspath(__file__)))
+            lambda: print(os.path.abspath(__file__))
+        )
         self.vertlay1 = QVBoxLayout()
         self.vertlay2 = QVBoxLayout()
         self.vertlay1.addWidget(self.buttonbox)

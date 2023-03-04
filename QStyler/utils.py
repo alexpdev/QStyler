@@ -18,35 +18,17 @@
 ##############################################################################
 """Utility module."""
 
-import json
 import os
+import webbrowser
 from copy import deepcopy
 from pathlib import Path
-import webbrowser
 
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
 
 
 class ParsingError(Exception):
-    pass
-
-
-class Memo:
-    """Memoize data."""
-
-    def __init__(self, func):
-        """Initialize the class instance."""
-        self.cache = {}
-        self.func = func
-
-    def __call__(self, *args, **kwargs):
-        """Invoke function call and save results to cache."""
-        if args in self.cache:
-            return self.cache[args]
-        result = self.func(*args, **kwargs)
-        self.cache[args] = result
-        return result
+    """Parsing Exception."""
 
 
 class Lorem:
@@ -62,7 +44,8 @@ class Lorem:
             "irure dolor in reprehenderit in voluptate velit esse cillum "
             "dolore eu fugiat nulla pariatur. Excepteur sint occaecat "
             "cupidatat non proident, sunt in culpa qui officia deserunt "
-            "mollit anim id est laborum.")
+            "mollit anim id est laborum."
+        )
         self.words = self.text.split(" ")
         self.it = self.iternext()
 
@@ -98,14 +81,8 @@ def get_icon(filename=None):
     return QIcon(str(path))
 
 
-@Memo
-def load_theme(title):
-    """Return data regarding QWidgets and styles."""
-    path = get_src_dir() / "themes" / (title + ".json")
-    return json.load(open(path, encoding="utf-8"))
-
-
 def json_to_stylesheet(theme: dict) -> str:
+    """Convert json to qss file."""
     ssheet = ""
     for k, v in theme.items():
         if not k or not v:
@@ -115,6 +92,7 @@ def json_to_stylesheet(theme: dict) -> str:
             ssheet += "    " + key + ": " + val + ";\n"
         ssheet += "}\n"
     return ssheet
+
 
 class QssParser:
     """Qt Style Sheet Parser."""
@@ -149,9 +127,9 @@ class QssParser:
         self._total = len(self._lines)
         try:
             self._parse_qss()
-        except IndexError:
+        except IndexError as err:
             if hasattr(self, "_line"):
-                raise ParsingError(str(self._line))
+                raise ParsingError(str(self._line)) from err
         self._compile()
         return self.results
 
@@ -244,7 +222,7 @@ class QssParser:
                 widgets.append(self.current[:sblock])
                 if "}" in self.current:
                     eblock = self.current.index("}")
-                    prop = self.current[sblock+1:eblock]
+                    prop = self.current[sblock + 1: eblock]
                     prop = self._serialize_prop(prop)
                     if prop:
                         props.update(prop)
@@ -283,41 +261,13 @@ class QssParser:
             self.results.update(row)
 
 
-def blockSignals(func):
-    """
-    Decorate for blocking signals in decorated functions.
-
-    Parameters
-    ----------
-    func : Callable
-        function wrapped
-    """
-
-    def wrapper(widget, *args, **kwargs):
-        """
-        Wrap function with functionality.
-
-        Parameters
-        ----------
-        widget : QWidget
-            the QWidget instance.
-
-        Returns
-        -------
-        any
-            the return value of wrapped function.
-        """
-        widget.blockSignals(True)
-        result = func(widget, *args, **kwargs)
-        widget.blockSignals(False)
-        return result
-
-    return wrapper
-
 def open_github_browser():
-    webbrowser.open("https://github.com/alexpdev/QStyler")
+    """Open github page in default browser."""
+    webbrowser.open("https://github.com/alexpdev/QStyler")  # pragma: nocover
+
 
 def apply_stylesheet(text):
+    """Apply theme to current app stylesheet."""
     if not text:
         QApplication.instance().setStyleSheet("")
         return
