@@ -22,9 +22,14 @@ import json
 import os
 from copy import deepcopy
 from pathlib import Path
+import webbrowser
 
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
+
+
+class ParsingError(Exception):
+    pass
 
 
 class Memo:
@@ -99,10 +104,6 @@ def load_theme(title):
     path = get_src_dir() / "themes" / (title + ".json")
     return json.load(open(path, encoding="utf-8"))
 
-def get_manager():
-    """Get the manager from any module."""
-    return QApplication.instance().manager
-
 
 def json_to_stylesheet(theme: dict) -> str:
     ssheet = ""
@@ -146,7 +147,11 @@ class QssParser:
         else:
             self._lines = [i.strip() for i in path_or_string.split("\n")]
         self._total = len(self._lines)
-        self._parse_qss()
+        try:
+            self._parse_qss()
+        except IndexError:
+            if hasattr(self, "_line"):
+                raise ParsingError(str(self._line))
         self._compile()
         return self.results
 
@@ -239,7 +244,7 @@ class QssParser:
                 widgets.append(self.current[:sblock])
                 if "}" in self.current:
                     eblock = self.current.index("}")
-                    prop = self.current[sblock:eblock]
+                    prop = self.current[sblock+1:eblock]
                     prop = self._serialize_prop(prop)
                     if prop:
                         props.update(prop)
@@ -308,3 +313,14 @@ def blockSignals(func):
         return result
 
     return wrapper
+
+def open_github_browser():
+    webbrowser.open("https://github.com/alexpdev/QStyler")
+
+def apply_stylesheet(text):
+    if not text:
+        QApplication.instance().setStyleSheet("")
+        return
+    parser = QssParser(text)
+    if parser.results:
+        QApplication.instance().setStyleSheet(text)

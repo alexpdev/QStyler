@@ -25,8 +25,10 @@ from pathlib import Path
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QAction, QFontMetricsF
 from PySide6.QtWidgets import (QApplication, QComboBox, QHBoxLayout,
-                               QLabel, QVBoxLayout, QWidget, QTextEdit, QToolBar, QListWidget, QSlider, QListWidgetItem)
-from QStyler.utils import QssParser, json_to_stylesheet
+                               QLabel, QVBoxLayout, QWidget, QTextEdit, QToolBar, QListWidget, QSlider, QListWidgetItem, QFileDialog)
+
+from QStyler.utils import QssParser, json_to_stylesheet, open_github_browser, apply_stylesheet, get_icon, ParsingError
+from QStyler.dialog import RenameDialog, NewDialog
 
 
 THEMES = Path(__file__).parent / "themes"
@@ -38,20 +40,21 @@ class ColorPicker(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.layout = QVBoxLayout(self)
-        self.label = QLabel("")
-        self.label.setObjectName("ColorPicker")
-        self.label.setMinimumHeight(150)
-        self.label.setMinimumWidth(100)
-        self.red_layout = QHBoxLayout()
+        self.layout       = QVBoxLayout(self)
+        self.label        = QLabel("")
+        self.red_layout   = QHBoxLayout()
         self.green_layout = QHBoxLayout()
-        self.blue_layout = QHBoxLayout()
-        self.red_label = QLabel("R")
-        self.green_label = QLabel("G")
-        self.blue_label = QLabel("B")
-        self.red_slider = QSlider(Qt.Horizontal)
-        self.blue_slider = QSlider(Qt.Horizontal)
+        self.blue_layout  = QHBoxLayout()
+        self.red_label    = QLabel("R")
+        self.green_label  = QLabel("G")
+        self.blue_label   = QLabel("B")
+        self.red_slider   = QSlider(Qt.Horizontal)
+        self.blue_slider  = QSlider(Qt.Horizontal)
         self.green_slider = QSlider(Qt.Horizontal)
+        self.label.setMinimumWidth(100)
+        self.label.setStyleSheet("background-color: #000;")
+        self.label.setMinimumHeight(150)
+        self.label.setObjectName("ColorPicker")
         self.red_layout.addWidget(self.red_label)
         self.red_layout.addWidget(self.red_slider)
         self.green_layout.addWidget(self.green_label)
@@ -68,13 +71,12 @@ class ColorPicker(QWidget):
         self.blue_slider.valueChanged.connect(self.change_color)
         self.red_slider.valueChanged.connect(self.change_color)
         self.green_slider.valueChanged.connect(self.change_color)
-        self.label.setStyleSheet("background-color: #000;")
 
     def change_color(self, _):
-        blue_value = self.blue_slider.value()
-        green_value = self.green_slider.value()
-        red_value = self.red_slider.value()
-        color_val = [f"{i:02x}" for i in [red_value, green_value, blue_value]]
+        blue_value   = self.blue_slider.value()
+        green_value  = self.green_slider.value()
+        red_value    = self.red_slider.value()
+        color_val    = [f"{i:02x}" for i in [red_value, green_value, blue_value]]
         color_string = "#" + ''.join(color_val)
         self.label.setStyleSheet(f"background-color: {color_string};")
         self.colorChanged.emit(color_string)
@@ -133,7 +135,7 @@ class PropertyList(QListWidget):
 
     def __init__(self, data):
         super().__init__()
-        self.data = data
+        self.data       = data
         self.properties = set()
         for k in self.data["properties"]:
             self.properties.add(k)
@@ -143,36 +145,103 @@ class PropertyList(QListWidget):
             self.addItem(item)
 
 class ToolBar(QToolBar):
+    imported = Signal(str)
+
     themes_dir = Path(__file__).parent / "themes"
+
     def __init__(self):
         super().__init__()
-
-        self.live_action = QAction("Live View", self)
+        self.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
+        self.live_action    = QAction(get_icon("live"), "live view", self)
+        self.preview_action = QAction(get_icon("preview"), "preview", self)
+        self.load_action    = QAction(get_icon("confirm"), "load", self)
+        self.reset_action   = QAction(get_icon("reset"), "reset", self)
+        self.load_action.setDisabled(True)
         self.live_action.setCheckable(True)
         self.live_action.setChecked(True)
-        self.preview_action = QAction("preview", self)
         self.preview_action.setCheckable(True)
         self.preview_action.setChecked(False)
-        self.load_action = QAction("load", self)
-        self.reset_action = QAction("reset", self)
         self.addActions([self.live_action, self.load_action,
                          self.preview_action, self.reset_action])
         self.addSeparator()
         self.themes_combo = QComboBox()
+        font = self.themes_combo.font()
+        font.setPointSize(10)
+        self.themes_combo.setFont(font)
         for file in os.listdir(self.themes_dir):
             theme_name = os.path.splitext(file)[0]
             self.themes_combo.addItem(theme_name, theme_name)
         self.addWidget(self.themes_combo)
-        self.new_action = QAction("new", self)
-        self.save_action = QAction("save", self)
-        self.rename_action = QAction("rename", self)
-        self.export_action = QAction("export", self)
-        self.import_action = QAction("import", self)
-        self.delete_action = QAction("delete", self)
-        self.addActions([self.new_action, self.save_action, self.rename_action, self.export_action, self.import_action, self.delete_action])
+        self.new_action    = QAction(get_icon("add"), "new", self)
+        self.save_action   = QAction(get_icon("save"), "save", self)
+        self.rename_action = QAction(get_icon("rename"), "rename", self)
+        self.export_action = QAction(get_icon("export"), "export", self)
+        self.import_action = QAction(get_icon("import"), "import", self)
+        self.delete_action = QAction(get_icon("trash"), "delete", self)
+        self.github_action = QAction(get_icon("github"), "github", self)
+        self.addActions(
+            [self.new_action, self.save_action,
+             self.rename_action, self.export_action,
+             self.import_action, self.delete_action]
+        )
         self.addSeparator()
-        self.github_action = QAction("github", self)
         self.addAction(self.github_action)
+        self.github_action.triggered.connect(open_github_browser)
+        self.live_action.triggered.connect(self.activate_load)
+        self.rename_action.triggered.connect(self.rename_theme)
+        self.new_action.triggered.connect(self.new_dialog)
+        self.delete_action.triggered.connect(self.delete_theme)
+        self.import_action.triggered.connect(self.import_theme)
+
+    def delete_theme(self):
+        theme = self.themes_combo.currentText()
+        os.remove(self.themes_dir / (theme + ".json"))
+        index = self.themes_combo.currentIndex()
+        self.themes_combo.removeItem(index)
+
+    def activate_load(self, state):
+        if state:
+            self.load_action.setDisabled(True)
+        else:
+            self.load_action.setDisabled(False)
+
+    def set_theme_name(self, new, old):
+        for i in range(self.themes_combo.count()):
+            if self.themes_combo.itemText(i) == old:
+                self.themes_combo.setItemText(i, new)
+                old_path = os.path.join(self.themes_dir, old + ".json")
+                new_path = os.path.join(self.themes_dir, new + ".json")
+                os.rename(old_path, new_path)
+                break
+
+    def rename_theme(self):
+        name = self.themes_combo.currentText()
+        self.dialog = RenameDialog(name, self)
+        self.dialog.renamed.connect(self.set_theme_name)
+        self.dialog.open()
+
+    def set_new_name(self, name):
+        self.themes_combo.addItem(name)
+        json.dump({}, open(self.themes_dir / (name + ".json"), "wt"))
+
+    def new_dialog(self):
+        self.dialog = NewDialog(None, self)
+        self.dialog.named.connect(self.set_new_name)
+        self.dialog.open()
+
+    def import_theme(self):
+        path = QFileDialog.getOpenFileName(
+            parent=self, caption="Import Qss File"
+        )
+        if path and path[0]:
+            path = path[0]
+            name = os.path.split(path)[1]
+            root = os.path.splitext(name)[0]
+            self.themes_combo.addItem(root)
+            parser = QssParser(open(path).read())
+            file_path = self.themes_dir / (root + ".json")
+            json.dump(parser.results, open(file_path, "wt"), indent=4)
+
 
 class StylerTab(QWidget):
 
@@ -195,6 +264,7 @@ class StylerTab(QWidget):
         self.vlayout             = QVBoxLayout()
         self.vlayout2            = QVBoxLayout()
         self.colorPicker         = ColorPicker()
+
         self.toolbar_layout.addStretch(1)
         self.toolbar_layout.addWidget(self.toolbar)
         self.toolbar_layout.addStretch(1)
@@ -207,7 +277,6 @@ class StylerTab(QWidget):
         self.vlayout.addWidget(self.control_list)
         self.vlayout.addWidget(self.states_list_label)
         self.vlayout.addWidget(self.state_list)
-
 
         self.vlayout2.addWidget(self.colorPicker)
         self.vlayout2.addWidget(self.property_list_label)
@@ -228,13 +297,13 @@ class StylerTab(QWidget):
         self.toolbar.load_action.triggered.connect(self.parse_changes)
         self.toolbar.preview_action.toggled.connect(self.preview_style)
         self.toolbar.reset_action.triggered.connect(self.reset_editor)
-        self.toolbar.themes_combo.currentTextChanged.connect(
-            self.set_current_theme
-        )
         self.current_style = None
         self.widget_list.itemClicked.connect(self.on_widget_clicked)
         self.widget_list.itemDoubleClicked.connect(self.on_widget_double_clicked)
         self.toolbar.save_action.triggered.connect(self.save_sheet)
+        self.toolbar.themes_combo.currentTextChanged.connect(
+            self.set_current_theme
+        )
 
     def save_sheet(self):
         content = self.editor.toPlainText()
@@ -242,7 +311,6 @@ class StylerTab(QWidget):
         results = parser.results
         name = self.toolbar.themes_combo.currentText()
         json.dump(results, open(str(THEMES / name) + ".json", "wt"), indent=4)
-
 
     def on_widget_clicked(self, item):
         widget = item.text()
@@ -281,7 +349,6 @@ class StylerTab(QWidget):
             else:
                 item.setHidden(False)
 
-
     def on_widget_double_clicked(self, item):
         widget = item.text()
         content = self.editor.toPlainText()
@@ -293,7 +360,6 @@ class StylerTab(QWidget):
         else:
             self.editor.insertPlainText(f"\n{widget} {{\n\n}}")
 
-
     def reset_editor(self):
         self.editor.clear()
         self.parse_changes()
@@ -302,28 +368,27 @@ class StylerTab(QWidget):
         style = ""
         for path in self.toolbar.themes_dir.iterdir():
             if path.stem == title:
-                data = json.load(open(path))
+                data  = json.load(open(path))
                 style = json_to_stylesheet(data)
         self.editor.setPlainText(style)
         self.parse_changes()
 
     def preview_style(self, checked):
-        ss = QApplication.instance().styleSheet()
         if checked:
-            self.current_style = ss
+            self.current_style = QApplication.instance().styleSheet()
             self.parse_changes()
         else:
             QApplication.instance().setStyleSheet(self.current_style)
             self.current_style = None
 
     def insert_color(self, color):
-        pattern = re.compile(r'#[a-zA-Z0-9]{3,6}\s?;?')
+        pattern  = re.compile(r'#[a-zA-Z0-9]{3,6}\s?;?')
         pattern2 = re.compile(r'\s?rgb\(\d+,\s?\d+,\s?\d+\);?')
-        cursor = self.editor.textCursor()
-        pos = cursor.position()
-        text = self.editor.toPlainText()
-        first = max(pos-8, 0)
-        second = max(pos-20,0)
+        cursor   = self.editor.textCursor()
+        pos      = cursor.position()
+        text     = self.editor.toPlainText()
+        first    = max(pos-8, 0)
+        second   = max(pos-20,0)
         if result := pattern.search(text[first:pos]):
             s, e = first + result.start(), pos
             cursor.movePosition(
@@ -344,12 +409,8 @@ class StylerTab(QWidget):
 
     def parse_changes(self):
         text = self.editor.toPlainText()
-        self.apply_stylesheet(text)
-
-    def apply_stylesheet(self, text):
-        if not text:
-            QApplication.instance().setStyleSheet("")
-            return
-        parser = QssParser(text)
-        if parser.results:
-            QApplication.instance().setStyleSheet(text)
+        try:
+            apply_stylesheet(text)
+        except ParsingError as err:
+            a = str(err)
+            self.window().statusBar().setMessage(10000, f"Error in line {a}")
