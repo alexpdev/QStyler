@@ -144,7 +144,9 @@ def test_toolbar_apply_osx(app, wind):
     processtime(app=app)
     toolbar = wind.styler.toolbar
     toolbar.themes_combo.setCurrentText("OSX")
+    toolbar.live_action.trigger()
     toolbar.load_action.trigger()
+    toolbar.live_action.trigger()
     wind.tabWidget.setCurrentIndex(1)
     assert "OSX" == toolbar.themes_combo.currentText()
 
@@ -155,6 +157,9 @@ def test_toolbar_reset_theme(app, wind):
     processtime(app=app)
     toolbar = wind.styler.toolbar
     toolbar.themes_combo.setCurrentIndex(0)
+    toolbar.live_action.trigger()
+    toolbar.load_action.trigger()
+    toolbar.reset_action.trigger()
     toolbar.load_action.trigger()
     assert toolbar.themes_combo.currentText()
 
