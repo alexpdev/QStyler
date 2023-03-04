@@ -1,5 +1,14 @@
 # QStyler CHANGELOG
 
+## Version 0.1.7
+
+-   Major update to UI
+-   Updated unit tests
+-   Deprecated table for editing style sheets
+-   Added Editor and live view
+-   Added color picker
+-   Updated tox
+
 ## Version 0.1.6
 
 -   Seperating widgets into different tabs

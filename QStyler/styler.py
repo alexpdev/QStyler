@@ -281,7 +281,7 @@ class ToolBar(QToolBar):
         self.dialog.named.connect(self.set_new_name)
         self.dialog.open()
 
-    def import_theme(self):
+    def import_theme(self):  # pragma: nocover
         """Import external qss theme into list of themes."""
         path = QFileDialog.getOpenFileName(
             parent=self, caption="Import Qss File"
@@ -463,14 +463,16 @@ class StylerTab(QWidget):
         text = self.editor.toPlainText()
         first = max(pos - 8, 0)
         second = max(pos - 20, 0)
-        if result := pattern.search(text[first:pos]):
-            s, e = first + result.start(), pos
+        result1 = pattern.search(text[first:pos])
+        result2 = pattern2.search(text[second:pos])
+        if result1:
+            s, e = first + result1.start(), pos
             cursor.movePosition(
                 cursor.MoveOperation.Left, cursor.MoveMode.KeepAnchor, e - s
             )
             cursor.deleteChar()
-        elif result := pattern2.search(text[second:pos]):
-            s, e = second + result.start(), pos
+        elif result2:  # pragma: nocover
+            s, e = second + result2.start(), pos
             cursor.movePosition(
                 cursor.MoveOperation.Left, cursor.MoveMode.KeepAnchor, e - s
             )
@@ -487,6 +489,6 @@ class StylerTab(QWidget):
         text = self.editor.toPlainText()
         try:
             apply_stylesheet(text)
-        except ParsingError as err:
+        except ParsingError as err:  # pragma: nocover
             a = str(err)
             self.window().statusBar().showMessage(f"Error near line {a}", 2000)

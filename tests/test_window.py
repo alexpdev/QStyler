@@ -20,6 +20,7 @@
 
 import atexit
 import os
+import re
 import sys
 import time
 
@@ -144,7 +145,9 @@ def test_toolbar_apply_osx(app, wind):
     processtime(app=app)
     toolbar = wind.styler.toolbar
     toolbar.themes_combo.setCurrentText("OSX")
+    toolbar.live_action.trigger()
     toolbar.load_action.trigger()
+    toolbar.live_action.trigger()
     wind.tabWidget.setCurrentIndex(1)
     assert "OSX" == toolbar.themes_combo.currentText()
 
@@ -155,6 +158,9 @@ def test_toolbar_reset_theme(app, wind):
     processtime(app=app)
     toolbar = wind.styler.toolbar
     toolbar.themes_combo.setCurrentIndex(0)
+    toolbar.live_action.trigger()
+    toolbar.load_action.trigger()
+    toolbar.reset_action.trigger()
     toolbar.load_action.trigger()
     assert toolbar.themes_combo.currentText()
 
@@ -220,12 +226,10 @@ def test_styler_with_theme(app, wind, theme):
     for i in range(styler.widget_list.count()):
         item = styler.widget_list.item(i)
         styler.on_widget_clicked(item)
+        styler.on_widget_double_clicked(item)
+
         processtime(app)
     styler.editor.clear()
-    for i in range(styler.widget_list.count()):
-        item = styler.widget_list.item(i)
-        styler.on_widget_double_clicked(item)
-        processtime(app)
     processtime(app)
     assert themes.currentText() == theme
 
@@ -242,7 +246,19 @@ def test_color_picker(wind, app):
             slider.setValue(value)
             processtime(app=app, amount=0.00001)
     styler.toolbar.reset_action.trigger()
+    styler.toolbar.themes_combo.setCurrentIndex(5)
     processtime(app=app, amount=0.1)
+    text = styler.editor.toPlainText()
+    processtime(app=app, amount=0.1)
+    match = re.search(r"\s#\w+?;", text)
+    pos = match.end()
+    cursor = styler.editor.textCursor()
+    cursor.setPosition(pos, cursor.MoveMode.MoveAnchor)
+    styler.editor.setTextCursor(cursor)
+    for i in range(20):
+        picker.red_slider.setValue(i)
+        processtime(app=app, amount=0.1)
+    styler.editor.clear()
     assert styler.editor.toPlainText() == ""
 
 
@@ -296,4 +312,4 @@ def teardown():
     if os.path.exists(theme_dir):
         test_json = os.path.join(theme_dir, "test.json")
         if os.path.exists(test_json):
-            os.remove(test_json)
+            os.remove(test_json)  # pragma: nocover

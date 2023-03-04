@@ -28,18 +28,18 @@ help:
 clean: clean-build ## remove all build, test, coverage and Python artifacts
 
 clean-build: ## remove build artifacts
-	rm -vfr build/
-	rm -vfr dist/
-	rm -vfr .eggs/
-	rm -vfr *.egg-info
-	rm -vfr *.egg
-	rm -vf **.pyc
-	rm -vf **.pyo
-	rm -fvr **/__pycache__
-	rm -frv .tox/
+	rm -rfv build/
+	rm -rfv dist/
+	rm -rfv .eggs/
+	rm -rfv *.egg-info
+	rm -rfv *.egg
+	rm -rfv **/__pycache__
+	rm -rfv htmlcov/
+	rm -rfv .tox/
+	rm -rfv .pytest_cache
+	rm -fv **.pyo
+	rm -fv **.pyc
 	rm -fv .coverage
-	rm -frv htmlcov/
-	rm -frv .pytest_cache
 	rm -fv corbertura.xml
 	rm -fv coverage.xml
 
