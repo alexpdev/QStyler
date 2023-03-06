@@ -179,12 +179,14 @@ class ToolBar(QToolBar):
     """Tool bar widget for themes."""
 
     imported = Signal(str)
+    extend = Signal(bool)
     themes_dir = Path(__file__).parent / "themes"
 
     def __init__(self):
         """Construct tool bar."""
         super().__init__()
         self.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
+        self.extended_state = False
         self.live_action = QAction(get_icon("live"), "live view", self)
         self.preview_action = QAction(get_icon("preview"), "preview", self)
         self.load_action = QAction(get_icon("confirm"), "load", self)
@@ -194,6 +196,7 @@ class ToolBar(QToolBar):
         self.live_action.setChecked(True)
         self.preview_action.setCheckable(True)
         self.preview_action.setChecked(False)
+        self.preview_action.setEnabled(False)
         self.addActions(
             [
                 self.live_action,
@@ -230,12 +233,27 @@ class ToolBar(QToolBar):
         )
         self.addSeparator()
         self.addAction(self.github_action)
+        self.addSeparator()
+        self.extend_action = QAction(get_icon("extend-right"), "extend", self)
+        self.addAction(self.extend_action)
         self.github_action.triggered.connect(open_github_browser)
         self.live_action.triggered.connect(self.activate_load)
         self.rename_action.triggered.connect(self.rename_theme)
         self.new_action.triggered.connect(self.new_dialog)
         self.delete_action.triggered.connect(self.delete_theme)
         self.import_action.triggered.connect(self.import_theme)
+        self.extend_action.triggered.connect(self.on_extended)
+
+    def on_extended(self):
+        """Triggers extending the screen to view widgets while styling them."""
+        if not self.extended_state:
+            self.extend_action.setIcon(get_icon("extend-left"))
+            self.extended_state = True
+            self.extend.emit(True)
+        else:
+            self.extend_action.setIcon(get_icon("extend-right"))
+            self.extended_state = False
+            self.extend.emit(False)
 
     def delete_theme(self):
         """Delete the current theme in combo box."""
@@ -248,8 +266,10 @@ class ToolBar(QToolBar):
         """Activate or deactivate load button."""
         if state:
             self.load_action.setDisabled(True)
+            self.preview_action.setDisabled(True)
         else:
             self.load_action.setDisabled(False)
+            self.preview_action.setDisabled(False)
 
     def set_theme_name(self, new, old):
         """Set the new name for current theme."""
@@ -302,6 +322,8 @@ class ToolBar(QToolBar):
 
 class StylerTab(QWidget):
     """Styler Widget."""
+
+    extend = Signal(bool)
 
     def __init__(self, parent=None):
         """Construct styler widget."""
@@ -367,6 +389,7 @@ class StylerTab(QWidget):
         self.toolbar.themes_combo.currentTextChanged.connect(
             self.set_current_theme
         )
+        self.toolbar.extend.connect(self.extend.emit)
 
     def save_sheet(self):
         """Save the current content of the editor to theme doc."""

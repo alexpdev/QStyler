@@ -302,6 +302,19 @@ def test_new_delete_theme(app, wind):
     assert toolbar.themes_combo.currentText() != "new_new_test_theme"
 
 
+def test_extend_button(wind, app):
+    """Test the extend button functionality."""
+    wind.tabWidget.setCurrentIndex(0)
+    toolbar = wind.styler.toolbar
+    processtime(app=app)
+    toolbar.extend_action.trigger()
+    processtime(app=app)
+    assert toolbar.extended_state is True
+    toolbar.extend_action.trigger()
+    processtime(app=app)
+    assert toolbar.extended_state is False
+
+
 @atexit.register
 def teardown():
     """
