@@ -63,7 +63,7 @@ def wind(app) -> QMainWindow:
     Iterator[QMainWindow]
         The main window instance.
     """
-    app.window.show()  # only for testing locally
+    # app.window.show()  # only for testing locally
     yield app.window
     app.window.close()
     app.window.deleteLater()

@@ -515,3 +515,15 @@ class StylerTab(QWidget):
         except ParsingError as err:  # pragma: nocover
             a = str(err)
             self.window().statusBar().showMessage(f"Error near line {a}", 2000)
+
+    def export_theme(self):  # pragma: nocover
+        """Export current editor contents to qss file."""
+        current_theme = self.editor.text()
+        path = QFileDialog.getSaveFileName(self, caption="Save Path")
+        if path and not os.path.exists(path):
+            if not path.lower().endswith(".qss"):
+                path += ".qss"
+            with open(path, "wt", encoding="utf8") as fd:
+                fd.write(current_theme)
+        else:
+            self.window().statusBar().showMessage(f"Error saving to {path}")
