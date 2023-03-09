@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10']
+        python-version: ['3.7', '3.8', '3.9', '3.10', ]
 
     steps:
       - uses: actions/checkout@v3
@@ -24,4 +24,10 @@ jobs:
           sudo apt-get install libglx0 libglx-mesa0 libegl-mesa0 libegl1 -y
       - name: Run Tests
         run: |
-          tox
+          tox -e pylint
+          tox -e pycodestyle
+          tox -e security
+          tox -e format
+          tox -e pyroma
+          tox -e twinecheck
+          tox -e flake8
