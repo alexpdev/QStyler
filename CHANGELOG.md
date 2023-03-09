@@ -1,5 +1,10 @@
 # QStyler CHANGELOG
 
+## Version 0.1.8
+
+-   Added new tool button that allows the user to extend screen so they can watch the effects of edits while editing.
+-   Added unittests for the new expansion.
+
 ## Version 0.1.7
 
 -   Major update to UI

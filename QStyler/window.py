@@ -21,8 +21,8 @@
 import sys
 from typing import Optional
 
-from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget,
-                               QTextBrowser, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QHBoxLayout, QMainWindow,
+                               QTabWidget, QVBoxLayout, QWidget)
 
 from QStyler.collectionsTab import CollectionsTab
 from QStyler.editorTab import EditorsTab
@@ -48,13 +48,19 @@ class MainWindow(QMainWindow):
         """Initialize main window."""
         super().__init__(parent=parent)
         self.setWindowTitle("QStyler")
+        self.widget = QWidget()
+        self.layout = QHBoxLayout(self.widget)
+        self.leftWidget = QWidget()
+        self.leftLayout = QVBoxLayout(self.leftWidget)
         self.tabWidget = QTabWidget()
-        self.setCentralWidget(self.tabWidget)
+        self.leftWidget.setHidden(True)
+        self.setCentralWidget(self.widget)
+        self.layout.addWidget(self.leftWidget)
+        self.layout.addWidget(self.tabWidget)
         self.setObjectName("MainWindow")
         self.resize(900, 700)
         self.setWindowIcon(get_icon("QStylerIcon.png"))
         self.menubar = MenuBar(self)
-        self.menubar.displayStyles.connect(self.showStyles)
         self.statusbar = self.statusBar()
         self.setMenuBar(self.menubar)
         self.add_widgets()
@@ -69,18 +75,24 @@ class MainWindow(QMainWindow):
         self.tabWidget.addTab(self.widgets, "Widgets")
         self.tabWidget.addTab(self.editors, "Editors")
         self.tabWidget.addTab(self.collections, "Collections")
+        self.styler.extend.connect(self.on_extend)
 
-    def showStyles(self):  # pragma: nocover
-        """Show the current stylesheet in a separate widget."""
-        sheet = QApplication.instance().styleSheet()
-        self.dialog = QWidget()
-        self.dialog.resize(300, 400)
-        layout = QVBoxLayout(self.dialog)
-        self.dialog.setWindowTitle("Current Style Sheet Theme")
-        textEdit = QTextBrowser(parent=self.dialog)
-        textEdit.setPlainText(sheet)
-        layout.addWidget(textEdit)
-        self.dialog.show()
+    def on_extend(self, state):
+        """Extend the window."""
+        if state:
+            self.tabWidget.removeTab(0)
+            self.leftLayout.addWidget(self.styler)
+            self.styler.show()
+            self.leftWidget.setHidden(False)
+            self.resize(self.width() + 450, self.height())
+        else:
+            self.leftWidget.hide()
+            self.leftLayout.takeAt(0)
+            self.tabWidget.insertTab(0, self.styler, "Style")
+            self.styler.show()
+            self.tabWidget.setCurrentWidget(self.styler)
+            self.tabWidget.show()
+            self.resize(self.width() - 450, self.height())
 
 
 class Application(QApplication):
