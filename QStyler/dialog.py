@@ -19,12 +19,13 @@
 
 from pathlib import Path
 
-from PySide6.QtCore import Signal, QSize, Qt
-from PySide6.QtWidgets import (QDialog, QHBoxLayout, QLabel, QLineEdit,
-                               QPushButton, QVBoxLayout, QTextBrowser)
+from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import (QDialog, QHBoxLayout, QLabel, QLineEdit,
+                               QPushButton, QTextBrowser, QVBoxLayout)
 
 from QStyler.utils import get_icon
+
 
 class RenameDialog(QDialog):
     """Dialog window for renaming theme."""
@@ -117,7 +118,7 @@ class AboutQStyler(QDialog):
         self.setWindowTitle("About QStyler")
         base = Path(__file__).parent.parent
         image = base / "assets" / "QStylerLogo.png"
-        pixmap = QPixmap(str(image)).scaled(QSize(280,80))
+        pixmap = QPixmap(str(image)).scaled(QSize(280, 80))
         self.label.setPixmap(pixmap)
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.layout.addWidget(self.label)
@@ -127,11 +128,10 @@ class AboutQStyler(QDialog):
             info = info[16:20] + info[22:]
             info = "\n".join(info)
 
-
         self.textBrowser = QTextBrowser(parent=self)
         self.layout.addWidget(self.textBrowser)
         self.textBrowser.setMarkdown(info)
         self.okay_btn = QPushButton("Okay", self)
         self.layout.addWidget(self.okay_btn)
         self.okay_btn.clicked.connect(self.close)
-        self.resize(660,760)
+        self.resize(660, 760)

@@ -22,8 +22,8 @@ from PySide6.QtCore import Signal
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QApplication, QMenu, QMenuBar
 
-from QStyler.utils import exitApp
 from QStyler.dialog import AboutQStyler
+from QStyler.utils import exitApp
 
 
 class MenuBar(QMenuBar):
