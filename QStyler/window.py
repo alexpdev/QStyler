@@ -64,6 +64,30 @@ class MainWindow(QMainWindow):
         self.statusbar = self.statusBar()
         self.setMenuBar(self.menubar)
         self.add_widgets()
+        self.menubar.optionsMenu.resetClicked.connect(
+            self.styler.toolbar.reset_action.trigger
+        )
+        self.menubar.optionsMenu.saveCurrentClicked.connect(
+            self.styler.toolbar.save_action.trigger
+        )
+        self.menubar.optionsMenu.loadThemeClicked.connect(
+            self.styler.toolbar.load_action.trigger
+        )
+        self.menubar.optionsMenu.previewThemeClicked.connect(
+            self.styler.toolbar.preview_action.trigger
+        )
+        self.styler.toolbar.live_action.triggered.connect(
+            self.disable_menu_buttons
+        )
+
+    def disable_menu_buttons(self, state):
+        """Disable options in menu when live view is active."""
+        if state:
+            self.menubar.optionsMenu.loadTheme.setDisabled(True)
+            self.menubar.optionsMenu.previewTheme.setDisabled(True)
+        else:
+            self.menubar.optionsMenu.loadTheme.setDisabled(False)
+            self.menubar.optionsMenu.previewTheme.setDisabled(False)
 
     def add_widgets(self):
         """Add widgets to the main window."""

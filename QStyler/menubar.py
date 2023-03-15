@@ -23,6 +23,7 @@ from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QApplication, QMenu, QMenuBar
 
 from QStyler.utils import exitApp
+from QStyler.dialog import AboutQStyler
 
 
 class MenuBar(QMenuBar):
@@ -48,7 +49,6 @@ class MenuBar(QMenuBar):
         """
         super().__init__(parent)
         self.window = parent
-
         self.fileMenu = FileMenu("File", parent=self)
         self.fileMenu.displayStyles.connect(self.displayStyles)
         self.optionsMenu = ThemeMenu("Themes", parent=self)
@@ -93,6 +93,8 @@ class HelpMenu(QMenu):
 
     def open_about(self):
         """Open the about QStyler Dialog."""
+        self.dialog = AboutQStyler(self)
+        self.dialog.exec()
 
 
 class ThemeMenu(QMenu):
@@ -106,6 +108,11 @@ class ThemeMenu(QMenu):
     parent : QWidget
         This widgets parent widget
     """
+
+    resetClicked = Signal()
+    saveCurrentClicked = Signal()
+    loadThemeClicked = Signal()
+    previewThemeClicked = Signal()
 
     def __init__(self, text: str, parent=None) -> None:
         """
@@ -121,10 +128,20 @@ class ThemeMenu(QMenu):
         super().__init__(text, parent=parent)
         self.resetAction = QAction("Reset Theme")
         self.saveCurrent = QAction("Save Theme As")
+        self.loadTheme = QAction("Load Theme")
+        self.previewTheme = QAction("Preview Theme")
         self.themeMenu = QMenu("Themes", parent=self)
         self.addAction(self.resetAction)
         self.addAction(self.saveCurrent)
+        self.addAction(self.loadTheme)
+        self.addAction(self.previewTheme)
         self.addMenu(self.themeMenu)
+        self.loadTheme.setDisabled(True)
+        self.previewTheme.setDisabled(True)
+        self.resetAction.triggered.connect(self.resetClicked.emit)
+        self.saveCurrent.triggered.connect(self.saveCurrentClicked.emit)
+        self.loadTheme.triggered.connect(self.loadTheme.emit)
+        self.previewTheme.triggered.connect(self.previewTheme.emit)
         self.themeactions = []
         self.themeMenu.addSeparator()
 

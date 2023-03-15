@@ -466,7 +466,7 @@ class StylerTab(QWidget):
                 data = json.load(open(path, encoding="utf8"))
                 style = json_to_stylesheet(data)
         self.editor.setPlainText(style)
-        self.parse_changes()
+        self.live_update()
 
     def preview_style(self, checked):
         """Save current theme then preview contents of editor."""
