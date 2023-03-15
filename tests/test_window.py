@@ -28,7 +28,7 @@ import pytest
 from PySide6.QtWidgets import QApplication, QMainWindow
 
 from QStyler import __main__, version
-from QStyler.dialog import NewDialog, RenameDialog
+from QStyler.dialog import AboutQStyler, NewDialog, RenameDialog
 from QStyler.utils import QssParser
 from QStyler.window import Application
 
@@ -313,6 +313,15 @@ def test_extend_button(wind, app):
     toolbar.extend_action.trigger()
     processtime(app=app)
     assert toolbar.extended_state is False
+
+
+def test_about_qstyler_dialog(wind):
+    """Test the about qstyler dialog."""
+    dialog = AboutQStyler()
+    wind.menubar.helpMenu.aboutQstyler.trigger()
+    assert dialog
+    wind.menubar.helpMenu.dialog.close()
+    dialog.deleteLater()
 
 
 @atexit.register

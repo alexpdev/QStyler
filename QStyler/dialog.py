@@ -17,9 +17,14 @@
 ##############################################################################
 """Module for dialogs."""
 
-from PySide6.QtCore import Signal
+from pathlib import Path
+
+from PySide6.QtCore import QSize, Qt, Signal
+from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (QDialog, QHBoxLayout, QLabel, QLineEdit,
-                               QPushButton, QVBoxLayout)
+                               QPushButton, QTextBrowser, QVBoxLayout)
+
+from QStyler.utils import get_icon
 
 
 class RenameDialog(QDialog):
@@ -46,6 +51,8 @@ class RenameDialog(QDialog):
         self.layout.setContentsMargins(3, 3, 3, 3)
         self.label = QLabel(name)
         self.setWindowTitle("Rename Theme")
+        self.setWindowIcon(get_icon("QStylerIcon.png"))
+        self.setModal(True)
         self.line = QLineEdit(self)
         self.button_layout = QHBoxLayout()
         self.save_btn = QPushButton("Save", self)
@@ -85,7 +92,9 @@ class NewDialog(RenameDialog):
         """
         super().__init__(name, parent)
         self.label.setText("Set Theme Name")
+        self.setWindowIcon(get_icon("QStylerIcon.png"))
         self.setWindowTitle("New Theme")
+        self.setModal(True)
 
     def save(self):
         """
@@ -94,3 +103,35 @@ class NewDialog(RenameDialog):
         name = self.line.text()
         self.named.emit(name)
         self.close()
+
+
+class AboutQStyler(QDialog):
+    """A Informational box that describes the QStyler application."""
+
+    def __init__(self, parent=None):
+        """Construct and display the about dialog."""
+        super().__init__(parent=parent)
+        self.setModal(True)
+        self.layout = QVBoxLayout(self)
+        self.label = QLabel()
+        self.setWindowIcon(get_icon("QStylerIcon.png"))
+        self.setWindowTitle("About QStyler")
+        base = Path(__file__).parent.parent
+        image = base / "assets" / "QStylerLogo.png"
+        pixmap = QPixmap(str(image)).scaled(QSize(280, 80))
+        self.label.setPixmap(pixmap)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.layout.addWidget(self.label)
+        readme = base / "README.md"
+        with open(readme, "rt", encoding="utf8") as fd:
+            info = fd.read().split("\n")
+            info = info[16:20] + info[22:]
+            info = "\n".join(info)
+
+        self.textBrowser = QTextBrowser(parent=self)
+        self.layout.addWidget(self.textBrowser)
+        self.textBrowser.setMarkdown(info)
+        self.okay_btn = QPushButton("Okay", self)
+        self.layout.addWidget(self.okay_btn)
+        self.okay_btn.clicked.connect(self.close)
+        self.resize(660, 760)
