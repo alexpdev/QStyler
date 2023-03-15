@@ -94,7 +94,7 @@ class HelpMenu(QMenu):
     def open_about(self):
         """Open the about QStyler Dialog."""
         self.dialog = AboutQStyler(self)
-        self.dialog.exec()
+        self.dialog.open()
 
 
 class ThemeMenu(QMenu):

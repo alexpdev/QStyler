@@ -315,10 +315,12 @@ def test_extend_button(wind, app):
     assert toolbar.extended_state is False
 
 
-def test_about_qstyler_dialog():
+def test_about_qstyler_dialog(wind):
     """Test the about qstyler dialog."""
     dialog = AboutQStyler()
+    wind.menubar.helpMenu.aboutQstyler.trigger()
     assert dialog
+    wind.menubar.helpMenu.dialog.close()
     dialog.deleteLater()
 
 
