@@ -12,7 +12,7 @@
 [![CI](https://github.com/alexpdev/QStyler/actions/workflows/mac.yml/badge.svg?branch=master&event=push)](https://github.com/alexpdev/QStyler/actions/workflows/mac.yml)
 ![GitHub repo size](https://img.shields.io/github/repo-size/alexpdev/qstyler)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/1e7fc4df9f66443daa887c740b05335d)](https://www.codacy.com/gh/alexpdev/QStyler/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=alexpdev/QStyler&amp;utm_campaign=Badge_Grade)
-[![codecov](https://codecov.io/gh/alexpdev/QStyler/branch/main/graph/badge.svg?token=jpj9Rgriqi)](https://codecov.io/gh/alexpdev/QStyler)
+[![codecov](https://codecov.io/gh/alexpdev/QStyler/branch/master/graph/badge.svg?token=jpj9Rgriqi)](https://codecov.io/gh/alexpdev/QStyler)
 
 ## 🌐 Overview
 
