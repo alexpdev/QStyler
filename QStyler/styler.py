@@ -21,9 +21,11 @@
 import json
 import os
 import re
+import queue
 from pathlib import Path
 
-from PySide6.QtCore import Qt, Signal
+
+from PySide6.QtCore import Qt, Signal, QThread
 from PySide6.QtGui import QAction, QFontMetricsF
 from PySide6.QtWidgets import (QApplication, QComboBox, QFileDialog,
                                QHBoxLayout, QLabel, QListWidget,
@@ -390,6 +392,11 @@ class StylerTab(QWidget):
             self.set_current_theme
         )
         self.toolbar.extend.connect(self.extend.emit)
+        self.queue = queue.Queue()
+        self.thread = Renderer(self.queue)
+        self.thread.complete.connect(self.apply_sheet)
+        self.thread.error.connect(self.show_error)
+        self.thread.start()
 
     def save_sheet(self):
         """Save the current content of the editor to theme doc."""
@@ -507,14 +514,17 @@ class StylerTab(QWidget):
         if self.toolbar.live_action.isChecked():
             self.parse_changes()
 
-    def parse_changes(self):
-        """Parse changes in current editor contents."""
+    def apply_sheet(self):
         text = self.editor.toPlainText()
-        try:
-            apply_stylesheet(text)
-        except ParsingError as err:  # pragma: nocover
-            a = str(err)
-            self.window().statusBar().showMessage(f"Error near line {a}", 2000)
+        QApplication.instance().setStyleSheet(text)
+
+    def show_error(self, msg):
+        self.window().statusBar().showMessage(msg, 3000)
+
+    def parse_changes(self):
+        text = self.editor.toPlainText()
+        self.queue.put(text)
+
 
     def export_theme(self):  # pragma: nocover
         """Export current editor contents to qss file."""
@@ -527,3 +537,24 @@ class StylerTab(QWidget):
                 fd.write(current_theme)
         else:
             self.window().statusBar().showMessage(f"Error saving to {path}")
+
+
+
+class Renderer(QThread):
+    error = Signal(str)
+    complete = Signal()
+
+    def __init__(self, queue):
+        super().__init__()
+        self.queue = queue
+        self._active = True
+
+    def run(self):
+        """Parse changes in current editor contents."""
+        while self._active:
+            text = self.queue.get()
+            try:
+                apply_stylesheet(text)
+                self.complete.emit()
+            except IndexError as err:
+                self.error.emit(f"Error new {err.msg}")

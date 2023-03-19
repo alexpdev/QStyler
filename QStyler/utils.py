@@ -268,9 +268,5 @@ def open_github_browser():
 
 def apply_stylesheet(text):
     """Apply theme to current app stylesheet."""
-    if not text:
-        QApplication.instance().setStyleSheet("")
-        return
-    parser = QssParser(text)
-    if parser.results:
-        QApplication.instance().setStyleSheet(text)
+    QssParser(text)
+    return True
