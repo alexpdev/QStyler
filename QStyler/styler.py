@@ -20,12 +20,11 @@
 
 import json
 import os
-import re
 import queue
+import re
 from pathlib import Path
 
-
-from PySide6.QtCore import Qt, Signal, QThread
+from PySide6.QtCore import Qt, QThread, Signal
 from PySide6.QtGui import QAction, QFontMetricsF
 from PySide6.QtWidgets import (QApplication, QComboBox, QFileDialog,
                                QHBoxLayout, QLabel, QListWidget,
@@ -515,16 +514,18 @@ class StylerTab(QWidget):
             self.parse_changes()
 
     def apply_sheet(self):
+        """Apply the current style sheet to the application."""
         text = self.editor.toPlainText()
         QApplication.instance().setStyleSheet(text)
 
     def show_error(self, msg):
+        """Display error for the parsing of stylesheets."""
         self.window().statusBar().showMessage(msg, 3000)
 
     def parse_changes(self):
+        """Add current editor contents to the thread queue."""
         text = self.editor.toPlainText()
         self.queue.put(text)
-
 
     def export_theme(self):  # pragma: nocover
         """Export current editor contents to qss file."""
@@ -539,12 +540,16 @@ class StylerTab(QWidget):
             self.window().statusBar().showMessage(f"Error saving to {path}")
 
 
-
 class Renderer(QThread):
+    """Thread process that parses the style sheet in the queue."""
+
     error = Signal(str)
     complete = Signal()
 
     def __init__(self, queue):
+        """
+        Build the thread and initialize the queue.
+        """
         super().__init__()
         self.queue = queue
         self._active = True
@@ -552,9 +557,16 @@ class Renderer(QThread):
     def run(self):
         """Parse changes in current editor contents."""
         while self._active:
-            text = self.queue.get()
+            try:
+                text = self.queue.get(timeout=5)
+            except queue.Empty:
+                continue
             try:
                 apply_stylesheet(text)
                 self.complete.emit()
-            except IndexError as err:
-                self.error.emit(f"Error new {err.msg}")
+            except ParsingError as err:
+                self.error.emit(f"Error new {err}")
+
+    def close(self):
+        """Set thread to innactive state."""
+        self._active = False

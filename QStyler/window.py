@@ -118,6 +118,13 @@ class MainWindow(QMainWindow):
             self.tabWidget.show()
             self.resize(self.width() - 450, self.height())
 
+    def closeEvent(self, event):
+        """Close the window."""
+        self.styler.thread.finished.connect(self.styler.thread.deleteLater)
+        self.styler.thread.close()
+        self.styler.thread.wait()
+        super().closeEvent(event)
+
 
 class Application(QApplication):
     """Subclass of the QApplication."""
