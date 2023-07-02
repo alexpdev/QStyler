@@ -28,7 +28,7 @@ from PySide6.QtGui import QAction, QFontMetricsF
 from PySide6.QtWidgets import (QApplication, QComboBox, QFileDialog,
                                QHBoxLayout, QLabel, QListWidget,
                                QListWidgetItem, QSlider, QTextEdit, QToolBar,
-                               QVBoxLayout, QWidget)
+                               QVBoxLayout, QWidget, QMessageBox)
 
 from QStyler.dialog import NewDialog, RenameDialog
 from QStyler.utils import (ParsingError, QssParser, apply_stylesheet, get_icon,
@@ -393,6 +393,7 @@ class StylerTab(QWidget):
 
     def save_sheet(self):
         """Save the current content of the editor to theme doc."""
+        
         content = self.editor.toPlainText()
         parser = QssParser(content)
         results = parser.results
