@@ -1,1 +1,1998 @@
-{}
+{
+    "*": {
+        "padding": "0px",
+        "margin": "0px",
+        "border": "0px",
+        "border-style": "none",
+        "border-image": "none",
+        "outline": "0"
+    },
+    "QToolBar *": {
+        "margin": "0px",
+        "padding": "0px"
+    },
+    "QMainWindow": {},
+    "QDialog": {},
+    "QDockWidget": {
+        "color": "rgba(0,0,0,120)"
+    },
+    "QToolBar": {
+        "border": "none",
+        "padding": "2px"
+    },
+    "QMdiArea": {
+        "background-position": "center center",
+        "background-repeat": "no-repeat"
+    },
+    "QMdiSubWindow": {
+        "border": "1px solid #828282",
+        "margin-top": "30px",
+        "margin-left": "4px",
+        "margin-right": "4px",
+        "margin-bottom": "4px"
+    },
+    "QMenuBar": {
+        "color": "black"
+    },
+    "QMenuBar::item": {
+        "color": "black"
+    },
+    "QMenu": {
+        "color": "black",
+        "text-decoration": "none"
+    },
+    "QMenu::item": {},
+    "QMenuBar::item:selected": {
+        "color": "white",
+        "background-color": "#daa116"
+    },
+    "QMenuBar::item:pressed": {
+        "color": "white",
+        "background-color": "#daa116"
+    },
+    "QMenu::item:selected": {
+        "color": "white",
+        "background-color": "#daa116"
+    },
+    "QMenu::item:pressed": {
+        "color": "white",
+        "background-color": "#daa116"
+    },
+    "QMenu::right-arrow": {
+        "width": "10px",
+        "height": "10px",
+        "margin-right": "2px"
+    },
+    "QMenu::right-arrow:selected": {},
+    "QMenu::icon": {
+        "margin-left": "2px"
+    },
+    "QMenu::separator": {
+        "height": "1px",
+        "background-color": "rgba(0,0,0,30)",
+        "margin": "6px 4px"
+    },
+    "QMenu::indicator:non-exclusive:checked": {
+        "color": "white"
+    },
+    "QMenu QRadioButton": {},
+    "QMenu QCheckBox": {},
+    "QMenu QPushButton": {},
+    "QMenu QToolButton": {},
+    "QMenu QRadioButton:hover": {
+        "color": "white"
+    },
+    "QMenu QCheckBox:hover": {
+        "color": "white"
+    },
+    "QMenu QPushButton:hover": {
+        "color": "white"
+    },
+    "QMenu QToolButton:hover": {
+        "color": "white"
+    },
+    "QMenu QPushButton:pressed": {
+        "color": "white"
+    },
+    "QMenu QToolButton:pressed": {
+        "color": "white"
+    },
+    "QMenu QPushButton:selected": {
+        "color": "white"
+    },
+    "QMenu QToolButton:selected": {
+        "color": "white"
+    },
+    "QMenu QRadioButton:disabled": {
+        "color": "#6e6e6e"
+    },
+    "QMenu QCheckBox:disabled": {
+        "color": "#6e6e6e"
+    },
+    "QMenu QRadioButton::indicator:disabled": {
+        "color": "#6e6e6e",
+        "background-color": "transparent",
+        "border": "1px solid #6e6e6e"
+    },
+    "QMenu QCheckBox::indicator:disabled": {
+        "color": "#6e6e6e",
+        "background-color": "transparent",
+        "border": "1px solid #6e6e6e"
+    },
+    "QToolBar::handle:top": {
+        "width": "10px",
+        "margin": "4px 2px",
+        "background-position": "top right",
+        "background-repeat": "repeat-y"
+    },
+    "QToolBar::handle:bottom": {
+        "width": "10px",
+        "margin": "4px 2px",
+        "background-position": "top right",
+        "background-repeat": "repeat-y"
+    },
+    "QToolBar::handle:horizontal": {
+        "width": "10px",
+        "margin": "4px 2px",
+        "background-position": "top right",
+        "background-repeat": "repeat-y"
+    },
+    "QToolBar::handle:left": {
+        "height": "10px",
+        "margin": "2px 4px",
+        "background-position": "left bottom",
+        "background-repeat": "repeat-x"
+    },
+    "QToolBar::handle:right": {
+        "height": "10px",
+        "margin": "2px 4px",
+        "background-position": "left bottom",
+        "background-repeat": "repeat-x"
+    },
+    "QToolBar::handle:vertical": {
+        "height": "10px",
+        "margin": "2px 4px",
+        "background-position": "left bottom",
+        "background-repeat": "repeat-x"
+    },
+    "QToolBar::separator:top": {
+        "width": "1px",
+        "margin": "6px 4px",
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QToolBar::separator:bottom": {
+        "width": "1px",
+        "margin": "6px 4px",
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QToolBar::separator:horizontal": {
+        "width": "1px",
+        "margin": "6px 4px",
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QToolBar::separator:left": {
+        "height": "1px",
+        "margin": "4px 6px",
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QToolBar::separator:right": {
+        "height": "1px",
+        "margin": "4px 6px",
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QToolBar::separator:vertical": {
+        "height": "1px",
+        "margin": "4px 6px",
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QGroupBox": {
+        "color": "rgba(0,0,0,120)",
+        "border-radius": "3px",
+        "margin-top": "10px",
+        "padding": "6px",
+        "background-color": "rgba(255, 255, 255, 15)"
+    },
+    "QGroupBox:title": {
+        "top": "-8px",
+        "left": "12px"
+    },
+    "QToolTip": {
+        "color": "white",
+        "background-color": "#828282",
+        "padding": "4px"
+    },
+    "QDockWidget::title": {
+        "text-align": "center",
+        "background-color": "rgba(0,0,0,10)"
+    },
+    "QDockWidget::close-button": {
+        "right": "4px"
+    },
+    "QDockWidget::float-button": {
+        "right": "22px"
+    },
+    "QDockWidget::close-button:hover": {
+        "background-color": "rgba(0,0,0,15)"
+    },
+    "QDockWidget::float-button:hover": {
+        "background-color": "rgba(0,0,0,15)"
+    },
+    "QDockWidget::close-button:pressed": {
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QDockWidget::float-button:pressed": {
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QDockWidget > QFrame": {
+        "background-color": "#f0f0f0",
+        "border": "1px solid #c3c3c3"
+    },
+    "QProgressBar": {
+        "color": "white",
+        "background-color": "rgba(0,0,0,10)",
+        "text-align": "center",
+        "border": "1px solid rgba(0,0,0,80)",
+        "padding": "1px",
+        "border-radius": "3px"
+    },
+    "QProgressBar:horizontal": {
+        "color": "white",
+        "background-color": "rgba(0,0,0,10)",
+        "text-align": "center",
+        "border": "1px solid rgba(0,0,0,80)",
+        "padding": "1px",
+        "border-radius": "3px"
+    },
+    "QProgressBar::chunk": {
+        "background-color": "qlineargradient(spread:pad, x1:1, y1:0.545, x2:1, y2:0, stop:0 #d0970c, stop:1 #daa116)",
+        "border-radius": "3px"
+    },
+    "QProgressBar::chunk:horizontal": {
+        "background-color": "qlineargradient(spread:pad, x1:1, y1:0.545, x2:1, y2:0, stop:0 #d0970c, stop:1 #daa116)",
+        "border-radius": "3px"
+    },
+    "QAbstractScrollArea": {
+        "border-radius": "2px",
+        "background-color": "transparent"
+    },
+    "QAbstractScrollArea::corner": {
+        "border": "none",
+        "background-color": "transparent"
+    },
+    "QScrollBar:horizontal": {
+        "background-color": "transparent",
+        "height": "15px",
+        "margin": "0px"
+    },
+    "QScrollBar::handle:vertical": {
+        "min-height": "5px",
+        "border-radius": "3px",
+        "margin": "15px 4px"
+    },
+    "QScrollBar::handle:horizontal": {
+        "min-width": "5px",
+        "border-radius": "3px",
+        "margin": "4px 15px"
+    },
+    "QScrollBar::handle:vertical:hover": {
+        "background-color": "rgba(0,0,0,100)"
+    },
+    "QScrollBar::handle:horizontal:hover": {
+        "background-color": "rgba(0,0,0,100)"
+    },
+    "QScrollBar::sub-line:horizontal": {
+        "width": "6px",
+        "height": "10px",
+        "subcontrol-position": "left",
+        "subcontrol-origin": "margin"
+    },
+    "QScrollBar::add-line:horizontal": {
+        "width": "6px",
+        "height": "10px",
+        "subcontrol-position": "right",
+        "subcontrol-origin": "margin"
+    },
+    "QScrollBar::sub-line:horizontal:hover": {},
+    "QScrollBar::sub-line:horizontal:on": {},
+    "QScrollBar::add-line:horizontal:hover": {},
+    "QScrollBar::add-line:horizontal:on": {},
+    "QScrollBar::up-arrow:horizontal": {
+        "background-color": "none"
+    },
+    "QScrollBar::down-arrow:horizontal": {
+        "background-color": "none"
+    },
+    "QScrollBar::add-page:horizontal": {
+        "background-color": "transparent"
+    },
+    "QScrollBar::sub-page:horizontal": {
+        "background-color": "transparent"
+    },
+    "QScrollBar:vertical": {
+        "background-color": "transparent",
+        "width": "15px",
+        "margin": "0px"
+    },
+    "QScrollBar::sub-line:vertical": {
+        "height": "6px",
+        "width": "10px",
+        "subcontrol-position": "top",
+        "subcontrol-origin": "margin"
+    },
+    "QScrollBar::add-line:vertical": {
+        "height": "6px",
+        "width": "10px",
+        "subcontrol-position": "bottom",
+        "subcontrol-origin": "margin"
+    },
+    "QScrollBar::sub-line:vertical:hover": {},
+    "QScrollBar::sub-line:vertical:on": {},
+    "QScrollBar::add-line:vertical:hover": {},
+    "QScrollBar::add-line:vertical:on": {},
+    "QScrollBar::up-arrow:vertical": {
+        "background-color": "none"
+    },
+    "QScrollBar::down-arrow:vertical": {
+        "background-color": "none"
+    },
+    "QScrollBar::add-page:vertical": {
+        "background-color": "transparent"
+    },
+    "QScrollBar::sub-page:vertical": {
+        "background-color": "transparent"
+    },
+    "QTabWidget::pane": {
+        "position": "absolute"
+    },
+    "QTabWidget::pane:top": {
+        "top": "-1px",
+        "border-top": "1px solid #d2d2d2"
+    },
+    "QTabWidget::pane:bottom": {
+        "bottom": "-1px",
+        "border-bottom": "1px solid #d2d2d2"
+    },
+    "QTabWidget::pane:left": {
+        "right": "-1px",
+        "border-right": "1px solid #d2d2d2"
+    },
+    "QTabWidget::pane:right": {
+        "left": "-1px",
+        "border-left": "1px solid #d2d2d2"
+    },
+    "QTabWidget::tab-bar:top": {
+        "left": "10px"
+    },
+    "QTabWidget::tab-bar:bottom": {
+        "left": "10px"
+    },
+    "QTabWidget::tab-bar:left": {
+        "top": "10px"
+    },
+    "QTabWidget::tab-bar:right": {
+        "top": "10px"
+    },
+    "QTabBar": {},
+    "QDockWidget QTabBar": {},
+    "QDialog QTabBar": {},
+    "QTabBar::tab": {
+        "background-color": "transparent",
+        "border": "1px solid transparent",
+        "padding": "3px"
+    },
+    "QTabBar::tab:top": {
+        "min-width": "11ex",
+        "margin-left": "2px",
+        "margin-right": "2px"
+    },
+    "QTabBar::tab:bottom": {
+        "min-width": "11ex",
+        "margin-left": "2px",
+        "margin-right": "2px"
+    },
+    "QTabBar::tab:left": {
+        "min-height": "14ex",
+        "margin-top": "2px",
+        "margin-bottom": "2px"
+    },
+    "QTabBar::tab:right": {
+        "min-height": "14ex",
+        "margin-top": "2px",
+        "margin-bottom": "2px"
+    },
+    "QTabBar::tab:selected": {
+        "border-color": "#d2d2d2"
+    },
+    "QTabBar::tab:top:selected": {},
+    "QTabBar::tab:bottom:selected": {},
+    "QTabBar::tab:right:selected": {},
+    "QTabBar::tab:left:selected": {},
+    "QTabBar::tab:!selected": {
+        "color": "rgba(0,0,0,160)"
+    },
+    "QTabBar::tab:!selected:hover": {
+        "color": "rgba(0,0,0,220)",
+        "background-color": "rgba(0,0,0,20)"
+    },
+    "QTabBar::tab:first:selected": {},
+    "QTabBar::tab:last:selected": {},
+    "QTabBar::tab:only-one": {},
+    "QDialog#Gui__Dialog__DlgPreferences > QFrame QFrame": {},
+    "QDialog#Gui__Dialog__DlgPreferences QTabWidget::pane": {},
+    "QDialog#Gui__Dialog__DlgPreferences > QListView": {
+        "min-width": "130px"
+    },
+    "QDialog#Gui__Dialog__DlgPreferences > QListView::item": {
+        "border-radius": "6px"
+    },
+    "QDialog#Gui__Dialog__DlgPreferences > QListView::item:hover": {
+        "background-color": "#dcdcdc"
+    },
+    "QDialog#Gui__Dialog__DlgPreferences > QListView::item:selected": {
+        "color": "white",
+        "background-color": "#daa116"
+    },
+    "QTabBar::close-button": {
+        "subcontrol-origin": "margin",
+        "border-radius": "2px",
+        "background-position": "center center",
+        "background-repeat": "none"
+    },
+    "QTabBar::close-button:hover": {
+        "background-color": "rgba(0,0,0,20)"
+    },
+    "QTabBar::close-button:pressed": {
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QDockWidget QTreeView": {
+        "margin": "6px"
+    },
+    "QDockWidget QListView": {
+        "margin": "6px"
+    },
+    "QDockWidget QTableView": {
+        "margin": "6px"
+    },
+    "QTabBar::scroller": {},
+    "QTabBar QToolButton": {},
+    "QTabBar QToolButton:hover": {},
+    "QTabBar QToolButton::right-arrow:enabled": {},
+    "QTabBar QToolButton::right-arrow:disabled": {},
+    "QTabBar QToolButton::right-arrow:off": {},
+    "QTabBar QToolButton::right-arrow:hover": {},
+    "QTabBar QToolButton::left-arrow:enabled": {},
+    "QTabBar QToolButton::left-arrow:disabled": {},
+    "QTabBar QToolButton::left-arrow:off": {},
+    "QTabBar QToolButton::left-arrow:hover": {},
+    "QTabBar QToolButton::up-arrow:enabled": {},
+    "QTabBar QToolButton::up-arrow:disabled": {},
+    "QTabBar QToolButton::up-arrow:off": {},
+    "QTabBar QToolButton::up-arrow:hover": {},
+    "QTabBar QToolButton::down-arrow:enabled": {},
+    "QTabBar QToolButton::down-arrow:disabled": {},
+    "QTabBar QToolButton::down-arrow:off": {},
+    "QTabBar QToolButton::down-arrow:hover": {},
+    "QTabBar::tear": {},
+    "QTreeView": {
+        "background-color": "#f0f0f0",
+        "border": "1px solid #c3c3c3",
+        "selection-color": "white",
+        "border-radius": "3px"
+    },
+    "QListView": {
+        "background-color": "#f0f0f0",
+        "border": "1px solid #c3c3c3",
+        "selection-color": "white",
+        "border-radius": "3px"
+    },
+    "QTableView": {
+        "gridline-color": "#d2d2d2",
+        "selection-color": "#624b14",
+        "selection-background-color": "#e3d8b9"
+    },
+    "QListView::item:hover": {},
+    "QTreeView::item:hover": {},
+    "QListView::item:selected": {},
+    "QTreeView::item:selected": {},
+    "Gui--PropertyEditor--PropertyEditor": {},
+    "Gui--PropertyEditor--PropertyEditor > QWidget > QFrame:focus": {},
+    "Gui--PropertyEditor--PropertyEditor > QWidget > QWidget > QLabel": {
+        "color": "black",
+        "background-color": "#e3d8b9"
+    },
+    "Gui--PropertyEditor--PropertyEditor > QWidget > QWidget > QLabel:disabled": {
+        "color": "transparent",
+        "background-color": "transparent",
+        "border": "none",
+        "border-radius": "0px",
+        "margin": "0px",
+        "padding": "0px"
+    },
+    "Gui--PropertyEditor--PropertyEditor QLineEdit:read-only": {
+        "color": "transparent",
+        "border-color": "transparent",
+        "background-color": "transparent",
+        "selection-color": "transparent",
+        "selection-background-color": "transparent"
+    },
+    "Gui--PropertyEditor--PropertyEditor QLineEdit:disabled": {
+        "color": "transparent",
+        "border-color": "transparent",
+        "background-color": "transparent",
+        "selection-color": "transparent",
+        "selection-background-color": "transparent"
+    },
+    "Gui--PropertyEditor--PropertyEditor QAbstractSpinBox:read-only": {
+        "color": "transparent",
+        "border-color": "transparent",
+        "background-color": "transparent",
+        "selection-color": "transparent",
+        "selection-background-color": "transparent"
+    },
+    "Gui--PropertyEditor--PropertyEditor QAbstractSpinBox:disabled": {
+        "color": "transparent",
+        "border-color": "transparent",
+        "background-color": "transparent",
+        "selection-color": "transparent",
+        "selection-background-color": "transparent"
+    },
+    "Gui--PropertyEditor--PropertyEditor QSpinBox": {
+        "margin-left": "0px",
+        "margin-right": "0px",
+        "padding-top": "0px",
+        "padding-bottom": "0px"
+    },
+    "Gui--PropertyEditor--PropertyEditor QDoubleSpinBox": {
+        "margin-left": "0px",
+        "margin-right": "0px",
+        "padding-top": "0px",
+        "padding-bottom": "0px"
+    },
+    "Gui--PropertyEditor--PropertyEditor QAbstractSpinBox": {
+        "margin-left": "0px",
+        "margin-right": "0px",
+        "padding-top": "0px",
+        "padding-bottom": "0px"
+    },
+    "Gui--PropertyEditor--PropertyEditor QLineEdit": {
+        "margin-left": "0px",
+        "margin-right": "0px",
+        "padding-top": "0px",
+        "padding-bottom": "0px"
+    },
+    "Gui--PropertyEditor--PropertyEditor QComboBox": {
+        "margin-left": "0px",
+        "margin-right": "0px",
+        "padding-top": "0px",
+        "padding-bottom": "0px"
+    },
+    "QTreeView > QWidget > QComboBox": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QAbstractSpinBox": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QSpinBox": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QDoubleSpinBox": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QLineEdit": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QTextEdit": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QTimeEdit": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QDateEdit": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QDateTimeEdit": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > Gui--ColorButton": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QComboBox:drop-down": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QAbstractSpinBox:up-button": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QSpinBox:up-button": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QDoubleSpinBox:up-button": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QTimeEdit:up-button": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QDateEdit:up-button": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QDateTimeEdit:up-button": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QAbstractSpinBox:down-button": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QSpinBox:down-button": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QDoubleSpinBox:down-button": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QTimeEdit:down-button": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QDateEdit:down-button": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QDateTimeEdit:down-button": {
+        "border-radius": "0px"
+    },
+    "QTreeView > QWidget > QComboBox:focus": {},
+    "QTreeView > QWidget > QAbstractSpinBox:focus": {},
+    "QTreeView > QWidget > QSpinBox:focus": {},
+    "QTreeView > QWidget > QDoubleSpinBox:focus": {},
+    "QTreeView > QWidget > QLineEdit:focus": {},
+    "QTreeView > QWidget > QTextEdit:focus": {},
+    "QTreeView > QWidget > QTimeEdit:focus": {},
+    "QTreeView > QWidget > QDateEdit:focus": {},
+    "QTreeView > QWidget > QDateTimeEdit:focus": {},
+    "QTreeView > QWidget > QAbstractSpinBox:read-only": {
+        "color": "transparent",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTreeView > QWidget > QSpinBox:read-only": {
+        "color": "transparent",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTreeView > QWidget > QDoubleSpinBox:read-only": {
+        "color": "transparent",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTreeView > QWidget > QLineEdit:read-only": {
+        "color": "transparent",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTreeView > QWidget > QTextEdit:read-only": {
+        "color": "transparent",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTreeView > QWidget > QTimeEdit:read-only": {
+        "color": "transparent",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTreeView > QWidget > QDateEdit:read-only": {
+        "color": "transparent",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTreeView > QWidget > QDateTimeEdit:read-only": {
+        "color": "transparent",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "Gui--PropertyEditor--PropertyEditor > QWidget > QWidget > QWidget": {
+        "min-height": "14px"
+    },
+    "QHeaderView": {
+        "background-color": "#c3c3c3",
+        "border-bottom-left-radius": "0px",
+        "border-bottom-right-radius": "0px"
+    },
+    "QHeaderView::section": {
+        "border": "none",
+        "padding": "4px 6px",
+        "background-color": "#c3c3c3"
+    },
+    "QHeaderView::section:horizontal": {
+        "border-right": "1px solid rgba(0,0,0,30)"
+    },
+    "QHeaderView::section:vertical": {
+        "border-bottom": "1px solid rgba(0,0,0,30)"
+    },
+    "QTableCornerButton::section": {
+        "background-color": "#c3c3c3",
+        "border-top": "none",
+        "border-left": "none",
+        "border-right": "1px solid rgba(0,0,0,30)",
+        "border-bottom": "1px solid rgba(0,0,0,30)"
+    },
+    "QHeaderView::section:last": {
+        "border-right": "none"
+    },
+    "QHeaderView::up-arrow": {},
+    "QHeaderView::up-arrow:hover": {},
+    "QHeaderView::down-arrow": {},
+    "QHeaderView::down-arrow:hover": {},
+    "QTreeView::branch": {
+        "background": "transparent"
+    },
+    "QTreeView::branch:has-siblings:!adjoins-item": {},
+    "QTreeView::branch:has-siblings:adjoins-item": {},
+    "QTreeView::branch:!has-children:!has-siblings:adjoins-item": {},
+    "QTreeView::branch:closed:has-children:has-siblings": {},
+    "QTreeView::branch:has-children:!has-siblings:closed": {},
+    "QTreeView::branch:open:has-children:has-siblings": {},
+    "QTreeView::branch:open:has-children:!has-siblings": {},
+    "QSplitter::handle": {
+        "margin": "0px 11px",
+        "padding": "0px"
+    },
+    "QSplitter::handle:horizontal": {
+        "background-position": "center center",
+        "background-repeat": "none",
+        "margin": "4px 2px 4px 2px",
+        "width": "2px"
+    },
+    "QSplitter::handle:vertical": {
+        "background-position": "center center",
+        "background-repeat": "none",
+        "margin": "2px 4px 2px 4px",
+        "height": "2px"
+    },
+    "QMainWindow::separator": {
+        "background-position": "center center",
+        "background-repeat": "none"
+    },
+    "QMainWindow::separator:horizontal": {
+        "height": "2px",
+        "margin": "4px 2px 4px 2px"
+    },
+    "QMainWindow::separator:vertical": {
+        "width": "2px",
+        "margin": "2px 4px 2px 4px"
+    },
+    "QPlainTextEdit": {
+        "background-color": "#f0f0f0",
+        "selection-color": "white",
+        "selection-background-color": "#d0970c",
+        "border": "1px solid #c3c3c3",
+        "border-radius": "3px",
+        "margin": "4px"
+    },
+    "QPlainTextEdit:focus": {
+        "background-color": "#f0f0f0",
+        "selection-color": "white",
+        "selection-background-color": "#d0970c",
+        "border": "1px solid #c3c3c3",
+        "border-radius": "3px",
+        "margin": "4px"
+    },
+    "QFrame[class=\"panel\"]": {},
+    "QSint--ActionGroup": {},
+    "QSint--ActionGroup QFrame[height=\"1\"]": {
+        "border-color": "rgba(0,0,0,60)"
+    },
+    "QSint--ActionGroup QFrame[height=\"2\"]": {
+        "border-color": "rgba(0,0,0,60)"
+    },
+    "QSint--ActionGroup QFrame[height=\"3\"]": {
+        "border-color": "rgba(0,0,0,60)"
+    },
+    "QSint--ActionGroup QFrame[width=\"1\"]": {
+        "border-color": "rgba(0,0,0,60)"
+    },
+    "QSint--ActionGroup QFrame[width=\"2\"]": {
+        "border-color": "rgba(0,0,0,60)"
+    },
+    "QSint--ActionGroup QFrame[width=\"3\"]": {
+        "border-color": "rgba(0,0,0,60)"
+    },
+    "QSint--ActionGroup QFrame[class=\"header\"]": {
+        "border": "none",
+        "border-top-left-radius": "3px",
+        "border-top-right-radius": "3px",
+        "border-bottom-left-radius": "0px",
+        "border-bottom-right-radius": "0px",
+        "margin": "0px",
+        "padding": "0px"
+    },
+    "QSint--ActionGroup QFrame[class=\"header\"]:hover": {
+        "background-color": "qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #daa116, stop:1 #d0970c)"
+    },
+    "QSint--ActionGroup QToolButton[class=\"header\"]": {
+        "text-align": "left",
+        "font-weight": "bold",
+        "border": "none",
+        "margin": "0px",
+        "padding": "0px"
+    },
+    "QSint--ActionGroup QFrame[class=\"header\"] QLabel": {
+        "background-color": "transparent",
+        "background-repeat": "none",
+        "background-position": "center center",
+        "padding": "0px",
+        "margin": "0px"
+    },
+    "QSint--ActionGroup QFrame[class=\"header\"] QLabel:hover": {
+        "background-color": "transparent"
+    },
+    "QSint--ActionGroup QFrame[class=\"header\"] QLabel[fold=\"true\"]": {
+        "background-color": "transparent",
+        "background-repeat": "none",
+        "background-position": "center center",
+        "padding": "0px",
+        "margin": "0px"
+    },
+    "QSint--ActionGroup QFrame[class=\"header\"] QLabel[fold=\"true\"]:hover": {
+        "background-color": "transparent"
+    },
+    "QSint--ActionGroup QFrame[class=\"content\"]": {
+        "margin": "0px",
+        "padding": "0px",
+        "border": "none",
+        "border-top-left-radius": "0px",
+        "border-top-right-radius": "0px",
+        "border-bottom-left-radius": "3px",
+        "border-bottom-right-radius": "3px"
+    },
+    "QSint--ActionGroup QFrame[class=\"content\"] > QWidget": {},
+    "QSint--ActionGroup QFrame[class=\"content\"] QTabBar::tab:top:selected": {},
+    "QSint--ActionGroup QFrame[class=\"content\"] QTabBar::tab:bottom:selected": {},
+    "QSint--ActionGroup QFrame[class=\"content\"] QTabBar::tab:right:selected": {},
+    "QSint--ActionGroup QFrame[class=\"content\"] QTabBar::tab:left:selected": {},
+    "QSint--ActionGroup QFrame[class=\"content\"] > QWidget > QPushButton": {
+        "margin": "0px"
+    },
+    "QComboBox": {
+        "selection-color": "white",
+        "selection-background-color": "#daa116"
+    },
+    "QAbstractSpinBox": {
+        "padding-right": "20px"
+    },
+    "QSpinBox": {
+        "padding-right": "20px"
+    },
+    "QDoubleSpinBox": {
+        "padding-right": "20px"
+    },
+    "QLineEdit": {
+        "color": "#6e6e6e",
+        "background-color": "#e0e0e0",
+        "selection-color": "white",
+        "selection-background-color": "#daa116",
+        "border": "1px solid #e0e0e0",
+        "border-radius": "3px"
+    },
+    "QTextEdit": {
+        "color": "black"
+    },
+    "QTimeEdit": {
+        "padding-right": "20px"
+    },
+    "QDateEdit": {
+        "padding-right": "20px"
+    },
+    "QDateTimeEdit": {
+        "padding-right": "20px"
+    },
+    "QTextEdit:!editable": {
+        "background-color": "#f0f0f0",
+        "border": "1px solid #c3c3c3"
+    },
+    "QTextEdit:!editable:focus": {
+        "background-color": "#f0f0f0",
+        "border": "1px solid #c3c3c3"
+    },
+    "QComboBox:focus": {
+        "color": "black",
+        "border-color": "#e3b64d",
+        "background-color": "#e3d8b9"
+    },
+    "QAbstractSpinBox:focus": {
+        "color": "black",
+        "border-color": "#e3b64d",
+        "background-color": "#e3d8b9"
+    },
+    "QSpinBox:focus": {
+        "color": "black",
+        "border-color": "#e3b64d",
+        "background-color": "#e3d8b9"
+    },
+    "QDoubleSpinBox:focus": {
+        "color": "black",
+        "border-color": "#e3b64d",
+        "background-color": "#e3d8b9"
+    },
+    "QLineEdit:focus": {
+        "color": "black",
+        "border-color": "#e3b64d",
+        "background-color": "#e3d8b9"
+    },
+    "QTextEdit:focus": {
+        "color": "black",
+        "border-color": "#e3b64d",
+        "background-color": "#e3d8b9"
+    },
+    "QTimeEdit:focus": {
+        "color": "black",
+        "border-color": "#e3b64d",
+        "background-color": "#e3d8b9"
+    },
+    "QDateEdit:focus": {
+        "color": "black",
+        "border-color": "#e3b64d",
+        "background-color": "#e3d8b9"
+    },
+    "QDateTimeEdit:focus": {
+        "color": "black",
+        "border-color": "#e3b64d",
+        "background-color": "#e3d8b9"
+    },
+    "QComboBox:disabled": {
+        "color": "#c3c3c3"
+    },
+    "QAbstractSpinBox:disabled": {
+        "color": "#c3c3c3"
+    },
+    "QSpinBox:disabled": {
+        "color": "#c3c3c3"
+    },
+    "QDoubleSpinBox:disabled": {
+        "color": "#c3c3c3"
+    },
+    "QLineEdit:disabled": {
+        "color": "#c3c3c3"
+    },
+    "QTextEdit:disabled": {
+        "color": "#c3c3c3"
+    },
+    "QTimeEdit:disabled": {
+        "color": "#c3c3c3"
+    },
+    "QDateEdit:disabled": {
+        "color": "#c3c3c3"
+    },
+    "QDateTimeEdit:disabled": {
+        "color": "#c3c3c3"
+    },
+    "QAbstractSpinBox:up-button": {
+        "subcontrol-position": "top right",
+        "border-top-right-radius": "3px"
+    },
+    "QSpinBox:up-button": {
+        "subcontrol-position": "top right",
+        "border-top-right-radius": "3px"
+    },
+    "QDoubleSpinBox:up-button": {
+        "subcontrol-position": "top right",
+        "border-top-right-radius": "3px"
+    },
+    "QTimeEdit:up-button": {
+        "subcontrol-position": "top right",
+        "border-top-right-radius": "3px"
+    },
+    "QDateEdit:up-button": {
+        "subcontrol-position": "top right",
+        "border-top-right-radius": "3px"
+    },
+    "QDateTimeEdit:up-button": {
+        "subcontrol-position": "top right",
+        "border-top-right-radius": "3px"
+    },
+    "QAbstractSpinBox:down-button": {
+        "subcontrol-position": "bottom right",
+        "border-bottom-right-radius": "3px"
+    },
+    "QSpinBox:down-button": {
+        "subcontrol-position": "bottom right",
+        "border-bottom-right-radius": "3px"
+    },
+    "QDoubleSpinBox:down-button": {
+        "subcontrol-position": "bottom right",
+        "border-bottom-right-radius": "3px"
+    },
+    "QTimeEdit:down-button": {
+        "subcontrol-position": "bottom right",
+        "border-bottom-right-radius": "3px"
+    },
+    "QDateEdit:down-button": {
+        "subcontrol-position": "bottom right",
+        "border-bottom-right-radius": "3px"
+    },
+    "QDateTimeEdit:down-button": {
+        "subcontrol-position": "bottom right",
+        "border-bottom-right-radius": "3px"
+    },
+    "QAbstractSpinBox:up-button:focus": {
+        "background-color": "qlineargradient(spread:pad, x1:1, y1:0.8, x2:1, y2:0, stop:0 #e2ac2a, stop:1 #e3b64d)"
+    },
+    "QSpinBox:up-button:focus": {
+        "background-color": "qlineargradient(spread:pad, x1:1, y1:0.8, x2:1, y2:0, stop:0 #e2ac2a, stop:1 #e3b64d)"
+    },
+    "QDoubleSpinBox:up-button:focus": {
+        "background-color": "qlineargradient(spread:pad, x1:1, y1:0.8, x2:1, y2:0, stop:0 #e2ac2a, stop:1 #e3b64d)"
+    },
+    "QTimeEdit:up-button:focus": {
+        "background-color": "qlineargradient(spread:pad, x1:1, y1:0.8, x2:1, y2:0, stop:0 #e2ac2a, stop:1 #e3b64d)"
+    },
+    "QDateEdit:up-button:focus": {
+        "background-color": "qlineargradient(spread:pad, x1:1, y1:0.8, x2:1, y2:0, stop:0 #e2ac2a, stop:1 #e3b64d)"
+    },
+    "QDateTimeEdit:up-button:focus": {
+        "background-color": "qlineargradient(spread:pad, x1:1, y1:0.8, x2:1, y2:0, stop:0 #e2ac2a, stop:1 #e3b64d)"
+    },
+    "QAbstractSpinBox:down-button:focus": {
+        "background-color": "qlineargradient(spread:pad, x1:1, y1:0.8, x2:1, y2:0, stop:0 #daa116, stop:1 #e2ac2a)"
+    },
+    "QSpinBox:down-button:focus": {
+        "background-color": "qlineargradient(spread:pad, x1:1, y1:0.8, x2:1, y2:0, stop:0 #daa116, stop:1 #e2ac2a)"
+    },
+    "QDoubleSpinBox:down-button:focus": {
+        "background-color": "qlineargradient(spread:pad, x1:1, y1:0.8, x2:1, y2:0, stop:0 #daa116, stop:1 #e2ac2a)"
+    },
+    "QTimeEdit:down-button:focus": {
+        "background-color": "qlineargradient(spread:pad, x1:1, y1:0.8, x2:1, y2:0, stop:0 #daa116, stop:1 #e2ac2a)"
+    },
+    "QDateEdit:down-button:focus": {
+        "background-color": "qlineargradient(spread:pad, x1:1, y1:0.8, x2:1, y2:0, stop:0 #daa116, stop:1 #e2ac2a)"
+    },
+    "QDateTimeEdit:down-button:focus": {
+        "background-color": "qlineargradient(spread:pad, x1:1, y1:0.8, x2:1, y2:0, stop:0 #daa116, stop:1 #e2ac2a)"
+    },
+    "QAbstractSpinBox:up-button:disabled": {
+        "background-color": "transparent"
+    },
+    "QSpinBox:up-button:disabled": {
+        "background-color": "transparent"
+    },
+    "QDoubleSpinBox:up-button:disabled": {
+        "background-color": "transparent"
+    },
+    "QTimeEdit:up-button:disabled": {
+        "background-color": "transparent"
+    },
+    "QDateEdit:up-button:disabled": {
+        "background-color": "transparent"
+    },
+    "QDateTimeEdit:up-button:disabled": {
+        "background-color": "transparent"
+    },
+    "QAbstractSpinBox:down-button:disabled": {
+        "background-color": "transparent"
+    },
+    "QSpinBox:down-button:disabled": {
+        "background-color": "transparent"
+    },
+    "QDoubleSpinBox:down-button:disabled": {
+        "background-color": "transparent"
+    },
+    "QTimeEdit:down-button:disabled": {
+        "background-color": "transparent"
+    },
+    "QDateEdit:down-button:disabled": {
+        "background-color": "transparent"
+    },
+    "QDateTimeEdit:down-button:disabled": {
+        "background-color": "transparent"
+    },
+    "QAbstractSpinBox::up-arrow": {},
+    "QSpinBox::up-arrow": {},
+    "QDoubleSpinBox::up-arrow": {},
+    "QTimeEdit::up-arrow": {},
+    "QDateEdit::up-arrow": {},
+    "QDateTimeEdit::up-arrow": {},
+    "QAbstractSpinBox::up-arrow:focus": {},
+    "QSpinBox::up-arrow:focus": {},
+    "QDoubleSpinBox::up-arrow:focus": {},
+    "QTimeEdit::up-arrow:focus": {},
+    "QDateEdit::up-arrow:focus": {},
+    "QDateTimeEdit::up-arrow:focus": {},
+    "QAbstractSpinBox::up-arrow:off": {},
+    "QSpinBox::up-arrow:off": {},
+    "QDoubleSpinBox::up-arrow:off": {},
+    "QTimeEdit::up-arrow:off": {},
+    "QDateEdit::up-arrow:off": {},
+    "QDateTimeEdit::up-arrow:off": {},
+    "QAbstractSpinBox::up-arrow:disabled": {},
+    "QSpinBox::up-arrow:disabled": {},
+    "QDoubleSpinBox::up-arrow:disabled": {},
+    "QTimeEdit::up-arrow:disabled": {},
+    "QDateEdit::up-arrow:disabled": {},
+    "QDateTimeEdit::up-arrow:disabled": {},
+    "QAbstractSpinBox::down-arrow": {},
+    "QSpinBox::down-arrow": {},
+    "QDoubleSpinBox::down-arrow": {},
+    "QTimeEdit::down-arrow": {},
+    "QDateEdit::down-arrow": {},
+    "QDateTimeEdit::down-arrow": {},
+    "QAbstractSpinBox::down-arrow:focus": {},
+    "QSpinBox::down-arrow:focus": {},
+    "QDoubleSpinBox::down-arrow:focus": {},
+    "QTimeEdit::down-arrow:focus": {},
+    "QDateEdit::down-arrow:focus": {},
+    "QDateTimeEdit::down-arrow:focus": {},
+    "QAbstractSpinBox::down-arrow:off": {},
+    "QSpinBox::down-arrow:off": {},
+    "QDoubleSpinBox::down-arrow:off": {},
+    "QTimeEdit::down-arrow:off": {},
+    "QDateEdit::down-arrow:off": {},
+    "QDateTimeEdit::down-arrow:off": {},
+    "QAbstractSpinBox::down-arrow:disabled": {},
+    "QSpinBox::down-arrow:disabled": {},
+    "QDoubleSpinBox::down-arrow:disabled": {},
+    "QTimeEdit::down-arrow:disabled": {},
+    "QDateEdit::down-arrow:disabled": {},
+    "QDateTimeEdit::down-arrow:disabled": {},
+    "QComboBox::drop-down": {
+        "background-color": "#d2d2d2",
+        "subcontrol-position": "top right",
+        "width": "20px",
+        "border-top-right-radius": "3px",
+        "border-bottom-right-radius": "3px"
+    },
+    "QComboBox::drop-down:on": {
+        "background-color": "qlineargradient(spread:pad, x1:1, y1:0.8, x2:1, y2:0, stop:0 #daa116, stop:1 #e3b64d)"
+    },
+    "QComboBox::drop-down:focus": {
+        "background-color": "qlineargradient(spread:pad, x1:1, y1:0.8, x2:1, y2:0, stop:0 #daa116, stop:1 #e3b64d)"
+    },
+    "QComboBox::down-arrow": {},
+    "QComboBox::down-arrow:on": {},
+    "QComboBox::down-arrow:focus": {},
+    "QComboBox::down-arrow:off": {},
+    "QComboBox::down-arrow:disabled": {},
+    "QComboBox QAbstractItemView": {
+        "background-color": "transparent",
+        "selection-color": "white",
+        "selection-background-color": "#daa116",
+        "border-width": "5px 0px 5px 0px",
+        "border-style": "solid",
+        "border-color": "transparent"
+    },
+    "QPushButton": {
+        "color": "#6e6e6e",
+        "text-align": "center",
+        "background-color": "qlineargradient(spread:pad, x1:0, y1:0.3, x2:0, y2:1, stop:0 #f5f5f5, stop:1 #e6e6e6)",
+        "border": "1px solid #d2d2d2",
+        "padding": "4px 22px",
+        "margin": "4px 4px",
+        "border-radius": "4px"
+    },
+    "QPushButton:hover": {
+        "color": "white",
+        "border-color": "#d0970c",
+        "background-color": "qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #daa116, stop:1 #d0970c)"
+    },
+    "QPushButton:focus": {
+        "color": "white",
+        "border-color": "#d0970c",
+        "background-color": "qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #daa116, stop:1 #d0970c)"
+    },
+    "QPushButton:disabled": {
+        "color": "#b6b6b6",
+        "border-color": "#e6e6e6",
+        "background-color": "#e6e6e6"
+    },
+    "QPushButton:disabled:checked": {
+        "color": "#b6b6b6",
+        "border-color": "#e6e6e6",
+        "background-color": "#e6e6e6"
+    },
+    "QPushButton:pressed": {
+        "background-color": "qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #d0970c, stop:1 #daa116)"
+    },
+    "QPushButton:checked": {
+        "background-color": "#daa116",
+        "border-color": "#d0970c"
+    },
+    "Gui--ColorButton": {
+        "background-color": "qlineargradient(spread:pad, x1:0, y1:0.3, x2:0, y2:1, stop:0 #f5f5f5, stop:1 #e6e6e6)",
+        "border": "1px solid #d2d2d2"
+    },
+    "Gui--ColorButton:disabled": {
+        "border-color": "transparent",
+        "background-color": "rgba(0,0,0,10)"
+    },
+    "Gui--ColorButton:hover": {
+        "border-color": "#d0970c",
+        "background-color": "qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #daa116, stop:1 #d0970c)"
+    },
+    "Gui--ColorButton:focus": {
+        "border-color": "#d0970c",
+        "background-color": "qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #daa116, stop:1 #d0970c)"
+    },
+    "Gui--ColorButton:pressed": {
+        "background-color": "qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #d0970c, stop:1 #daa116)"
+    },
+    "Gui--PropertyEditor--PropertyEditor > QWidget > QWidget > QPushButton": {
+        "background-color": "#b6b6b6",
+        "border": "1px solid #828282",
+        "border-radius": "0px"
+    },
+    "Gui--PropertyEditor--PropertyEditor > QWidget > QWidget > QWidget > QWidget > QFrame": {
+        "border": "1px solid #dcdcdc",
+        "border-radius": "2px",
+        "padding": "2px 6px"
+    },
+    "QFileDialog#QFileDialog QToolButton": {
+        "background-color": "transparent",
+        "padding": "1px",
+        "border": "1px",
+        "margin": "0px"
+    },
+    "QDialog QToolButton": {
+        "color": "#6e6e6e",
+        "text-align": "center",
+        "background-color": "qlineargradient(spread:pad, x1:0, y1:0.3, x2:0, y2:1, stop:0 #f5f5f5, stop:1 #e6e6e6)",
+        "border": "1px solid #d2d2d2",
+        "border-radius": "4px"
+    },
+    "QDialog QToolButton:hover": {
+        "color": "white",
+        "border-color": "#d0970c",
+        "background-color": "qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #daa116, stop:1 #d0970c)"
+    },
+    "QDialog QToolButton:focus": {
+        "color": "white",
+        "border-color": "#d0970c",
+        "background-color": "qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #daa116, stop:1 #d0970c)"
+    },
+    "QDialog QToolButton:disabled": {
+        "color": "#b6b6b6",
+        "border-color": "#e6e6e6",
+        "background-color": "#e6e6e6"
+    },
+    "QDialog QToolButton:disabled:checked": {
+        "color": "#b6b6b6",
+        "border-color": "#e6e6e6",
+        "background-color": "#e6e6e6"
+    },
+    "QDialog QToolButton:pressed": {
+        "background-color": "qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #d0970c, stop:1 #daa116)"
+    },
+    "QSint--ActionGroup QFrame[class=\"content\"] QToolButton": {
+        "color": "#6e6e6e",
+        "text-align": "center",
+        "background-color": "qlineargradient(spread:pad, x1:0, y1:0.3, x2:0, y2:1, stop:0 #f5f5f5, stop:1 #e6e6e6)",
+        "border": "1px solid #d2d2d2",
+        "border-radius": "4px"
+    },
+    "QSint--ActionGroup QFrame[class=\"content\"] QToolButton:hover": {
+        "color": "white",
+        "border-color": "#d0970c",
+        "background-color": "qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #daa116, stop:1 #d0970c)"
+    },
+    "QSint--ActionGroup QFrame[class=\"content\"] QToolButton:focus": {
+        "color": "white",
+        "border-color": "#d0970c",
+        "background-color": "qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #daa116, stop:1 #d0970c)"
+    },
+    "QSint--ActionGroup QFrame[class=\"content\"] QToolButton:disabled": {
+        "color": "#b6b6b6",
+        "border-color": "#e6e6e6",
+        "background-color": "#e6e6e6"
+    },
+    "QSint--ActionGroup QFrame[class=\"content\"] QToolButton:disabled:checked": {
+        "color": "#b6b6b6",
+        "border-color": "#e6e6e6",
+        "background-color": "#e6e6e6"
+    },
+    "QSint--ActionGroup QFrame[class=\"content\"] QToolButton:pressed": {
+        "background-color": "qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #d0970c, stop:1 #daa116)"
+    },
+    "QRadioButton::indicator:unchecked": {
+        "color": "#505050",
+        "background-color": "rgba(0,0,0,20)",
+        "border": "1px solid #505050"
+    },
+    "QRadioButton::indicator:checked": {},
+    "QRadioButton": {
+        "color": "#505050",
+        "padding": "3px",
+        "outline": "none",
+        "background-color": "transparent"
+    },
+    "QRadioButton:disabled": {
+        "color": "rgba(0,0,0,40)"
+    },
+    "QRadioButton::indicator": {
+        "width": "11px",
+        "height": "11px",
+        "border-radius": "6px"
+    },
+    "QRadioButton::indicator:pressed": {
+        "border-color": "#e0c992"
+    },
+    "QRadioButton::indicator:disabled": {
+        "color": "#6e6e6e",
+        "background-color": "transparent",
+        "border": "1px solid #6e6e6e"
+    },
+    "QRadioButton:focus": {
+        "border": "none"
+    },
+    "QCheckBox": {
+        "color": "#505050",
+        "padding": "3px",
+        "outline": "none",
+        "background-color": "transparent"
+    },
+    "QCheckBox:disabled": {
+        "color": "rgba(0,0,0,40)",
+        "background-color": "transparent"
+    },
+    "QCheckBox::indicator": {
+        "color": "#c8c8c8",
+        "background-color": "rgba(0,0,0,20)",
+        "border": "1px solid #505050",
+        "width": "11px",
+        "height": "11px",
+        "border-radius": "2px"
+    },
+    "QGroupBox::indicator": {
+        "color": "#c8c8c8",
+        "background-color": "rgba(0,0,0,20)",
+        "border": "1px solid #505050",
+        "width": "11px",
+        "height": "11px",
+        "border-radius": "2px"
+    },
+    "QCheckBox::indicator:pressed": {
+        "border-color": "#e0c992"
+    },
+    "QCheckBox::indicator:non-exclusive:checked:pressed": {
+        "border-color": "#e0c992"
+    },
+    "QCheckBox::indicator:indeterminate:pressed": {
+        "border-color": "#e0c992"
+    },
+    "QCheckBox::indicator:checked:pressed": {
+        "border-color": "#e0c992"
+    },
+    "QGroupBox::indicator:pressed": {
+        "border-color": "#e0c992"
+    },
+    "QGroupBox::indicator:non-exclusive:checked:pressed": {
+        "border-color": "#e0c992"
+    },
+    "QGroupBox::indicator:indeterminate:pressed": {
+        "border-color": "#e0c992"
+    },
+    "QGroupBox::indicator:checked:pressed": {
+        "border-color": "#e0c992"
+    },
+    "QCheckBox::indicator:checked": {},
+    "QGroupBox::indicator:checked": {},
+    "QCheckBox::indicator:disabled": {
+        "background-color": "rgba(0,0,0,20)",
+        "border": "1px solid rgba(0,0,0,20)"
+    },
+    "QGroupBox::indicator:disabled": {
+        "background-color": "rgba(0,0,0,20)",
+        "border": "1px solid rgba(0,0,0,20)"
+    },
+    "QCheckBox::indicator:indeterminate": {
+        "background-color": "#daa116",
+        "border": "1px solid #d0970c"
+    },
+    "QGroupBox::indicator:indeterminate": {
+        "background-color": "#daa116",
+        "border": "1px solid #d0970c"
+    },
+    "QCheckBox:focus": {
+        "border": "none"
+    },
+    "QListWidget::indicator": {
+        "color": "#c8c8c8",
+        "background-color": "rgba(0,0,0,20)",
+        "border": "1px solid #505050",
+        "width": "11px",
+        "height": "11px",
+        "border-radius": "2px"
+    },
+    "QTreeView::indicator": {
+        "margin": "3px"
+    },
+    "QListWidget::indicator:selected": {
+        "background-color": "#e6e6e6"
+    },
+    "QTreeView::indicator:selected": {
+        "background-color": "#e6e6e6"
+    },
+    "QListWidget::indicator:checked:selected": {},
+    "QListWidget::indicator:indeterminate:selected": {},
+    "QTreeView::indicator:checked:selected": {},
+    "QTreeView::indicator:indeterminate:selected": {},
+    "QListWidget::indicator:pressed": {
+        "border-color": "#e0c992"
+    },
+    "QListWidget::indicator:non-exclusive:checked:pressed": {
+        "border-color": "#e0c992"
+    },
+    "QListWidget::indicator:indeterminate:pressed": {
+        "border-color": "#e0c992"
+    },
+    "QListWidget::indicator:checked:pressed": {
+        "border-color": "#e0c992"
+    },
+    "QTreeView::indicator:pressed": {
+        "border-color": "#e0c992"
+    },
+    "QTreeView::indicator:non-exclusive:checked:pressed": {
+        "border-color": "#e0c992"
+    },
+    "QTreeView::indicator:indeterminate:pressed": {
+        "border-color": "#e0c992"
+    },
+    "QTreeView::indicator:checked:pressed": {
+        "border-color": "#e0c992"
+    },
+    "QListWidget::indicator:checked": {},
+    "QTreeView::indicator:checked": {},
+    "QListWidget::indicator:disabled": {
+        "background-color": "rgba(0,0,0,20)",
+        "border": "1px solid rgba(0,0,0,20)"
+    },
+    "QTreeView::indicator:disabled": {
+        "background-color": "rgba(0,0,0,20)",
+        "border": "1px solid rgba(0,0,0,20)"
+    },
+    "QListWidget::indicator:indeterminate": {
+        "background-color": "#daa116",
+        "border": "1px solid #d0970c"
+    },
+    "QTreeView::indicator:indeterminate": {
+        "background-color": "#daa116",
+        "border": "1px solid #d0970c"
+    },
+    "QSlider": {
+        "border": "none",
+        "background-color": "transparent"
+    },
+    "QSlider:active": {
+        "border": "none",
+        "background-color": "transparent"
+    },
+    "QSlider:!active": {
+        "border": "none",
+        "background-color": "transparent"
+    },
+    "QSlider:horizontal": {
+        "padding": "0px 10px"
+    },
+    "QSlider:vertical": {
+        "padding": "10px 0px"
+    },
+    "QSlider::groove": {
+        "background-color": "rgba(0,0,0,30)",
+        "border": "1px solid rgba(0,0,0,40)",
+        "border-radius": "5px",
+        "margin": "4px 0px"
+    },
+    "QSlider::groove:horizontal": {
+        "height": "8px"
+    },
+    "QSlider::groove:vertical": {
+        "width": "8px"
+    },
+    "QSlider::groove:horizontal:disabled": {
+        "border-color": "#dcdcdc",
+        "background-color": "#dcdcdc"
+    },
+    "QSlider::groove:vertical:disabled": {
+        "border-color": "#dcdcdc",
+        "background-color": "#dcdcdc"
+    },
+    "QSlider::handle:horizontal": {
+        "margin": "-4px 0"
+    },
+    "QSlider::handle:vertical": {
+        "margin": "0 -4px"
+    },
+    "QSlider::handle:horizontal:hover": {
+        "border-color": "#daa116",
+        "background-color": "#daa116"
+    },
+    "QSlider::handle:vertical:hover": {
+        "border-color": "#daa116",
+        "background-color": "#daa116"
+    },
+    "QSlider::handle:horizontal:pressed": {
+        "border-color": "#daa116",
+        "background-color": "#daa116"
+    },
+    "QSlider::handle:vertical:pressed": {
+        "border-color": "#daa116",
+        "background-color": "#daa116"
+    },
+    "QSlider::handle:horizontal:disabled": {
+        "border-color": "#dcdcdc",
+        "background-color": "#dcdcdc"
+    },
+    "QSlider::handle:vertical:disabled": {
+        "border-color": "#dcdcdc",
+        "background-color": "#dcdcdc"
+    },
+    "QToolBar > QAbstractSpinBox": {},
+    "QToolBar > QSpinBox": {},
+    "QToolBar > QDoubleSpinBox": {},
+    "QToolBar > QLineEdit": {},
+    "QToolBar > QTextEdit": {},
+    "QToolBar > QTimeEdit": {},
+    "QToolBar > QDateEdit": {},
+    "QToolBar > QDateTimeEdit": {},
+    "QToolBar > QComboBox": {},
+    "QToolBar > QPushButton": {
+        "padding": "0px"
+    },
+    "QToolBar > QPushButton:checked": {
+        "border": "1px solid #e3b64d",
+        "background-color": "qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #e3d8b9, stop:1 #e3b64d)"
+    },
+    "QToolBar > QPushButton:!checked": {
+        "background-color": "qlineargradient(spread:pad, x1:0, y1:0.3, x2:0, y2:1, stop:0 #f5f5f5, stop:1 #e6e6e6)",
+        "border": "1px solid #d2d2d2"
+    },
+    "QToolBar > QPushButton:checked:hover": {
+        "border-color": "#e2ac2a"
+    },
+    "QToolBar > QPushButton:!checked:hover": {
+        "color": "black",
+        "border-color": "#b6b6b6"
+    },
+    "QToolBar > QPushButton:checked:pressed": {
+        "background-color": "#e3b64d"
+    },
+    "QToolBar > QPushButton:!checked:pressed": {
+        "background-color": "qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #b6b6b6, stop:1 #e6e6e6)"
+    },
+    "QToolBar > QPushButton:checked:disabled": {
+        "border": "none",
+        "background-color": "transparent"
+    },
+    "QToolBar > QPushButton:!checked:disabled": {
+        "border": "none",
+        "background-color": "transparent"
+    },
+    "QToolBar > QToolButton": {
+        "margin": "2px",
+        "padding": "2px",
+        "border-radius": "3px"
+    },
+    "QToolBar > QToolButton:hover": {
+        "background-color": "rgba(0,0,0,20)"
+    },
+    "QToolBar > QToolButton:pressed": {
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QToolBar > QToolButton#qt_toolbutton_menubutton": {
+        "border": "1px solid transparent",
+        "border-radius": "3px"
+    },
+    "QToolBar > QToolButton#qt_toolbutton_menubutton:hover": {
+        "border": "1px solid #e3b64d"
+    },
+    "QToolBar > QToolButton#qt_toolbutton_menubutton:pressed": {
+        "border": "1px solid #e3b64d"
+    },
+    "QToolBar > QToolButton#qt_toolbutton_menubutton:open": {
+        "border": "1px solid #e3b64d"
+    },
+    "QToolBar QToolButton::menu-button": {
+        "border": "none",
+        "border-top-right-radius": "3px",
+        "border-bottom-right-radius": "3px",
+        "outline": "none",
+        "background-color": "transparent"
+    },
+    "QToolBar > QToolButton#qt_toolbutton_menubutton::menu-button": {
+        "border": "none",
+        "border-top-right-radius": "3px",
+        "border-bottom-right-radius": "3px",
+        "outline": "none",
+        "background-color": "transparent"
+    },
+    "QToolBar > QToolButton#qt_toolbutton_menubutton::menu-button:hover": {
+        "background-color": "qlineargradient(spread:pad, x1:1, y1:0.8, x2:1, y2:0, stop:0 #daa116, stop:1 #e3b64d)"
+    },
+    "QToolBar > QToolButton#qt_toolbutton_menubutton::menu-button:pressed": {
+        "background-color": "qlineargradient(spread:pad, x1:1, y1:0.8, x2:1, y2:0, stop:0 #daa116, stop:1 #e3b64d)"
+    },
+    "QToolBar > QToolButton#qt_toolbutton_menubutton::menu-button:open": {
+        "background-color": "qlineargradient(spread:pad, x1:1, y1:0.8, x2:1, y2:0, stop:0 #daa116, stop:1 #e3b64d)"
+    },
+    "QToolBar > QToolButton::menu-arrow": {
+        "background-position": "center center",
+        "background-repeat": "none",
+        "subcontrol-origin": "padding",
+        "subcontrol-position": "bottom right"
+    },
+    "QToolBar > QToolButton::menu-arrow:hover": {},
+    "QToolBar > QToolButton::menu-arrow:open": {},
+    "QToolButton:checked": {
+        "border": "1px solid #e3b64d"
+    },
+    "QToolButton:checked:hover": {
+        "border": "1px solid #e3b64d"
+    },
+    "QToolBar QToolButton#qt_toolbar_ext_button": {
+        "margin": "0px",
+        "padding": "0px",
+        "image": "transparent",
+        "background-repeat": "none",
+        "background-position": "center left"
+    },
+    "QToolBar QToolButton#qt_toolbar_ext_button:hover": {
+        "border-color": "#e0e0e0",
+        "background-color": "#e0e0e0"
+    },
+    "QToolBar QToolButton#qt_toolbar_ext_button:on": {
+        "border-color": "#e0e0e0",
+        "background-color": "#e0e0e0"
+    },
+    "QTableView::item:hover": {},
+    "QTableView::item:disabled": {
+        "color": "#e6e6e6"
+    },
+    "QTableView::item:selected": {
+        "color": "#624b14"
+    },
+    "QTableView > QWidget > QComboBox": {
+        "color": "black",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QAbstractSpinBox": {
+        "color": "black",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QSpinBox": {
+        "color": "black",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QDoubleSpinBox": {
+        "color": "black",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QLineEdit": {
+        "color": "black",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QTextEdit": {
+        "color": "black",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QTimeEdit": {
+        "color": "black",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QDateEdit": {
+        "color": "black",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QDateTimeEdit": {
+        "color": "black",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QComboBox:drop-down": {
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QTableView > QWidget > QAbstractSpinBox:up-button": {
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QTableView > QWidget > QSpinBox:up-button": {
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QTableView > QWidget > QDoubleSpinBox:up-button": {
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QTableView > QWidget > QTimeEdit:up-button": {
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QTableView > QWidget > QDateEdit:up-button": {
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QTableView > QWidget > QDateTimeEdit:up-button": {
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QTableView > QWidget > QAbstractSpinBox:down-button": {
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QTableView > QWidget > QSpinBox:down-button": {
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QTableView > QWidget > QDoubleSpinBox:down-button": {
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QTableView > QWidget > QTimeEdit:down-button": {
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QTableView > QWidget > QDateEdit:down-button": {
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QTableView > QWidget > QDateTimeEdit:down-button": {
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QTableView > QWidget > Gui--ColorButton": {
+        "background-color": "rgba(0,0,0,30)"
+    },
+    "QTableView > QWidget > QComboBox:focus": {
+        "color": "#624b14",
+        "selection-color": "white",
+        "selection-background-color": "#daa116",
+        "border-color": "#e3d8b9",
+        "background-color": "#e3d8b9"
+    },
+    "QTableView > QWidget > QAbstractSpinBox:focus": {
+        "color": "#624b14",
+        "selection-color": "white",
+        "selection-background-color": "#daa116",
+        "border-color": "#e3d8b9",
+        "background-color": "#e3d8b9"
+    },
+    "QTableView > QWidget > QSpinBox:focus": {
+        "color": "#624b14",
+        "selection-color": "white",
+        "selection-background-color": "#daa116",
+        "border-color": "#e3d8b9",
+        "background-color": "#e3d8b9"
+    },
+    "QTableView > QWidget > QDoubleSpinBox:focus": {
+        "color": "#624b14",
+        "selection-color": "white",
+        "selection-background-color": "#daa116",
+        "border-color": "#e3d8b9",
+        "background-color": "#e3d8b9"
+    },
+    "QTableView > QWidget > QLineEdit:focus": {
+        "color": "#624b14",
+        "selection-color": "white",
+        "selection-background-color": "#daa116",
+        "border-color": "#e3d8b9",
+        "background-color": "#e3d8b9"
+    },
+    "QTableView > QWidget > QTextEdit:focus": {
+        "color": "#624b14",
+        "selection-color": "white",
+        "selection-background-color": "#daa116",
+        "border-color": "#e3d8b9",
+        "background-color": "#e3d8b9"
+    },
+    "QTableView > QWidget > QTimeEdit:focus": {
+        "color": "#624b14",
+        "selection-color": "white",
+        "selection-background-color": "#daa116",
+        "border-color": "#e3d8b9",
+        "background-color": "#e3d8b9"
+    },
+    "QTableView > QWidget > QDateEdit:focus": {
+        "color": "#624b14",
+        "selection-color": "white",
+        "selection-background-color": "#daa116",
+        "border-color": "#e3d8b9",
+        "background-color": "#e3d8b9"
+    },
+    "QTableView > QWidget > QDateTimeEdit:focus": {
+        "color": "#624b14",
+        "selection-color": "white",
+        "selection-background-color": "#daa116",
+        "border-color": "#e3d8b9",
+        "background-color": "#e3d8b9"
+    },
+    "QTableView > QWidget > QComboBox:disabled": {
+        "color": "rgba(0,0,0,120)",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QAbstractSpinBox:disabled": {
+        "color": "rgba(0,0,0,120)",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QSpinBox:disabled": {
+        "color": "rgba(0,0,0,120)",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QDoubleSpinBox:disabled": {
+        "color": "rgba(0,0,0,120)",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QLineEdit:disabled": {
+        "color": "rgba(0,0,0,120)",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QTextEdit:disabled": {
+        "color": "rgba(0,0,0,120)",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QTimeEdit:disabled": {
+        "color": "rgba(0,0,0,120)",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QDateEdit:disabled": {
+        "color": "rgba(0,0,0,120)",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QDateTimeEdit:disabled": {
+        "color": "rgba(0,0,0,120)",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QComboBox:read-only": {
+        "color": "black",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QAbstractSpinBox:read-only": {
+        "color": "black",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QSpinBox:read-only": {
+        "color": "black",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QDoubleSpinBox:read-only": {
+        "color": "black",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QLineEdit:read-only": {
+        "color": "black",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QTextEdit:read-only": {
+        "color": "black",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QTimeEdit:read-only": {
+        "color": "black",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QDateEdit:read-only": {
+        "color": "black",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QTableView > QWidget > QDateTimeEdit:read-only": {
+        "color": "black",
+        "background-color": "transparent",
+        "border-color": "transparent"
+    },
+    "QToolBar:horizontal#Selector": {
+        "background-color": "rgba(0,0,0,120)",
+        "margin": "0px",
+        "padding": "0px"
+    },
+    "QToolBar:vertical#Selector": {
+        "background-color": "rgba(0,0,0,120)",
+        "margin": "0px",
+        "padding": "0px"
+    },
+    "QToolBar::handle:top#Selector": {
+        "alignment": "bottom left"
+    },
+    "QToolBar::handle:bottom#Selector": {
+        "alignment": "bottom left"
+    },
+    "QToolBar::handle:horizontal#Selector": {
+        "alignment": "bottom left"
+    },
+    "QToolBar::handle:left#Selector": {
+        "width": "100%",
+        "alignment": "center left"
+    },
+    "QToolBar::handle:right#Selector": {
+        "width": "100%",
+        "alignment": "center left"
+    },
+    "QToolBar::handle:vertical#Selector": {
+        "width": "100%",
+        "alignment": "center left"
+    },
+    "QToolBar:top#Selector QToolButton": {
+        "alignment": "bottom left"
+    },
+    "QToolBar:bottom#Selector QToolButton": {
+        "alignment": "bottom left"
+    },
+    "QToolBar:horizontal#Selector QToolButton": {
+        "alignment": "bottom left"
+    },
+    "QToolBar:left#Selector QToolButton": {
+        "alignment": "center left"
+    },
+    "QToolBar:right#Selector QToolButton": {
+        "alignment": "center left"
+    },
+    "QToolBar:vertical#Selector QToolButton": {
+        "alignment": "center left"
+    },
+    "QToolButton[toolbar_orientation=\"horizontal\"]": {},
+    "QToolButton[toolbar_orientation=\"vertical\"]": {},
+    "QToolBar#Selector QToolButton": {
+        "border": "none",
+        "margin": "0px",
+        "padding": "2px 6px",
+        "border-radius": "0px"
+    },
+    "QToolBar#Selector QToolButton:checked": {
+        "color": "black",
+        "background-color": "#f5f5f5"
+    },
+    "QToolBar#Selector QToolButton:!checked": {
+        "color": "rgba(255,255,255,160)",
+        "background-color": "transparent",
+        "margin": "0px"
+    },
+    "QToolBar#Selector QToolButton:!checked:hover": {
+        "color": "rgba(255,255,255,255)",
+        "background-color": "rgba(255,255,255,20)"
+    },
+    "QToolBar#Selector QToolButton:!checked:pressed": {
+        "background-color": "rgba(255,255,255,40)"
+    },
+    "QTabWidget#TabBar > QTabBar": {
+        "border-top": "0"
+    },
+    "QTabWidget#TabBar > QTabBar::tab:top": {
+        "min-width": "-1"
+    },
+    "QTabWidget#TabBar > QTabBar::tab:bottom": {
+        "min-width": "-1"
+    },
+    "QTabWidget#TabBar > QTabBar::tab:left": {
+        "min-height": "-1"
+    },
+    "QTabWidget#TabBar > QTabBar::tab:right": {
+        "min-height": "-1"
+    },
+    "QDialog QGroupBox QFrame": {
+        "margin": "2px 0px"
+    },
+    "*[mandatoryField=\"true\"]": {
+        "background-color": "cyan"
+    },
+    "QPushButton#NavigationIndicator::menu-indicator": {
+        "image": "none",
+        "width": "0px"
+    },
+    "Gui--StatefulLabel[state=\"empty_sketch\"]": {},
+    "Gui--StatefulLabel[state=\"under_constrained\"]": {},
+    "Gui--StatefulLabel[state=\"conflicting_constraints\"]": {},
+    "Gui--StatefulLabel[state=\"malformed_constraints\"]": {},
+    "Gui--StatefulLabel[state=\"redundant_constraints\"]": {},
+    "Gui--StatefulLabel[state=\"partially_redundant_constraints\"]": {},
+    "Gui--StatefulLabel[state=\"solver_failed\"]": {
+        "font-weight": "bold"
+    },
+    "Gui--StatefulLabel[state=\"fully_constrained\"]": {
+        "font-weight": "bold"
+    },
+    "Gui--UrlLabel": {
+        "text-decoration": "underline"
+    }
+}
