@@ -50,18 +50,6 @@
         "color": "#FFF",
         "background-color": "#252526"
     },
-    "QPushButton#HydrusAccept": {
-        "color": "#50fa7b"
-    },
-    "QPushButton#HydrusCancel": {
-        "color": "#ff5555"
-    },
-    "QPushButton#HydrusOnOffButton[hydrus_on=true]": {
-        "color": "#50fa7b"
-    },
-    "QPushButton#HydrusOnOffButton[hydrus_on=false]": {
-        "color": "#ff5555"
-    },
     "QTabBar::tab": {
         "color": "#8be9fd",
         "background-color": "#1a1a1a",
@@ -174,44 +162,5 @@
     },
     "QTextEdit": {
         "background-color": "#383B3D"
-    },
-    "QTextEdit#HydrusValid": {
-        "background-color": "#80ff80"
-    },
-    "QTextEdit#HydrusIndeterminate": {
-        "background-color": "#8080ff"
-    },
-    "QTextEdit#HydrusInvalid": {
-        "background-color": "#ff8080"
-    },
-    "QPlainTextEdit": {
-        "background-color": "#383B3D"
-    },
-    "QLabel#HydrusValid": {
-        "color": "#50fa7b"
-    },
-    "QLabel#HydrusIndeterminate": {
-        "color": "#8080ff"
-    },
-    "QLabel#HydrusInvalid": {
-        "color": "#ff5555"
-    },
-    "QLabel#HydrusWarning": {
-        "color": "#ff5555"
-    },
-    "QLineEdit#HydrusValid": {
-        "background-color": "#80ff80"
-    },
-    "QLineEdit#HydrusIndeterminateValid": {
-        "background-color": "#8080ff"
-    },
-    "QLineEdit#HydrusInvalid": {
-        "background-color": "#ff8080"
-    },
-    "QCheckBox#HydrusWarning": {
-        "color": "#ff5555"
-    },
-    "QLabel#HydrusHyperlink": {
-        "qproperty-link_color": "#8be9fd"
     }
 }

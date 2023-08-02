@@ -6,20 +6,6 @@
         "background": "transparent",
         "alternate-background-color": "transparent"
     },
-    "#debugger QListWidget": {
-        "border": "0.05em solid #ffd785",
-        "background": "rgba(52, 49, 40, 0.9)"
-    },
-    "#debugger QTextEdit": {
-        "border": "0.05em solid #ffd785",
-        "background": "rgba(52, 49, 40, 0.9)"
-    },
-    "#log_frame": {
-        "background": "rgba(52, 49, 40, 0.9)",
-        "font-size": "8.50pt",
-        "font-family": "none"
-    },
-    "#tty_frame": {},
     "QListWidget::indicator": {
         "border": "0.05em solid #4d4940"
     },
@@ -43,11 +29,6 @@
         "color": "#ffd785",
         "border": "0.10em solid #705722"
     },
-    "QWidget#trophy_manager": {},
-    "QWidget#cg_disasm": {},
-    "QWidget#log_viewer": {},
-    "QDialog": {},
-    "QMainWindow#main_window": {},
     "QHeaderView::section": {
         "text-transform": "uppercase",
         "background": "#bfa163",
@@ -58,9 +39,6 @@
         "border": "none"
     },
     "QTabWidget::tab-bar": {},
-    "QTabWidget#tab_widget_log::tab-bar": {
-        "alignment": "left"
-    },
     "QTabBar": {
         "border-bottom": "0.05em solid #ffd785",
         "text-transform": "uppercase"
@@ -85,12 +63,6 @@
         "margin-top": "0.15em",
         "border-top-left-radius": "0.3em",
         "border-top-right-radius": "0.3em"
-    },
-    "#vfs_dialog QTabBar::tab": {
-        "width": "5.50em"
-    },
-    "#vfs_dialog QTabBar::tab:first": {
-        "width": "7.45em"
     },
     "QCheckBox::indicator": {
         "border-radius": "0.1em",
@@ -174,11 +146,6 @@
         "background": "#ffd785",
         "width": "0.50em"
     },
-    "QSlider#sizeSlider::groove:horizontal": {
-        "border": "0.10em solid #ffd785",
-        "border-radius": "0.10em",
-        "height": "1.5em"
-    },
     "QTextEdit": {
         "background": "rgba(52, 49, 40, 0.9)",
         "color": "#ffd785",
@@ -197,7 +164,6 @@
         "color": "#4d4940",
         "font-weight": "500"
     },
-    "[floating=\"true\"]": {},
     "QDockWidget::title": {
         "background": "#bfa163",
         "padding-top": "0.2em"
@@ -261,70 +227,11 @@
         "background-color": "#828790",
         "color": "#4d4940"
     },
-    "QLabel#l_controller": {
-        "color": "#ffd785"
-    },
-    "QTableWidget#game_grid": {
-        "font-weight": "600",
-        "color": "#ffd785",
-        "text-transform": "uppercase",
-        "selection-color": "#ffd785"
-    },
-    "QTableWidget#game_grid::item:selected:active": {
-        "selection-background-color": "#4d4940"
-    },
-    "QTableWidget#game_grid::item:selected:!active": {
-        "selection-background-color": "#615c51"
-    },
-    "QLabel#color_button": {
-        "background": "transparent"
-    },
-    "QLineEdit#mw_searchbar": {
-        "margin-left": "0.7em",
-        "color": "#ffd785",
-        "font-size": "10.25pt"
-    },
     "QToolButton": {
         "background": "transparent",
         "text-transform": "uppercase"
     },
     "QToolButton::hover": {
         "background-color": "#b3ac98"
-    },
-    "QLabel#gamelist_icon_background_color": {
-        "color": "transparent"
-    },
-    "QLabel#thumbnail_icon_color": {
-        "color": "#ffd785"
-    },
-    "QLabel#log_level_always": {},
-    "QLabel#log_level_fatal": {},
-    "QLabel#log_level_error": {},
-    "QLabel#log_level_todo": {},
-    "QLabel#log_level_success": {},
-    "QLabel#log_level_warning": {},
-    "QLabel#log_level_notice": {},
-    "QLabel#log_level_trace": {},
-    "QLabel#log_stack": {},
-    "QLabel#memory_viewer_address_panel": {
-        "border": "0.05em solid #ffd785",
-        "background": "rgba(52, 49, 40, 0.9)",
-        "font-family": "none"
-    },
-    "QLabel#memory_viewer_hex_panel": {
-        "border": "0.05em solid #ffd785",
-        "background": "rgba(52, 49, 40, 0.9)",
-        "font-family": "none"
-    },
-    "QLabel#memory_viewer_ascii_panel": {
-        "border": "0.05em solid #ffd785",
-        "background": "rgba(52, 49, 40, 0.9)",
-        "font-family": "none"
-    },
-    "QLabel#debugger_frame_breakpoint": {},
-    "QLabel#debugger_frame_pc": {},
-    "QWidget#trophy_notification_frame": {
-        "background-color": "#b3ac98",
-        "color": "#4d4940"
     }
 }

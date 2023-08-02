@@ -147,37 +147,6 @@
         "color": "#ecf0f1",
         "border-radius": "0.25em"
     },
-    "QLabel#l_controller": {
-        "color": "#fff"
-    },
-    "QTableWidget#game_grid": {
-        "font-weight": "600",
-        "font-size": "8pt",
-        "font-family": "Lucida Grande",
-        "color": "#fff"
-    },
-    "QTableWidget#game_grid::item:selected:!active": {
-        "selection-background-color": "#354454"
-    },
-    "QWidget#sizeSliderContainer": {
-        "background": "transparent"
-    },
-    "QSlider#sizeSlider::groove:horizontal": {
-        "border": "0em solid transparent",
-        "height": ".3em",
-        "background": "#fff"
-    },
-    "QSlider#sizeSlider::handle:horizontal": {
-        "width": "1em",
-        "margin": "-.8em 0"
-    },
-    "QLabel#color_button": {
-        "background": "transparent"
-    },
-    "QLineEdit#mw_searchbar": {
-        "margin-left": "0.7em",
-        "color": "#ecf0f1"
-    },
     "QToolButton": {
         "background": "transparent",
         "border-radius": "0.125em",
@@ -194,45 +163,6 @@
     "QToolButton::hover": {
         "background-color": "#3d475e"
     },
-    "QLabel#gamelist_icon_background_color": {
-        "color": "transparent"
-    },
-    "QLabel#thumbnail_icon_color": {
-        "color": "#262626"
-    },
-    "QTextEdit#log_frame": {},
-    "QLabel#log_level_always": {},
-    "QLabel#log_level_fatal": {},
-    "QLabel#log_level_error": {},
-    "QLabel#log_level_todo": {},
-    "QLabel#log_level_success": {},
-    "QLabel#log_level_warning": {},
-    "QLabel#log_level_notice": {},
-    "QLabel#log_level_trace": {},
-    "QLabel#log_stack": {},
-    "QTextEdit#tty_frame": {},
-    "QLabel#tty_text": {},
-    "QLabel#rsx_debugger_display_buffer": {
-        "background-color": "#181d24"
-    },
-    "QDialog#kernel_explorer": {
-        "background-color": "#333b44"
-    },
-    "QDialog#memory_viewer": {
-        "background-color": "#333b44",
-        "color": "#fff"
-    },
-    "QLabel#memory_viewer_address_panel": {
-        "background-color": "#333b44"
-    },
-    "QLabel#memory_viewer_hex_panel": {
-        "background-color": "#333b44"
-    },
-    "QLabel#memory_viewer_ascii_panel": {
-        "background-color": "#333b44"
-    },
-    "QLabel#debugger_frame_breakpoint": {},
-    "QLabel#debugger_frame_pc": {},
     "QTreeView::branch:has-children:!has-siblings:closed": {
         "border-image": "none"
     },

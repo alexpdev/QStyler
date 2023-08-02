@@ -816,75 +816,6 @@
     "QTreeView QHeaderView::section": {
         "border": "none"
     },
-    "QPushButton.danger": {
-        "border-color": "#dc3545",
-        "color": "#dc3545"
-    },
-    "QPushButton.danger:checked": {
-        "color": "#31363b",
-        "background-color": "#dc3545"
-    },
-    "QPushButton.danger:pressed": {
-        "color": "#31363b",
-        "background-color": "#dc3545"
-    },
-    "QPushButton.warning": {
-        "border-color": "#ffc107",
-        "color": "#ffc107"
-    },
-    "QPushButton.warning:checked": {
-        "color": "#31363b",
-        "background-color": "#ffc107"
-    },
-    "QPushButton.warning:pressed": {
-        "color": "#31363b",
-        "background-color": "#ffc107"
-    },
-    "QPushButton.success": {
-        "border-color": "#17a2b8",
-        "color": "#17a2b8"
-    },
-    "QPushButton.success:checked": {
-        "color": "#31363b",
-        "background-color": "#17a2b8"
-    },
-    "QPushButton.success:pressed": {
-        "color": "#31363b",
-        "background-color": "#17a2b8"
-    },
-    "QPushButton.danger:flat:hover": {
-        "background-color": "rgba(220, 53, 69, 0.2)"
-    },
-    "QPushButton.danger:flat:pressed": {
-        "background-color": "rgba(220, 53, 69, 0.1)",
-        "color": "#dc3545"
-    },
-    "QPushButton.danger:flat:checked": {
-        "background-color": "rgba(220, 53, 69, 0.1)",
-        "color": "#dc3545"
-    },
-    "QPushButton.warning:flat:hover": {
-        "background-color": "rgba(255, 193, 7, 0.2)"
-    },
-    "QPushButton.warning:flat:pressed": {
-        "background-color": "rgba(255, 193, 7, 0.1)",
-        "color": "#ffc107"
-    },
-    "QPushButton.warning:flat:checked": {
-        "background-color": "rgba(255, 193, 7, 0.1)",
-        "color": "#ffc107"
-    },
-    "QPushButton.success:flat:hover": {
-        "background-color": "rgba(23, 162, 184, 0.2)"
-    },
-    "QPushButton.success:flat:pressed": {
-        "background-color": "rgba(23, 162, 184, 0.1)",
-        "color": "#17a2b8"
-    },
-    "QPushButton.success:flat:checked": {
-        "background-color": "rgba(23, 162, 184, 0.1)",
-        "color": "#17a2b8"
-    },
     "QTableCornerButton::section": {
         "background-color": "#232629",
         "border-radius": "0px",
@@ -912,8 +843,6 @@
         "border": "1px solid rgba(255, 64, 129, 0.3)",
         "border-radius": "4px"
     },
-    "#qt_calendar_prevmonth": {},
-    "#qt_calendar_nextmonth": {},
     "QTreeView QLineEdit": {
         "color": "#ffffff",
         "background-color": "#232629",
