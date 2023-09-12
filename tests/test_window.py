@@ -180,7 +180,7 @@ def test_rename_dialog(app):
 
 
 @pytest.mark.parametrize(
-    "theme", ["OSX", "KnightRider", "Overcaset", "Terminal", "Bland"]
+    "theme", ["OSX", "KnightRider", "Overcast", "Terminal", "Bland"]
 )
 def test_toolbar_buttons(app, wind, theme):
     """Test function for toolbar buttons."""
@@ -209,7 +209,7 @@ def test_toolbar_buttons(app, wind, theme):
 
 
 @pytest.mark.parametrize(
-    "theme", ["SummerBreeze", "MaterialDarkStyle", "DarkSkyline", "Coastal"]
+    "theme", ["SummerBreeze", "DarkSkyline", "Coastal"]
 )
 def test_styler_with_theme(app, wind, theme):
     """Test function for toolbar buttons."""

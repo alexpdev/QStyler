@@ -27,7 +27,8 @@ from PySide6.QtWidgets import (QCheckBox, QComboBox, QCommandLinkButton, QDial,
                                QKeySequenceEdit, QLabel, QLCDNumber, QLineEdit,
                                QProgressBar, QPushButton, QRadioButton,
                                QScrollBar, QSlider, QSpinBox, QTimeEdit,
-                               QToolButton, QVBoxLayout, QWidget)
+                               QToolBar, QToolBox, QToolButton, QVBoxLayout,
+                               QWidget)
 
 from QStyler.utils import Lorem
 
@@ -57,31 +58,39 @@ class WidgetsTab(QWidget):
             lambda: print(os.path.abspath(__file__))
         )
         self.vertlay1 = QVBoxLayout()
-        self.vertlay2 = QVBoxLayout()
         self.vertlay1.addWidget(self.buttonbox)
-        self.vertlay1.addWidget(self.horizontalbox)
-        self.vertlay2.addWidget(self.linebox)
-        self.vertlay2.addWidget(self.verticalbox)
+        self.vertlay1.addWidget(self.linebox)
         self.hlayout.addLayout(self.vertlay1)
-        self.hlayout.addLayout(self.vertlay2)
-        self.hlayout.addWidget(self.dockWidget)
+        self.hlayout.addWidget(self.verticalbox)
+        self.hlayout.addWidget(self.tool_box())
+
+    def tool_box(self):
+        """Build ui elements for toolbox."""
+        self.toolbox = QToolBox()
+        self.toolbox.addItem(self.dockWidget, "Dock")
+        self.toolbox.addItem(self.horizontalbox, "Horizontal Widgets")
+        return self.toolbox
 
     def button_box(self):
         """Build ui elements for button box."""
         buttonbox = QGroupBox("Buttons", self)
         self.vlay1 = QVBoxLayout(buttonbox)
         self.pushButton = QPushButton("Push Button", self)
-        self.radioButton = QRadioButton("Radio Button", self)
-        self.checkBox = QCheckBox("Check Box", self)
+        self.radioButton1 = QRadioButton("Radio Button1", self)
+        self.radioButton2 = QRadioButton("Radio Button2", self)
+        self.checkBox1 = QCheckBox("Check Box1", self)
+        self.checkBox2 = QCheckBox("Check Box2", self)
         self.keySequenceEdit = QKeySequenceEdit(self)
         self.commandLinkButton = QCommandLinkButton("Command Link", self)
         self.toolButton = QToolButton(self)
         self.toolButton.setText("ToolButton")
         self.vlay1.addWidget(self.pushButton)
-        self.vlay1.addWidget(self.radioButton)
+        self.vlay1.addWidget(self.radioButton1)
+        self.vlay1.addWidget(self.radioButton2)
         self.vlay1.addWidget(self.toolButton)
         self.vlay1.addWidget(self.commandLinkButton)
-        self.vlay1.addWidget(self.checkBox)
+        self.vlay1.addWidget(self.checkBox1)
+        self.vlay1.addWidget(self.checkBox2)
         self.vlay1.addWidget(self.keySequenceEdit)
         return buttonbox
 
@@ -93,6 +102,8 @@ class WidgetsTab(QWidget):
         self.timeEdit = QTimeEdit(self)
         self.fontComboBox = QFontComboBox(self)
         self.comboBox = QComboBox(self)
+        for i in ["item 1", "item 2", "item 3"]:
+            self.comboBox.addItem(i)
         self.spinBox = QSpinBox(self)
         self.doubleSpinBox = QDoubleSpinBox(self)
         self.vlay2.addWidget(self.lineEdit)
@@ -109,8 +120,8 @@ class WidgetsTab(QWidget):
         self.line = QFrame(self)
         self.line.setFrameShape(QFrame.VLine)
         self.line.setFrameShadow(QFrame.Sunken)
-        horizontalbox = QGroupBox("Horizontal")
-        self.vlay3 = QVBoxLayout(horizontalbox)
+        verticalbox = QGroupBox("Vertical")
+        self.vlay3 = QVBoxLayout(verticalbox)
         self.lcdNumber = QLCDNumber(self)
         self.verticalSlider = QSlider(self)
         self.verticalSlider.setOrientation(Qt.Vertical)
@@ -129,23 +140,30 @@ class WidgetsTab(QWidget):
         self.horizontalSlider.setOrientation(Qt.Horizontal)
         self.progressBar = QProgressBar(self)
         self.dockWidget = QDockWidget(self)
+        self.toolbar = QToolBar(self)
+        self.toolbar.setToolButtonStyle(
+            Qt.ToolButtonStyle.ToolButtonTextUnderIcon
+        )
+        for action in ["Action 1", "Action 2", "Action 3"]:
+            self.toolbar.addAction(action)
+        self.vlay3.addWidget(self.toolbar)
         self.vlay3.addWidget(self.progressBar)
         self.vlay3.addWidget(self.horizontalSlider)
         self.vlay3.addWidget(self.horizontalScrollBar)
         self.vlay3.addWidget(self.lcdNumber)
         self.vlay3.addWidget(self.line2)
-        verticalbox = QGroupBox("Vertical", self)
-        self.hlay1 = QHBoxLayout(verticalbox)
+        self.vlay3.addWidget(self.dial)
+        horizontalbox = QGroupBox("Horizontal", self)
+        self.hlay1 = QHBoxLayout(horizontalbox)
         self.progressBar.setRange(0, 100)
         self.horizontalSlider.setMinimum(0)
         self.horizontalSlider.setMaximum(100)
         self.horizontalSlider.setTickInterval(1)
         self.horizontalSlider.valueChanged.connect(self.updateProgress)
-        verticalbox.setLayout(self.hlay1)
+        horizontalbox.setLayout(self.hlay1)
         self.hlay1.addWidget(self.verticalScrollBar)
         self.hlay1.addWidget(self.verticalSlider)
         self.hlay1.addWidget(self.line)
-        self.hlay1.addWidget(self.dial)
         return verticalbox, horizontalbox
 
     def changeLCD(self):

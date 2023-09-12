@@ -210,6 +210,7 @@ class ToolBar(QToolBar):
         font = self.themes_combo.font()
         font.setPointSize(10)
         self.themes_combo.setFont(font)
+        self.themes_combo.addItem("", "")
         for file in os.listdir(self.themes_dir):
             theme_name = os.path.splitext(file)[0]
             self.themes_combo.addItem(theme_name, theme_name)

@@ -1,0 +1,383 @@
+{
+    "QWidget": {
+        "color": "black"
+    },
+    "QDialog": {
+        "background-color": "rgba(254, 211, 59, 64)",
+        "background-position": "top left",
+        "background-origin": "content"
+    },
+    "QSplitter": {
+        "background-color": "rgba(254, 211, 59, 64)",
+        "background-position": "top left",
+        "background-origin": "content"
+    },
+    "QScrollArea": {
+        "background-color": "rgba(254, 211, 59, 64)",
+        "background-position": "top left",
+        "background-origin": "content"
+    },
+    "QScrollArea *": {
+        "background-color": "rgba(254, 211, 59, 64)",
+        "background-position": "top left",
+        "background-origin": "content"
+    },
+    "MainWindow": {
+        "background-color": "rgba(254, 211, 59, 64)",
+        "background-position": "top left",
+        "background-origin": "content"
+    },
+    "Options": {
+        "background-color": "rgba(254, 211, 59, 64)",
+        "background-position": "top left",
+        "background-origin": "content"
+    },
+    "Preview": {
+        "background-color": "rgba(254, 211, 59, 64)",
+        "background-position": "top left",
+        "background-origin": "content"
+    },
+    "Flyer": {
+        "background-color": "rgba(254, 211, 59, 64)",
+        "background-position": "top left",
+        "background-origin": "content"
+    },
+    "Cabinet": {
+        "background-color": "rgba(254, 211, 59, 64)",
+        "background-position": "top left",
+        "background-origin": "content"
+    },
+    "Title": {
+        "background-color": "rgba(254, 211, 59, 64)",
+        "background-position": "top left",
+        "background-origin": "content"
+    },
+    "Marquee": {
+        "background-color": "rgba(254, 211, 59, 64)",
+        "background-position": "top left",
+        "background-origin": "content"
+    },
+    "Controller": {
+        "background-color": "rgba(254, 211, 59, 64)",
+        "background-position": "top left",
+        "background-origin": "content"
+    },
+    "PCB": {
+        "background-color": "rgba(254, 211, 59, 64)",
+        "background-position": "top left",
+        "background-origin": "content"
+    },
+    "QTabWidget": {
+        "background-color": "rgba(254, 211, 59, 64)",
+        "color": "black",
+        "border": "1px solid rgba(254, 211, 59, 255)",
+        "padding": "2px",
+        "border-radius": "3px"
+    },
+    "QLabel#labelTitle": {
+        "background": "qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(152, 54, 29, 255), stop:0.5 rgba(254, 211, 59, 128), stop:1 rgba(152, 54, 29, 255))",
+        "color": "black"
+    },
+    "QLabel#labelProjectInfo": {
+        "color": "white",
+        "width": "300",
+        "height": "300"
+    },
+    "QLabel#labelLogoPixmap": {
+        "background": "black"
+    },
+    "QTabBar": {
+        "background": "qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(152, 54, 29, 64), stop:1 rgba(254, 211, 59, 64))"
+    },
+    "QLabel#labelGamelistStatus": {
+        "background": "qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(152, 54, 29, 64), stop:0.5 rgba(254, 211, 59, 128), stop:1 rgba(152, 54, 29, 64))"
+    },
+    "QLabel#labelGameStatus": {
+        "background": "none"
+    },
+    "QLabel#labelLoadingGamelist": {},
+    "QLabel#labelLoadingHierarchy": {},
+    "QLabel#labelCreatingCategoryView": {},
+    "QLabel#labelCreatingVersionView": {},
+    "QListWidget#listWidgetFavorites": {},
+    "QListWidget#listWidgetPlayed": {},
+    "QListWidget#listWidgetSearch": {},
+    "QTreeWidget#treeWidgetCategoryView": {},
+    "QTreeWidget#treeWidgetVersionView": {},
+    "QTreeWidget#treeWidgetGamelist": {},
+    "QTreeWidget#treeWidgetHierarchy": {},
+    "QComboBox": {
+        "selection-color": "black",
+        "selection-background-color": "rgba(152, 54, 29, 128)",
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgba(152, 54, 29, 128), stop: 1 rgba(254, 211, 59, 128))",
+        "border": "1px solid gray",
+        "padding": "2px",
+        "border-radius": "3px"
+    },
+    "QTreeView": {
+        "alternate-background-color": "rgba(152, 54, 29, 128)",
+        "paint-alternating-row-colors-for-empty-area": "true",
+        "show-decoration-selected": "0"
+    },
+    "QListView": {
+        "selection-color": "black",
+        "selection-background-color": "rgba(152, 54, 29, 128)",
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgba(152, 54, 29, 128), stop: 1 rgba(254, 211, 59, 128))",
+        "border": "1px solid gray",
+        "padding": "2px",
+        "border-radius": "3px"
+    },
+    "QTextBrowser": {
+        "selection-color": "white",
+        "selection-background-color": "rgba(0, 0, 0, 128)",
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgba(152, 54, 29, 128), stop: 1 rgba(254, 211, 59, 128))",
+        "border": "1px solid gray",
+        "padding": "2px",
+        "border-radius": "3px"
+    },
+    "QPlainTextEdit": {
+        "selection-color": "white",
+        "selection-background-color": "rgba(0, 0, 0, 128)",
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgba(152, 54, 29, 128), stop: 1 rgba(254, 211, 59, 128))",
+        "border": "1px solid gray",
+        "padding": "2px",
+        "border-radius": "3px"
+    },
+    "QSpinBox": {
+        "selection-color": "white",
+        "selection-background-color": "rgba(0, 0, 0, 128)",
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgba(152, 54, 29, 128), stop: 1 rgba(254, 211, 59, 128))",
+        "border": "1px solid gray",
+        "padding": "2px",
+        "border-radius": "3px"
+    },
+    "QDoubleSpinBox": {
+        "selection-color": "white",
+        "selection-background-color": "rgba(0, 0, 0, 128)",
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgba(152, 54, 29, 128), stop: 1 rgba(254, 211, 59, 128))",
+        "border": "1px solid gray",
+        "padding": "2px",
+        "border-radius": "3px"
+    },
+    "QLineEdit": {
+        "selection-color": "white",
+        "selection-background-color": "rgba(0, 0, 0, 128)",
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgb(152, 54, 29), stop: 1 rgb(254, 211, 59))",
+        "border": "1px solid gray",
+        "padding": "2px",
+        "border-radius": "3px"
+    },
+    "QPushButton": {
+        "selection-color": "black",
+        "selection-background-color": "white",
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgba(152, 54, 29, 255), stop: 1 rgba(254, 211, 59, 255))",
+        "border": "1px solid gray",
+        "padding": "2px",
+        "border-radius": "3px"
+    },
+    "QToolButton": {
+        "selection-color": "black",
+        "selection-background-color": "white",
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgba(152, 54, 29, 255), stop: 1 rgba(254, 211, 59, 255))",
+        "border": "1px solid gray",
+        "padding": "2px",
+        "border-radius": "3px"
+    },
+    "QPushButton:hover": {
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgba(254, 211, 59, 255), stop: 1 rgba(152, 54, 29, 255))"
+    },
+    "QToolButton:hover": {
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgba(254, 211, 59, 255), stop: 1 rgba(152, 54, 29, 255))"
+    },
+    "QPushButton:pressed": {
+        "background": "rgba(64, 64, 64, 192)"
+    },
+    "QToolButton:pressed": {
+        "background": "rgba(64, 64, 64, 192)"
+    },
+    "QPushButton:on": {
+        "background": "rgba(64, 64, 64, 192)"
+    },
+    "QToolButton:on": {
+        "background": "rgba(64, 64, 64, 192)"
+    },
+    "QMenu": {
+        "selection-color": "black",
+        "selection-background-color": "rgb(132, 34, 9)",
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgb(152, 54, 29), stop: 1 rgb(254, 211, 59))",
+        "border": "1px solid rgb(132, 34, 9)",
+        "padding": "2px",
+        "border-radius": "3px"
+    },
+    "QCheckBox": {
+        "background": "transparent"
+    },
+    "QLabel": {
+        "background": "transparent"
+    },
+    "QRadioButton": {
+        "background": "transparent"
+    },
+    "QCheckBox::indicator": {
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgba(254, 211, 59, 255), stop:1 rgba(152, 54, 29, 255))",
+        "width": "14px",
+        "height": "14px",
+        "border": "1px solid gray",
+        "padding": "1px",
+        "border-radius": "3px"
+    },
+    "QCheckBox::indicator:checked": {},
+    "QRadioButton::indicator": {
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgba(254, 211, 59, 255), stop:1 rgba(152, 54, 29, 255))",
+        "width": "7px",
+        "height": "7px",
+        "border": "1px solid gray",
+        "padding": "1px",
+        "border-radius": "5px"
+    },
+    "QRadioButton::indicator:checked": {
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgba(152, 54, 29, 255), stop:1 rgba(0, 0, 0, 255))",
+        "width": "7px",
+        "height": "7px",
+        "border": "1px solid gray",
+        "padding": "1px",
+        "border-radius": "5px"
+    },
+    "QListView::item:hover": {
+        "background-color": "rgba(152, 54, 29, 64)",
+        "padding": "2px"
+    },
+    "QTreeView::item:hover": {
+        "background-color": "rgba(152, 54, 29, 64)",
+        "padding": "2px"
+    },
+    "QScrollBar": {
+        "background-color": "rgba(152, 54, 29, 64)",
+        "padding": "2px"
+    },
+    "QWebView": {
+        "background-color": "rgba(152, 54, 29, 64)",
+        "padding": "2px"
+    },
+    "QProgressBar": {
+        "background-color": "rgba(152, 54, 29, 64)",
+        "padding": "2px"
+    },
+    "QMenu::item:selected": {
+        "background-color": "rgba(152, 54, 29, 128)",
+        "color": "black"
+    },
+    "QHeaderView": {
+        "background": "rgb(152, 54, 29)",
+        "color": "black"
+    },
+    "QToolBar": {
+        "background": "rgba(254, 211, 59, 64)",
+        "color": "black",
+        "selection-color": "black",
+        "selection-background-color": "white"
+    },
+    "QMenuBar": {
+        "background": "rgba(254, 211, 59, 64)",
+        "color": "black",
+        "selection-color": "black",
+        "selection-background-color": "white"
+    },
+    "QMenuBar::item": {
+        "spacing": "4px",
+        "padding": "2px 4px",
+        "background": "rgba(254, 211, 59, 128)",
+        "border": "1px solid rgb(152, 54, 29)",
+        "border-radius": "3px"
+    },
+    "QMenuBar::item:selected": {
+        "background": "rgba(152, 54, 29, 128)"
+    },
+    "QMenuBar::item:pressed": {
+        "background": "rgba(152, 54, 29, 255)"
+    },
+    "QGroupBox": {
+        "background": "rgba(254, 211, 59, 64)"
+    },
+    "QRadioButton:hover": {
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 rgba(254, 211, 59, 128), stop:1 rgba(152, 54, 29, 128))",
+        "color": "black"
+    },
+    "QCheckBox:hover": {
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 rgba(254, 211, 59, 128), stop:1 rgba(152, 54, 29, 128))",
+        "color": "black"
+    },
+    "QToolTip": {
+        "background": "rgba(152, 54, 29, 128)",
+        "color": "lightgrey",
+        "border": "1px solid rgb(254, 211, 59)",
+        "border-radius": "3px"
+    },
+    "QSplitter::handle:horizontal": {
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 rgba(152, 54, 29, 128), stop:1 rgba(20, 20, 20, 255))",
+        "border": "1px solid rgb(50, 50, 50)",
+        "width": "2px",
+        "height": "2px",
+        "border-radius": "1px"
+    },
+    "QSplitter::handle:vertical": {
+        "background": "qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(152, 54, 29, 128), stop:1 rgba(20, 20, 20, 255))"
+    },
+    "QProgressBar:horizontal": {
+        "border": "1px solid rgb(50, 50, 50)",
+        "border-radius": "3px",
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 rgb(152, 54, 29), stop:1 rgb(254, 211, 59))",
+        "padding": "0px",
+        "text-align": "center"
+    },
+    "QProgressBar:vertical": {
+        "border": "1px solid rgb(50, 50, 50)",
+        "border-radius": "3px",
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgb(152, 54, 29), stop:1 rgb(254, 211, 59))",
+        "padding": "0px",
+        "text-align": "center"
+    },
+    "QProgressBar::chunk:horizontal": {
+        "background-color": "rgb(254, 211, 59)",
+        "width": "1px"
+    },
+    "QProgressBar::chunk:vertical": {
+        "background-color": "rgb(254, 211, 59)",
+        "height": "1px"
+    },
+    "QProgressBar:disabled": {
+        "color": "grey"
+    },
+    "QHeaderView::down-arrow": {},
+    "QHeaderView::up-arrow": {},
+    "QTreeView::branch:has-siblings:!adjoins-item": {},
+    "QTreeView::branch:has-siblings:adjoins-item": {},
+    "QTreeView::branch:!has-children:!has-siblings:adjoins-item": {},
+    "QTreeView::branch:has-children:!has-siblings:closed": {
+        "border-image": "none"
+    },
+    "QTreeView::branch:closed:has-children:has-siblings": {
+        "border-image": "none"
+    },
+    "QTreeView::branch:open:has-children:!has-siblings": {
+        "border-image": "none"
+    },
+    "QTreeView::branch:open:has-children:has-siblings": {
+        "border-image": "none"
+    },
+    "QSlider::groove:horizontal": {
+        "border": "1px solid rgb(254, 211, 59)",
+        "height": "8px",
+        "background": "qlineargradient(x1:1, y1:0, x2:0, y2:0, stop:0 rgba(152, 54, 29, 255), stop:1 rgba(254, 211, 59, 255))",
+        "border-radius": "3px",
+        "margin": "2px 0"
+    },
+    "QSlider::handle:horizontal": {
+        "background": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgb(152, 54, 29), stop:1 rgb(254, 211, 59))",
+        "border": "1px solid rgb(254, 211, 59)",
+        "width": "20px",
+        "margin": "-2px 0",
+        "border-radius": "3px"
+    },
+    "QMessageBox": {}
+}

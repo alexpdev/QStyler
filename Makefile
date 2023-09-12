@@ -28,20 +28,20 @@ help:
 clean: clean-build ## remove all build, test, coverage and Python artifacts
 
 clean-build: ## remove build artifacts
-	rm -rfv build/
-	rm -rfv dist/
-	rm -rfv .eggs/
-	rm -rfv *.egg-info
-	rm -rfv *.egg
-	rm -rfv **/__pycache__
-	rm -rfv htmlcov/
-	rm -rfv .tox/
-	rm -rfv .pytest_cache
-	rm -fv **.pyo
-	rm -fv **.pyc
-	rm -fv .coverage
-	rm -fv corbertura.xml
-	rm -fv coverage.xml
+	rm -rf build/
+	rm -rf dist/
+	rm -rf .eggs/
+	rm -rf *.egg-info
+	rm -rf *.egg
+	rm -rf **/__pycache__
+	rm -rf htmlcov/
+	rm -rf .tox/
+	rm -rf .pytest_cache
+	rm -f **.pyo
+	rm -f **.pyc
+	rm -f .coverage
+	rm -f corbertura.xml
+	rm -f coverage.xml
 
 install: ## install packages
 	pip install --upgrade --no-cache --force-reinstall torrentfileQt QStyler
