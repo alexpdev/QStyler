@@ -26,9 +26,9 @@ from pathlib import Path
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QAction, QFontMetricsF
 from PySide6.QtWidgets import (QApplication, QComboBox, QFileDialog,
-                               QHBoxLayout, QLabel, QListWidget,
+                               QHBoxLayout, QLabel, QLineEdit, QListWidget,
                                QListWidgetItem, QSlider, QTextEdit, QToolBar,
-                               QVBoxLayout, QWidget, QLineEdit)
+                               QVBoxLayout, QWidget)
 
 from QStyler.dialog import NewDialog, RenameDialog
 from QStyler.utils import (ParsingError, QssParser, apply_stylesheet, get_icon,
