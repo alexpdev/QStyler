@@ -28,7 +28,7 @@ from PySide6.QtGui import QAction, QFontMetricsF
 from PySide6.QtWidgets import (QApplication, QComboBox, QFileDialog,
                                QHBoxLayout, QLabel, QListWidget,
                                QListWidgetItem, QSlider, QTextEdit, QToolBar,
-                               QVBoxLayout, QWidget)
+                               QVBoxLayout, QWidget, QLineEdit)
 
 from QStyler.dialog import NewDialog, RenameDialog
 from QStyler.utils import (ParsingError, QssParser, apply_stylesheet, get_icon,
@@ -57,6 +57,7 @@ class ColorPicker(QWidget):
         self.red_layout = QHBoxLayout()
         self.green_layout = QHBoxLayout()
         self.blue_layout = QHBoxLayout()
+        self.line_edit = QLineEdit()
         self.red_label = QLabel("R")
         self.green_label = QLabel("G")
         self.blue_label = QLabel("B")
@@ -74,12 +75,14 @@ class ColorPicker(QWidget):
         self.blue_layout.addWidget(self.blue_label)
         self.blue_layout.addWidget(self.blue_slider)
         self.layout.addWidget(self.label)
+        self.layout.addWidget(self.line_edit)
         self.layout.addLayout(self.red_layout)
         self.layout.addLayout(self.green_layout)
         self.layout.addLayout(self.blue_layout)
         self.blue_slider.setRange(0, 255)
         self.green_slider.setRange(0, 255)
         self.red_slider.setRange(0, 255)
+        self.line_edit.setReadOnly(True)
         self.blue_slider.valueChanged.connect(self.change_color)
         self.red_slider.valueChanged.connect(self.change_color)
         self.green_slider.valueChanged.connect(self.change_color)
@@ -98,6 +101,7 @@ class ColorPicker(QWidget):
         red_value = self.red_slider.value()
         color_val = [f"{i:02x}" for i in [red_value, green_value, blue_value]]
         color_string = "#" + "".join(color_val)
+        self.line_edit.setText(color_string)
         self.label.setStyleSheet(f"background-color: {color_string};")
         self.colorChanged.emit(color_string)
 
@@ -495,13 +499,14 @@ class StylerTab(QWidget):
                 cursor.MoveOperation.Left, cursor.MoveMode.KeepAnchor, e - s
             )
             cursor.deleteChar()
+            self.editor.insertPlainText(color + ";")
         elif result2:  # pragma: nocover
             s, e = second + result2.start(), pos
             cursor.movePosition(
                 cursor.MoveOperation.Left, cursor.MoveMode.KeepAnchor, e - s
             )
             cursor.deleteChar()
-        self.editor.insertPlainText(color + ";")
+            self.editor.insertPlainText(color + ";")
 
     def live_update(self):
         """Update theme in real time."""
