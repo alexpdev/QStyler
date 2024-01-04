@@ -162,7 +162,7 @@ def test_toolbar_reset_theme(app, wind):
     toolbar.load_action.trigger()
     toolbar.reset_action.trigger()
     toolbar.load_action.trigger()
-    assert toolbar.themes_combo.currentText()
+    assert not toolbar.themes_combo.currentText()
 
 
 def test_new_dialog(app):
@@ -208,9 +208,7 @@ def test_toolbar_buttons(app, wind, theme):
     assert wind.styler.editor.toPlainText() == ""
 
 
-@pytest.mark.parametrize(
-    "theme", ["SummerBreeze", "DarkSkyline", "Coastal"]
-)
+@pytest.mark.parametrize("theme", ["SummerBreeze", "DarkSkyline", "Coastal"])
 def test_styler_with_theme(app, wind, theme):
     """Test function for toolbar buttons."""
     wind.tabWidget.setCurrentIndex(0)

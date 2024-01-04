@@ -1,0 +1,95 @@
+{
+    "QPushButton": {
+        "background-color": "palegoldenrod",
+        "border-width": "2px",
+        "border-color": "darkkhaki",
+        "border-style": "solid",
+        "border-radius": "5",
+        "padding": "3px",
+        "min-width": "9ex",
+        "min-height": "2.5ex"
+    },
+    "QPushButton:hover": {
+        "background-color": "khaki"
+    },
+    "QPushButton:pressed": {
+        "padding-left": "5px",
+        "padding-top": "5px",
+        "background-color": "#d0d67c"
+    },
+    "QLabel": {
+        "border": "none",
+        "padding": "0",
+        "background": "none"
+    },
+    "QAbstractButton": {
+        "font": "bold"
+    },
+    "QStatusBar QLabel": {
+        "font": "normal"
+    },
+    "QStatusBar::item": {
+        "border-width": "1",
+        "border-color": "darkkhaki",
+        "border-style": "solid",
+        "border-radius": "2"
+    },
+    "QComboBox": {
+        "background-color": "cornsilk",
+        "selection-color": "#0a214c",
+        "selection-background-color": "#C19A6B"
+    },
+    "QLineEdit": {
+        "border-width": "2px",
+        "padding": "1px",
+        "border-style": "solid",
+        "border-color": "darkkhaki",
+        "border-radius": "5px"
+    },
+    "QSpinBox": {
+        "background-color": "cornsilk",
+        "selection-color": "#0a214c",
+        "selection-background-color": "#C19A6B"
+    },
+    "QTextEdit": {
+        "background-color": "cornsilk",
+        "selection-color": "#0a214c",
+        "selection-background-color": "#C19A6B"
+    },
+    "QListView": {
+        "show-decoration-selected": "1"
+    },
+    "QListView::item:hover": {
+        "background-color": "wheat"
+    },
+    "QFrame": {
+        "border-width": "2px",
+        "padding": "1px",
+        "border-style": "solid",
+        "border-color": "darkkhaki",
+        "border-radius": "5px"
+    },
+    "QLineEdit:focus": {
+        "border-width": "3px",
+        "padding": "0px"
+    },
+    "QFrame:focus": {
+        "border-width": "3px",
+        "padding": "0px"
+    },
+    "QToolTip": {
+        "border": "2px solid darkkhaki",
+        "padding": "5px",
+        "border-radius": "3px",
+        "opacity": "200"
+    },
+    "QRadioButton:hover": {
+        "background-color": "wheat"
+    },
+    "QCheckBox:hover": {
+        "background-color": "wheat"
+    },
+    "QDialogButtonBox": {
+        "button-layout": "0"
+    }
+}
