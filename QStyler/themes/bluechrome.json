@@ -1,8 +1,7 @@
 {
     "*": {
         "font-size": "14px",
-        "color": "#d5d5d5",
-        "font-family": "\"\u9ed1\u4f53\""
+        "color": "#d5d5d5"
     },
     "QWidget": {
         "color": "#eff0f1",
@@ -143,8 +142,6 @@
         "width": "10px",
         "height": "10px"
     },
-    "QAbstractSpinBox::up-arrow:hover": {},
-    "QSpinBox::up-arrow:hover": {},
     "QAbstractSpinBox::down-arrow": {
         "width": "10px",
         "height": "10px"
@@ -221,19 +218,6 @@
     "QTabBar::tab:hover": {
         "background": "qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #113845,  stop: 1.0 #0E6F80)"
     },
-    "#QTabBar::tab:selected": {
-        "border-color": "#32435E"
-    },
-    "#QTabBar::tab:!selected": {},
-    "#QTabBar:tab:first:selected": {
-        "margin-top": "0"
-    },
-    "QTabBar:tab:last:selected": {
-        "margin-right": "0"
-    },
-    "QTabBar:tab:only-one": {
-        "margin": "0"
-    },
     "QListWidget": {
         "border": "1px solid #32435E",
         "background": "#1d2938"
@@ -287,7 +271,6 @@
     "QComboBox::drop-down:editable:on": {
         "background": "qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #080B10, stop: 1.0 #212C3F);"
     },
-    "padding-top: 3px;padding-left: 4px;": {},
     "QComboBox::drop-down": {
         "subcontrol-origin": "padding",
         "subcontrol-position": "top right",
@@ -297,7 +280,6 @@
         "border-bottom-right-radius": "3px"
     },
     "QComboBox::down-arrow": {},
-    "top: 1px;left: 1px;": {},
     "QComboBox::down-arrow:on": {},
     "QComboBox::down-arrow:hover": {},
     "QComboBox::down-arrow:focus": {},
@@ -326,24 +308,6 @@
         "border-width": "1px",
         "border-color": "qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(50,67,94), stop:1 rgba(50,67,94))"
     },
-    "QCheckBox::indicator:unchecked:hover": {
-        "border": "none"
-    },
-    "QCheckBox::indicator:unchecked:focus": {
-        "border": "none"
-    },
-    "QCheckBox::indicator:unchecked:pressed": {
-        "border": "none"
-    },
-    "QGroupBox::indicator:unchecked:hover": {
-        "border": "none"
-    },
-    "QGroupBox::indicator:unchecked:focus": {
-        "border": "none"
-    },
-    "QGroupBox::indicator:unchecked:pressed": {
-        "border": "none"
-    },
     "QCheckBox::indicator:checked": {
         "height": "14px",
         "width": "14px",
@@ -352,32 +316,6 @@
         "background": "qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #758385, stop: 0.5 #122C39, stop: 1.0 #0E7788)",
         "border-color": "#11505C"
     },
-    "QCheckBox::indicator:checked:hover": {
-        "border": "none"
-    },
-    "QCheckBox::indicator:checked:focus": {
-        "border": "none"
-    },
-    "QCheckBox::indicator:checked:pressed": {
-        "border": "none"
-    },
-    "QGroupBox::indicator:checked:hover": {
-        "border": "none"
-    },
-    "QGroupBox::indicator:checked:focus": {
-        "border": "none"
-    },
-    "QGroupBox::indicator:checked:pressed": {
-        "border": "none"
-    },
-    "QCheckBox::indicator:indeterminate": {},
-    "QCheckBox::indicator:indeterminate:focus": {},
-    "QCheckBox::indicator:indeterminate:hover": {},
-    "QCheckBox::indicator:indeterminate:pressed": {},
-    "QCheckBox::indicator:checked:disabled": {},
-    "QGroupBox::indicator:checked:disabled": {},
-    "QCheckBox::indicator:unchecked:disabled": {},
-    "QGroupBox::indicator:unchecked:disabled": {},
     "QMenu": {
         "background-color": "#030406",
         "border-width": "0px",
@@ -401,7 +339,6 @@
         "background": "qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #1E293A, stop: 1.0 #2C547E)",
         "color": "#E6FFFF"
     },
-    "background: gray;border: 1px inset gray;position: absolute;top: 1px;right: 1px;bottom: 1px;left: 1px;": {},
     "QMenu::separator": {
         "height": "1px",
         "background": "#1D99A9"
@@ -410,14 +347,6 @@
         "width": "13px",
         "height": "13px"
     },
-    "QMenu::indicator:non-exclusive:unchecked": {},
-    "QMenu::indicator:non-exclusive:unchecked:selected": {},
-    "QMenu::indicator:non-exclusive:checked": {},
-    "QMenu::indicator:non-exclusive:checked:selected": {},
-    "QMenu::indicator:exclusive:unchecked": {},
-    "QMenu::indicator:exclusive:unchecked:selected": {},
-    "QMenu::indicator:exclusive:checked": {},
-    "QMenu::indicator:exclusive:checked:selected": {},
     "QMenuBar": {
         "background-color": "#2c3e55",
         "color": "#eff0f1"
@@ -474,22 +403,6 @@
         "border-color": "qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(50,67,94), stop:1 rgba(50,67,94))",
         "background": "qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #758385, stop: 0.5 #122C39, stop: 1.0 #0E7788)"
     },
-    "QRadioButton::indicator:checked:hover": {
-        "border": "none",
-        "outline": "none"
-    },
-    "QRadioButton::indicator:checked:focus": {
-        "border": "none",
-        "outline": "none"
-    },
-    "QRadioButton::indicator:checked:pressed": {
-        "border": "none",
-        "outline": "none"
-    },
-    "QRadioButton::indicator:checked:disabled": {
-        "outline": "none"
-    },
-    "QRadioButton::indicator:unchecked:disabled": {},
     "QGroupBox": {
         "border": "1px solid #2E3D57",
         "border-radius": "2px",
@@ -631,10 +544,6 @@
         "background": "1px solid #1d2938",
         "font-weight": "bold"
     },
-    "QToolBar::handle:horizontal": {},
-    "QToolBar::handle:vertical": {},
-    "QToolBar::separator:horizontal": {},
-    "QToolBar::separator:vertical": {},
     "QToolTip": {
         "border": "1.5px solid #179BAB",
         "padding": "3px",
@@ -648,10 +557,6 @@
         "border": "1px solid #3E58A5",
         "border-radius": "3px"
     },
-    "#QStatusBar QLabel": {
-        "border": "1px solid #6AF0FF"
-    },
-    "image: url(qss/sizegrip.png);width: 16px;height: 16px;": {},
     "QHeaderView::section": {
         "background-color": "qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #353B43, stop:1 #151A20)",
         "color": "white",
@@ -668,8 +573,5 @@
     "QTableView::item:selected": {
         "background": "qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #758385, stop: 0.5 #122C39, stop: 1.0 #0E7788)",
         "border-color": "#11505C"
-    },
-    "QFrame#customTitleBar": {
-        "background": "qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #454F53,  stop: 1.0 #135263)"
     }
 }
